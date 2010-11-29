@@ -1,0 +1,79 @@
+\documentclass[a4paper]{book}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{ifthen}
+\usepackage[table]{xcolor}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{ifpdf}
+\ifpdf
+\usepackage[pdftex,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            unicode
+           ]{hyperref}
+\else
+\usepackage[ps2pdf,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            unicode
+           ]{hyperref}
+\usepackage{pspicture}
+\fi
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{mathptmx}
+\usepackage[scaled=.90]{helvet}
+\usepackage{courier}
+\usepackage{doxygen}
+\lstset{language=C++,inputencoding=utf8,basicstyle=\footnotesize,breaklines=true,breakatwhitespace=true,tabsize=8,numbers=left }
+\makeindex
+\setcounter{tocdepth}{3}
+\renewcommand{\footrulewidth}{0.4pt}
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\vspace*{7cm}
+\begin{center}
+{\Large CVMob }\\
+\vspace*{1cm}
+{\large Gerado por Doxygen 1.7.2}\\
+\vspace*{0.5cm}
+{\small Sexta, 26 de Novembro de 2010 17:50:15}\\
+\end{center}
+\end{titlepage}
+\clearemptydoublepage
+\pagenumbering{roman}
+\tableofcontents
+\clearemptydoublepage
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true}
+\chapter{Índice dos Componentes}
+\input{hierarchy}
+\chapter{Índice dos Componentes}
+\input{annotated}
+\chapter{Classes}
+\input{classAboutDialog}
+\input{classAngle}
+\input{classmodel_1_1cvMo}
+\input{classview_1_1CvMobMainWindow}
+\input{classcvZoomer}
+\input{classmodel_1_1ExportText}
+\input{classcontroller_1_1FacadeController}
+\input{structFixedPoint}
+\input{classmodel_1_1IExportStrategy}
+\input{classimageViewer}
+\input{classoptions}
+\input{classmodel_1_1PhisicsCalc}
+\input{classview_1_1Plot}
+\input{structpoint}
+\input{classmodel_1_1ProxyOpenCv}
+\input{classreportDialog}
+\printindex
+\end{document}

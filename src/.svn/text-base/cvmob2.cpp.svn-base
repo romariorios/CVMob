@@ -1,0 +1,285 @@
+/****************************************************************************
+ **
+ ** Trolltech hereby grants a license to use the Qt/Eclipse Integration
+ ** plug-in (the software contained herein), in binary form, solely for the
+ ** purpose of creating code to be used with Trolltech's Qt software.
+ **
+ ** Qt Designer is licensed under the terms of the GNU General Public
+ ** License versions 2.0 and 3.0 ("GPL License"). Trolltech offers users the
+ ** right to use certain no GPL licensed software under the terms of its GPL
+ ** Exception version 1.2 (http://trolltech.com/products/qt/gplexception).
+ **
+ ** THIS SOFTWARE IS PROVIDED BY TROLLTECH AND ITS CONTRIBUTORS (IF ANY) "AS
+ ** IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ ** TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ ** PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ ** OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ ** EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ ** PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+ **
+ ** Since we now have the GPL exception I think that the "special exception
+ ** is no longer needed. The license text proposed above (other than the
+ ** special exception portion of it) is the BSD license and we have added
+ ** the BSD license as a permissible license under the exception.
+ **
+ ****************************************************************************/
+
+#include "cvmob2.h"
+
+//#include <iostream>
+//#include <string> // program uses C++ standard string class
+
+using namespace std;
+
+cvMob2::cvMob2(QWidget *parent) :
+	QMainWindow(parent) {
+	char InitOK;
+	this->PlotV = new Plot("Velocity", "vel (pxl/frame)");
+	this->PlotA = new Plot("Angle", "ang (degree)");
+	this->PlotAc = new Plot("Aceleration", "acel (pxl/frame2)");
+	this->PlotAA = new Plot("Ang.Acel.", "acel (degree/frame2)");
+	this->NVelpoints = 0;
+
+	ui.setupUi(this);
+	QGridLayout *vbox = new QGridLayout;
+	vbox->addWidget(PlotV, 0, 0);
+	vbox->addWidget(PlotA, 0, 1);
+	vbox->addWidget(PlotAc, 1, 0);
+	vbox->addWidget(PlotAA, 1, 1);
+	ui.GraphGroupBox->setLayout(vbox);
+
+	//connect(ui.pushButtonStep, SIGNAL(clicked()), this, SLOT(PressStepF()));
+	//connect(ui.pushButtonStepB, SIGNAL(clicked()), this, SLOT(PressStepB()));
+	connect(ui.slider, SIGNAL(valueChanged(int)), this, SLOT(SliderChange()));
+	connect(ui.checkBoxGrid, SIGNAL(stateChanged(int)), this, SLOT(CheckGrid(int)));
+	connect(ui.lineEditSizeGrid, SIGNAL(textChanged(const QString &)), this, SLOT(TextGrid(const QString &)));
+	connect(ui.pushButtonClearPoints, SIGNAL(clicked()), this, SLOT(FreePoints()));
+	connect(ui.pushButtonClearTrajectories, SIGNAL(clicked()), this, SLOT(FreeTrajectories()));
+	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(FileOpen()));
+	connect(ui.actionAngle, SIGNAL(triggered()), this, SLOT(ExportAngle()));
+	connect(ui.actionTrajectory, SIGNAL(triggered()), this, SLOT(ExportTrajectory()));
+
+	InitOK = cvM.Init();
+	ui.slider->setRange(0, cvM.TotFrames);
+	ui.slider->setValue(0);
+	cvM.SetPlay(1);
+	cvM.SetStep(1);
+	this->Refresh(1);
+
+}
+
+cvMob2::~cvMob2() {
+
+}
+
+void cvMob2::CalcVel() {
+	int i, Ti = -1;
+	double dvx, dvy;
+	for (i = 0; i < this->cvM.GetPCount(); i++)
+		// busca o ponto de trajetoria
+		if (this->cvM.GetpTipo(i) == 1)
+			Ti = i;
+	if (Ti >= 0) // se existe ao menos uma trajetoria
+	{
+		this->NVelpoints = cvM.GetNTraject(Ti); // Quantidade de pontos da trajetoria
+		for (i = 1; i < this->NVelpoints; i++) {
+			dvx = cvM.GetTrajectX(Ti, i) - cvM.GetTrajectX(Ti, i - 1);
+			dvy = cvM.GetTrajectY(Ti, i) - cvM.GetTrajectY(Ti, i - 1);
+			this->Vel[i - 1] = sqrt(pow(dvx,2) + pow(dvy ,2));
+			this->Time[i - 1] = (double) cvM.Fc - this->NVelpoints + i;
+			if (i == 4) // calculates smoothing aceleration
+				this->Ace[i - 4] = ((Vel[i - 2] - Vel[i - 3]) + (Vel[i - 1]
+						- Vel[i - 2])) / 2;
+			if (i > 4)
+				this->Ace[i - 4] = ((Vel[i - 4] - Vel[i - 5]) + (Vel[i - 3]
+						- Vel[i - 4]) + (Vel[i - 2] - Vel[i - 3]) + (Vel[i - 1]
+						- Vel[i - 2])) / 4;
+		}
+	}
+	this->PlotV->CurveV.setData(this->Time, this->Vel,
+			(this->NVelpoints) ? (this->NVelpoints - 1) : 0);
+	this->PlotAc->CurveV.setData(this->Time, this->Ace, (this->NVelpoints - 3
+			> 0) ? (this->NVelpoints - 4) : 0);
+}
+
+void cvMob2::CalcAng() {
+	if (this->cvM.ThereIsAngle()) // se existe angulo definido
+	{
+		this->PlotA->CurveV.setData(this->cvM.TimeA, this->cvM.Ang,
+				this->cvM.NApoints);
+	}
+}
+
+void cvMob2::Refresh(int step) {
+	cvM.Capture(step);
+	cvM.LocatePoints();
+	cvM.ShowImage();
+	this->CalcVel();
+	this->CalcAng();
+	this->PlotV->replot();
+	this->PlotA->replot();
+	this->PlotAc->replot();
+}
+
+void cvMob2::FileOpen() {
+	char InitOK;
+	int i;
+	QString fileName = QFileDialog::getOpenFileName(this);
+	for (i = 0; cvM.FlName[i] = fileName[i].toAscii();)
+		i++;
+	if (!fileName.isEmpty()) {
+		cvM.freePoints();
+		cvM.freeTrajectories();
+		InitOK = cvM.Init(cvM.FlName);
+		ui.slider->setRange(0, cvM.TotFrames);
+		ui.slider->setValue(0);
+		this->Refresh(1);
+	}
+}
+
+void cvMob2::ExportAngle() {
+	int i;
+	FILE *fS;
+	char SaveFileName[800]; // File Name
+	if (!this->cvM.NApoints) {
+		QMessageBox::critical(this, tr("cvMob2"), tr(
+				"There is no angle captured."), QMessageBox::Ok);
+
+		//int ret = QMessageBox::critical(this, tr("cvMob2"),tr("There is no angle captured."),QMessageBox::Ok);
+		return;
+	}
+	QString fileName = QFileDialog::getSaveFileName(this);
+	for (i = 0; SaveFileName[i] = fileName[i].toAscii();)
+		i++;
+	if (!fileName.isEmpty()) {
+		fS = fopen(SaveFileName, "w");
+		fprintf(fS, "Frame\tTime\tAngle\n");
+		for (i = 0; i < this->cvM.NApoints; i++) {
+			fprintf(fS, "%4.0f %g %g\n", this->cvM.TimeA[i],
+					(double) this->cvM.TimeA[i] / this->cvM.FrameRate,
+					this->cvM.Ang[i]);
+		}
+		fclose(fS);
+	}
+}
+
+void cvMob2::ExportTrajectory() {
+	int i, Ti = -1;
+	FILE *fS;
+	char SaveFileName[800]; // File Name
+
+	for (i = 0; i < this->cvM.GetPCount(); i++)
+		// busca o ponto de trajetoria
+		if (this->cvM.GetpTipo(i) == 1)
+			Ti = i;
+	if (Ti == -1) {
+		QMessageBox::critical(this, tr("cvMob2"), tr(
+				"There is no trajectory captured."), QMessageBox::Ok);
+
+		//int ret = QMessageBox::critical(this, tr("cvMob2"),tr("There is no trajectory captured."),QMessageBox::Ok);
+
+		return;
+	}
+	QString fileName = QFileDialog::getSaveFileName(this);
+	for (i = 0; SaveFileName[i] = fileName[i].toAscii();)
+		i++;
+	if (!fileName.isEmpty()) {
+		fS = fopen(SaveFileName, "w");
+		fprintf(fS, "Frame\tTime\tX\tY\tVelocity\tAcel\n");
+		for (i = 0; i < this->NVelpoints - 1; i++) {
+			if (i < 2)
+				fprintf(fS, "%4.0f\t%g\t%g\t%g\t%g\n", this->Time[i],
+						(double) this->Time[i] / this->cvM.FrameRate,
+						this->cvM.GetTrajectX(Ti, i), this->cvM.GetTrajectY(Ti,
+								i), this->Vel[i]);
+			else
+				fprintf(fS, "%4.0f\t%g\t%g\t%g\t%g\t%g\n", this->Time[i],
+						(double) this->Time[i] / this->cvM.FrameRate,
+						this->cvM.GetTrajectX(Ti, i), this->cvM.GetTrajectY(Ti,
+								i), this->Vel[i], this->Ace[i - 2]);
+
+		}
+		fclose(fS);
+	}
+}
+
+void cvMob2::PressRec(bool chk) {
+	if (!chk) {
+		cvM.StopRecord();
+		fclose(cvM.FlRec);
+	} else {
+		cvM.FlRec = cvM.AbreArquivo(cvM.FlName);
+		cvM.Record(cvM.FlRec);
+	}
+	cvM.SetPlay(1);
+	cvM.SetStep(1);
+	this->Refresh(1);
+}
+
+void cvMob2::PressStepF() {
+	cvM.SetPlay(1);
+	cvM.SetStep(1);
+	cvM.Capture(1);
+	//this->Refresh(1);
+	cvM.SetPlay(0);
+	ui.slider->setValue(cvM.Fc);
+	this->SliderChange();
+}
+
+void cvMob2::PressStepB() {
+	cvM.SetPlay(1);
+	cvM.SetStep(-1);
+	this->Refresh(-1);
+	cvM.SetPlay(0);
+	ui.slider->setValue(cvM.Fc);
+	this->SliderChange();
+}
+
+void cvMob2::FreePoints() {
+	cvM.freePoints();
+	this->Refresh(0);
+}
+
+void cvMob2::FreeTrajectories() {
+	cvM.freeTrajectories();
+	this->Refresh(0);
+}
+void cvMob2::CheckGrid(int checked) {
+	bool ok;
+	int step;
+	if (checked == Qt::Checked) {
+		step = ui.lineEditSizeGrid->text().toInt(&ok);
+		if (ok)
+			cvM.SetGridStep(step);
+		ui.lineEditSizeGrid->setEnabled(checked);
+		cvM.SetGrid(checked);
+		this->Refresh(0);
+	} else {
+		ui.lineEditSizeGrid->setEnabled(0);
+		cvM.SetGrid(checked);
+		this->Refresh(0);
+	}
+
+}
+void cvMob2::TextGrid(const QString &text) {
+	this->CheckGrid(Qt::Checked);
+}
+
+void cvMob2::SliderChange() {
+	char s[40];
+	int min;
+	double sec;
+	this->cvM.Fc = ui.slider->value();
+	sprintf(s, "Frame:%d", cvM.Fc);
+	ui.labelFrame->setText(s);
+	min = cvM.Fc / cvM.FrameRate / 60;
+	sec = ((double) cvM.Fc / cvM.FrameRate - min);
+	sprintf(s, "Time:%02d:%05.2f", min, sec);
+	ui.labelTime->setText(s);
+	this->Refresh(1);
+}
+

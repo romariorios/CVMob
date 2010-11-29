@@ -1,0 +1,9 @@
+CVMob - Movement analysis tool
+
+How to compile?
+ - qmake && make
+
+It currently compiles and runs on Linux, but playing a video does not work.
+
+TODO:
+ - A lot

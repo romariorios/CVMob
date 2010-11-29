@@ -1,0 +1,438 @@
+/********************************************************************************
+** Form generated from reading ui file 'FormCvMob.ui'
+**
+** Created: Tue 24. Nov 05:59:31 2009
+**      by: Qt User Interface Compiler version 4.5.2
+**
+** WARNING! All changes made in this file will be lost when recompiling ui file!
+********************************************************************************/
+
+#ifndef UI_FORMCVMOB_H
+#define UI_FORMCVMOB_H
+
+#include <QtCore/QVariant>
+#include <QtGui/QAction>
+#include <QtGui/QApplication>
+#include <QtGui/QButtonGroup>
+#include <QtGui/QCheckBox>
+#include <QtGui/QDoubleSpinBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QMainWindow>
+#include <QtGui/QMenu>
+#include <QtGui/QMenuBar>
+#include <QtGui/QPushButton>
+#include <QtGui/QRadioButton>
+#include <QtGui/QSlider>
+#include <QtGui/QSpacerItem>
+#include <QtGui/QStatusBar>
+#include <QtGui/QToolBar>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QWidget>
+
+QT_BEGIN_NAMESPACE
+
+class Ui_cvMob2Class
+{
+public:
+    QAction *actionOpen;
+    QAction *actionAngle;
+    QAction *actionTrajectory;
+    QAction *actionStart_Calibration;
+    QAction *actionSet_Error_Point;
+    QAction *actionVelocity;
+    QAction *actionAcceleration;
+    QAction *actionSmooth_Acceleration;
+    QAction *actionTrabalho;
+    QAction *actionAbout_CvMob2;
+    QAction *actionReport;
+    QAction *actionX_Trajectory;
+    QWidget *centralwidget;
+    QGridLayout *gridLayout;
+    QVBoxLayout *vboxLayout;
+    QGroupBox *GraphGroupBox;
+    QVBoxLayout *vboxLayout1;
+    QSlider *slider;
+    QHBoxLayout *hboxLayout;
+    QPushButton *pushButtonStepBack;
+    QPushButton *pushButtonPlay;
+    QPushButton *pushButtonPause;
+    QPushButton *pushButtonStop;
+    QPushButton *pushButtonStepFoward;
+    QVBoxLayout *vboxLayout2;
+    QLabel *labelFrame;
+    QLabel *labelTime;
+    QSpacerItem *spacerItem;
+    QLabel *label_2;
+    QDoubleSpinBox *doubleSpinBoxWinSize;
+    QCheckBox *checkBoxGrid;
+    QLabel *label;
+    QLineEdit *lineEditSizeGrid;
+    QVBoxLayout *verticalLayout_2;
+    QGroupBox *groupBoxVectors;
+    QGridLayout *gridLayout1;
+    QRadioButton *radioVelocity;
+    QRadioButton *radioButtonAcceleration;
+    QSpacerItem *spacerItem1;
+    QPushButton *pushButtonClearTrajectories;
+    QPushButton *pushButtonClearPoints;
+    QSpacerItem *spacerItem2;
+    QMenuBar *menubar;
+    QMenu *menuFile;
+    QMenu *menuExport;
+    QMenu *menuCalibration;
+    QMenu *menuGraphs;
+    QMenu *menuAbout;
+    QStatusBar *statusbar;
+    QToolBar *toolBar;
+    QToolBar *toolBar_2;
+
+    void setupUi(QMainWindow *cvMob2Class)
+    {
+        if (cvMob2Class->objectName().isEmpty())
+            cvMob2Class->setObjectName(QString::fromUtf8("cvMob2Class"));
+        cvMob2Class->setWindowModality(Qt::NonModal);
+        cvMob2Class->resize(564, 527);
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(cvMob2Class->sizePolicy().hasHeightForWidth());
+        cvMob2Class->setSizePolicy(sizePolicy);
+        cvMob2Class->setMaximumSize(QSize(5000, 5000));
+        cvMob2Class->setAutoFillBackground(false);
+        cvMob2Class->setAnimated(true);
+        cvMob2Class->setUnifiedTitleAndToolBarOnMac(false);
+        actionOpen = new QAction(cvMob2Class);
+        actionOpen->setObjectName(QString::fromUtf8("actionOpen"));
+        actionAngle = new QAction(cvMob2Class);
+        actionAngle->setObjectName(QString::fromUtf8("actionAngle"));
+        actionTrajectory = new QAction(cvMob2Class);
+        actionTrajectory->setObjectName(QString::fromUtf8("actionTrajectory"));
+        actionStart_Calibration = new QAction(cvMob2Class);
+        actionStart_Calibration->setObjectName(QString::fromUtf8("actionStart_Calibration"));
+        actionSet_Error_Point = new QAction(cvMob2Class);
+        actionSet_Error_Point->setObjectName(QString::fromUtf8("actionSet_Error_Point"));
+        actionVelocity = new QAction(cvMob2Class);
+        actionVelocity->setObjectName(QString::fromUtf8("actionVelocity"));
+        actionVelocity->setCheckable(true);
+        actionVelocity->setChecked(true);
+        actionAcceleration = new QAction(cvMob2Class);
+        actionAcceleration->setObjectName(QString::fromUtf8("actionAcceleration"));
+        actionAcceleration->setCheckable(true);
+        actionAcceleration->setChecked(true);
+        actionSmooth_Acceleration = new QAction(cvMob2Class);
+        actionSmooth_Acceleration->setObjectName(QString::fromUtf8("actionSmooth_Acceleration"));
+        actionSmooth_Acceleration->setCheckable(true);
+        actionTrabalho = new QAction(cvMob2Class);
+        actionTrabalho->setObjectName(QString::fromUtf8("actionTrabalho"));
+        actionTrabalho->setCheckable(true);
+        actionAbout_CvMob2 = new QAction(cvMob2Class);
+        actionAbout_CvMob2->setObjectName(QString::fromUtf8("actionAbout_CvMob2"));
+        actionReport = new QAction(cvMob2Class);
+        actionReport->setObjectName(QString::fromUtf8("actionReport"));
+        actionX_Trajectory = new QAction(cvMob2Class);
+        actionX_Trajectory->setObjectName(QString::fromUtf8("actionX_Trajectory"));
+        actionX_Trajectory->setCheckable(true);
+        centralwidget = new QWidget(cvMob2Class);
+        centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
+        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(centralwidget->sizePolicy().hasHeightForWidth());
+        centralwidget->setSizePolicy(sizePolicy1);
+        gridLayout = new QGridLayout(centralwidget);
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        vboxLayout = new QVBoxLayout();
+        vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
+        GraphGroupBox = new QGroupBox(centralwidget);
+        GraphGroupBox->setObjectName(QString::fromUtf8("GraphGroupBox"));
+        sizePolicy.setHeightForWidth(GraphGroupBox->sizePolicy().hasHeightForWidth());
+        GraphGroupBox->setSizePolicy(sizePolicy);
+        GraphGroupBox->setMinimumSize(QSize(300, 300));
+        GraphGroupBox->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+        GraphGroupBox->setFlat(false);
+
+        vboxLayout->addWidget(GraphGroupBox);
+
+        vboxLayout1 = new QVBoxLayout();
+        vboxLayout1->setObjectName(QString::fromUtf8("vboxLayout1"));
+        slider = new QSlider(centralwidget);
+        slider->setObjectName(QString::fromUtf8("slider"));
+        slider->setOrientation(Qt::Horizontal);
+
+        vboxLayout1->addWidget(slider);
+
+        hboxLayout = new QHBoxLayout();
+        hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
+        pushButtonStepBack = new QPushButton(centralwidget);
+        pushButtonStepBack->setObjectName(QString::fromUtf8("pushButtonStepBack"));
+        QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy2.setHorizontalStretch(0);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(pushButtonStepBack->sizePolicy().hasHeightForWidth());
+        pushButtonStepBack->setSizePolicy(sizePolicy2);
+
+        hboxLayout->addWidget(pushButtonStepBack);
+
+        pushButtonPlay = new QPushButton(centralwidget);
+        pushButtonPlay->setObjectName(QString::fromUtf8("pushButtonPlay"));
+        sizePolicy2.setHeightForWidth(pushButtonPlay->sizePolicy().hasHeightForWidth());
+        pushButtonPlay->setSizePolicy(sizePolicy2);
+
+        hboxLayout->addWidget(pushButtonPlay);
+
+        pushButtonPause = new QPushButton(centralwidget);
+        pushButtonPause->setObjectName(QString::fromUtf8("pushButtonPause"));
+        sizePolicy2.setHeightForWidth(pushButtonPause->sizePolicy().hasHeightForWidth());
+        pushButtonPause->setSizePolicy(sizePolicy2);
+
+        hboxLayout->addWidget(pushButtonPause);
+
+        pushButtonStop = new QPushButton(centralwidget);
+        pushButtonStop->setObjectName(QString::fromUtf8("pushButtonStop"));
+        sizePolicy2.setHeightForWidth(pushButtonStop->sizePolicy().hasHeightForWidth());
+        pushButtonStop->setSizePolicy(sizePolicy2);
+
+        hboxLayout->addWidget(pushButtonStop);
+
+        pushButtonStepFoward = new QPushButton(centralwidget);
+        pushButtonStepFoward->setObjectName(QString::fromUtf8("pushButtonStepFoward"));
+        sizePolicy2.setHeightForWidth(pushButtonStepFoward->sizePolicy().hasHeightForWidth());
+        pushButtonStepFoward->setSizePolicy(sizePolicy2);
+
+        hboxLayout->addWidget(pushButtonStepFoward);
+
+
+        vboxLayout1->addLayout(hboxLayout);
+
+
+        vboxLayout->addLayout(vboxLayout1);
+
+
+        gridLayout->addLayout(vboxLayout, 0, 0, 1, 1);
+
+        vboxLayout2 = new QVBoxLayout();
+        vboxLayout2->setObjectName(QString::fromUtf8("vboxLayout2"));
+        labelFrame = new QLabel(centralwidget);
+        labelFrame->setObjectName(QString::fromUtf8("labelFrame"));
+        sizePolicy2.setHeightForWidth(labelFrame->sizePolicy().hasHeightForWidth());
+        labelFrame->setSizePolicy(sizePolicy2);
+        QFont font;
+        font.setPointSize(14);
+        labelFrame->setFont(font);
+
+        vboxLayout2->addWidget(labelFrame);
+
+        labelTime = new QLabel(centralwidget);
+        labelTime->setObjectName(QString::fromUtf8("labelTime"));
+        sizePolicy2.setHeightForWidth(labelTime->sizePolicy().hasHeightForWidth());
+        labelTime->setSizePolicy(sizePolicy2);
+        QFont font1;
+        font1.setPointSize(13);
+        labelTime->setFont(font1);
+
+        vboxLayout2->addWidget(labelTime);
+
+        spacerItem = new QSpacerItem(20, 151, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        vboxLayout2->addItem(spacerItem);
+
+        label_2 = new QLabel(centralwidget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        sizePolicy2.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
+        label_2->setSizePolicy(sizePolicy2);
+
+        vboxLayout2->addWidget(label_2);
+
+        doubleSpinBoxWinSize = new QDoubleSpinBox(centralwidget);
+        doubleSpinBoxWinSize->setObjectName(QString::fromUtf8("doubleSpinBoxWinSize"));
+        doubleSpinBoxWinSize->setDecimals(0);
+        doubleSpinBoxWinSize->setMinimum(2);
+        doubleSpinBoxWinSize->setMaximum(1000);
+        doubleSpinBoxWinSize->setValue(15);
+
+        vboxLayout2->addWidget(doubleSpinBoxWinSize);
+
+        checkBoxGrid = new QCheckBox(centralwidget);
+        checkBoxGrid->setObjectName(QString::fromUtf8("checkBoxGrid"));
+        checkBoxGrid->setEnabled(false);
+        sizePolicy2.setHeightForWidth(checkBoxGrid->sizePolicy().hasHeightForWidth());
+        checkBoxGrid->setSizePolicy(sizePolicy2);
+        checkBoxGrid->setChecked(false);
+
+        vboxLayout2->addWidget(checkBoxGrid);
+
+        label = new QLabel(centralwidget);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setEnabled(false);
+        sizePolicy2.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
+        label->setSizePolicy(sizePolicy2);
+
+        vboxLayout2->addWidget(label);
+
+        lineEditSizeGrid = new QLineEdit(centralwidget);
+        lineEditSizeGrid->setObjectName(QString::fromUtf8("lineEditSizeGrid"));
+        lineEditSizeGrid->setEnabled(false);
+        sizePolicy2.setHeightForWidth(lineEditSizeGrid->sizePolicy().hasHeightForWidth());
+        lineEditSizeGrid->setSizePolicy(sizePolicy2);
+
+        vboxLayout2->addWidget(lineEditSizeGrid);
+
+        verticalLayout_2 = new QVBoxLayout();
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        groupBoxVectors = new QGroupBox(centralwidget);
+        groupBoxVectors->setObjectName(QString::fromUtf8("groupBoxVectors"));
+        groupBoxVectors->setEnabled(true);
+        QSizePolicy sizePolicy3(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(200);
+        sizePolicy3.setHeightForWidth(groupBoxVectors->sizePolicy().hasHeightForWidth());
+        groupBoxVectors->setSizePolicy(sizePolicy3);
+        groupBoxVectors->setCheckable(true);
+        gridLayout1 = new QGridLayout(groupBoxVectors);
+        gridLayout1->setObjectName(QString::fromUtf8("gridLayout1"));
+        radioVelocity = new QRadioButton(groupBoxVectors);
+        radioVelocity->setObjectName(QString::fromUtf8("radioVelocity"));
+        radioVelocity->setChecked(true);
+
+        gridLayout1->addWidget(radioVelocity, 0, 0, 1, 1);
+
+        radioButtonAcceleration = new QRadioButton(groupBoxVectors);
+        radioButtonAcceleration->setObjectName(QString::fromUtf8("radioButtonAcceleration"));
+
+        gridLayout1->addWidget(radioButtonAcceleration, 1, 0, 1, 1);
+
+
+        verticalLayout_2->addWidget(groupBoxVectors);
+
+
+        vboxLayout2->addLayout(verticalLayout_2);
+
+        spacerItem1 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        vboxLayout2->addItem(spacerItem1);
+
+        pushButtonClearTrajectories = new QPushButton(centralwidget);
+        pushButtonClearTrajectories->setObjectName(QString::fromUtf8("pushButtonClearTrajectories"));
+        sizePolicy2.setHeightForWidth(pushButtonClearTrajectories->sizePolicy().hasHeightForWidth());
+        pushButtonClearTrajectories->setSizePolicy(sizePolicy2);
+
+        vboxLayout2->addWidget(pushButtonClearTrajectories);
+
+        pushButtonClearPoints = new QPushButton(centralwidget);
+        pushButtonClearPoints->setObjectName(QString::fromUtf8("pushButtonClearPoints"));
+        sizePolicy2.setHeightForWidth(pushButtonClearPoints->sizePolicy().hasHeightForWidth());
+        pushButtonClearPoints->setSizePolicy(sizePolicy2);
+
+        vboxLayout2->addWidget(pushButtonClearPoints);
+
+        spacerItem2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        vboxLayout2->addItem(spacerItem2);
+
+
+        gridLayout->addLayout(vboxLayout2, 0, 1, 1, 1);
+
+        cvMob2Class->setCentralWidget(centralwidget);
+        menubar = new QMenuBar(cvMob2Class);
+        menubar->setObjectName(QString::fromUtf8("menubar"));
+        menubar->setGeometry(QRect(0, 0, 564, 22));
+        menuFile = new QMenu(menubar);
+        menuFile->setObjectName(QString::fromUtf8("menuFile"));
+        menuExport = new QMenu(menuFile);
+        menuExport->setObjectName(QString::fromUtf8("menuExport"));
+        menuCalibration = new QMenu(menubar);
+        menuCalibration->setObjectName(QString::fromUtf8("menuCalibration"));
+        menuGraphs = new QMenu(menubar);
+        menuGraphs->setObjectName(QString::fromUtf8("menuGraphs"));
+        menuAbout = new QMenu(menubar);
+        menuAbout->setObjectName(QString::fromUtf8("menuAbout"));
+        cvMob2Class->setMenuBar(menubar);
+        statusbar = new QStatusBar(cvMob2Class);
+        statusbar->setObjectName(QString::fromUtf8("statusbar"));
+        cvMob2Class->setStatusBar(statusbar);
+        toolBar = new QToolBar(cvMob2Class);
+        toolBar->setObjectName(QString::fromUtf8("toolBar"));
+        cvMob2Class->addToolBar(Qt::TopToolBarArea, toolBar);
+        toolBar_2 = new QToolBar(cvMob2Class);
+        toolBar_2->setObjectName(QString::fromUtf8("toolBar_2"));
+        cvMob2Class->addToolBar(Qt::TopToolBarArea, toolBar_2);
+
+        menubar->addAction(menuFile->menuAction());
+        menubar->addAction(menuCalibration->menuAction());
+        menubar->addAction(menuGraphs->menuAction());
+        menubar->addAction(menuAbout->menuAction());
+        menuFile->addAction(actionOpen);
+        menuFile->addAction(menuExport->menuAction());
+        menuExport->addAction(actionAngle);
+        menuExport->addAction(actionTrajectory);
+        menuExport->addAction(actionReport);
+        menuCalibration->addAction(actionStart_Calibration);
+        menuCalibration->addAction(actionSet_Error_Point);
+        menuGraphs->addAction(actionVelocity);
+        menuGraphs->addAction(actionAcceleration);
+        menuGraphs->addAction(actionTrabalho);
+        menuGraphs->addAction(actionX_Trajectory);
+        menuAbout->addAction(actionAbout_CvMob2);
+
+        retranslateUi(cvMob2Class);
+
+        QMetaObject::connectSlotsByName(cvMob2Class);
+    } // setupUi
+
+    void retranslateUi(QMainWindow *cvMob2Class)
+    {
+        cvMob2Class->setWindowTitle(QApplication::translate("cvMob2Class", "cvMob2(main)", 0, QApplication::UnicodeUTF8));
+        actionOpen->setText(QApplication::translate("cvMob2Class", "&Open", 0, QApplication::UnicodeUTF8));
+        actionAngle->setText(QApplication::translate("cvMob2Class", "&Angle", 0, QApplication::UnicodeUTF8));
+        actionTrajectory->setText(QApplication::translate("cvMob2Class", "&Trajectory", 0, QApplication::UnicodeUTF8));
+        actionStart_Calibration->setText(QApplication::translate("cvMob2Class", "Start Calibration", 0, QApplication::UnicodeUTF8));
+        actionSet_Error_Point->setText(QApplication::translate("cvMob2Class", "Set Error Point", 0, QApplication::UnicodeUTF8));
+        actionVelocity->setText(QApplication::translate("cvMob2Class", "Velocity", 0, QApplication::UnicodeUTF8));
+        actionAcceleration->setText(QApplication::translate("cvMob2Class", "Acceleration", 0, QApplication::UnicodeUTF8));
+        actionSmooth_Acceleration->setText(QApplication::translate("cvMob2Class", "Smooth Acceleration", 0, QApplication::UnicodeUTF8));
+        actionTrabalho->setText(QApplication::translate("cvMob2Class", "Trabalho", 0, QApplication::UnicodeUTF8));
+        actionAbout_CvMob2->setText(QApplication::translate("cvMob2Class", "About CvMob2...", 0, QApplication::UnicodeUTF8));
+        actionReport->setText(QApplication::translate("cvMob2Class", "&Report", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionReport->setToolTip(QApplication::translate("cvMob2Class", "Print Report", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        actionX_Trajectory->setText(QApplication::translate("cvMob2Class", "X Trajectory", 0, QApplication::UnicodeUTF8));
+        GraphGroupBox->setTitle(QApplication::translate("cvMob2Class", "Graphs", 0, QApplication::UnicodeUTF8));
+        pushButtonStepBack->setText(QApplication::translate("cvMob2Class", "Step-", 0, QApplication::UnicodeUTF8));
+        pushButtonPlay->setText(QApplication::translate("cvMob2Class", "Play", 0, QApplication::UnicodeUTF8));
+        pushButtonPause->setText(QApplication::translate("cvMob2Class", "Pause", 0, QApplication::UnicodeUTF8));
+        pushButtonStop->setText(QApplication::translate("cvMob2Class", "Stop", 0, QApplication::UnicodeUTF8));
+        pushButtonStepFoward->setText(QApplication::translate("cvMob2Class", "Step+", 0, QApplication::UnicodeUTF8));
+        labelFrame->setText(QApplication::translate("cvMob2Class", "Frame:0", 0, QApplication::UnicodeUTF8));
+        labelTime->setText(QApplication::translate("cvMob2Class", "Time:00:00", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("cvMob2Class", "Window Size", 0, QApplication::UnicodeUTF8));
+        checkBoxGrid->setText(QApplication::translate("cvMob2Class", "Show Grid", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("cvMob2Class", "Grid Size", 0, QApplication::UnicodeUTF8));
+        groupBoxVectors->setTitle(QApplication::translate("cvMob2Class", "Show Vectors", 0, QApplication::UnicodeUTF8));
+        radioVelocity->setText(QApplication::translate("cvMob2Class", "Velocity", 0, QApplication::UnicodeUTF8));
+        radioButtonAcceleration->setText(QApplication::translate("cvMob2Class", "Acceleration", 0, QApplication::UnicodeUTF8));
+        pushButtonClearTrajectories->setText(QApplication::translate("cvMob2Class", "Clear Trajectories", 0, QApplication::UnicodeUTF8));
+        pushButtonClearPoints->setText(QApplication::translate("cvMob2Class", "Clear Points", 0, QApplication::UnicodeUTF8));
+        menuFile->setTitle(QApplication::translate("cvMob2Class", "&File", 0, QApplication::UnicodeUTF8));
+        menuExport->setTitle(QApplication::translate("cvMob2Class", "&Export", 0, QApplication::UnicodeUTF8));
+        menuCalibration->setTitle(QApplication::translate("cvMob2Class", "Calibration", 0, QApplication::UnicodeUTF8));
+        menuGraphs->setTitle(QApplication::translate("cvMob2Class", "Graphs", 0, QApplication::UnicodeUTF8));
+        menuAbout->setTitle(QApplication::translate("cvMob2Class", "About", 0, QApplication::UnicodeUTF8));
+        toolBar->setWindowTitle(QApplication::translate("cvMob2Class", "toolBar", 0, QApplication::UnicodeUTF8));
+        toolBar_2->setWindowTitle(QApplication::translate("cvMob2Class", "toolBar_2", 0, QApplication::UnicodeUTF8));
+    } // retranslateUi
+
+};
+
+namespace Ui {
+    class cvMob2Class: public Ui_cvMob2Class {};
+} // namespace Ui
+
+QT_END_NAMESPACE
+
+#endif // UI_FORMCVMOB_H
