@@ -43,13 +43,18 @@ FORMS    += \
     src/view/dialog.ui \
     src/view/aboutDialog.ui
 
+TRANSLATIONS += pt_BR_cvmob.ts
+
 #OTHER_FILES += \
 #    src/model/exporter/exporter.event
 
-LIBS += -lcxcore \
-    -lcv \
-    -lhighgui \
-    -lcvaux \
+LIBS += -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml \
+    -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect \
+    -lopencv_contrib -lopencv_legacy -lopencv_flann \
     -lqwt \
     -lQtSvg
 INCLUDEPATH += qwt
+
+OTHER_FILES += \
+    pt_BR_cvmob.ts \
+    pt_BR_cvmob.qm

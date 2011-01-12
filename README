@@ -3,7 +3,8 @@ CVMob - Movement analysis tool
 How to compile?
  - qmake && make
 
-It currently compiles and runs on Linux, but playing a video does not work.
+It currently compiles and runs on Linux, but video playback does not work. To use a translation, just copy the .qm
+file into the CVMob running directory. If you wish to translate CVMob to your language, please contact me.
 
 TODO:
  - A lot
