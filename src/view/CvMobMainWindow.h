@@ -11,14 +11,17 @@
 #include <QtGui>
 #include <qlist.h>
 #include "ui_FormCvMob.h"
-#include "../../ui_DialogCalibration.h" // Dont forget to include ": public QDialog" in the class definition
-#include "../../ui_aboutDialog.h"
+#include "ui_DialogCalibration.h" // Dont forget to include ": public QDialog" in the class definition
+#include "ui_aboutDialog.h"
 #include "graphs/Plot.h"
 #include "../controller/FacadeController.h"
 #include "graphs/EnumGraphs.h"
 #include "imageviewer.h"
 
 using namespace Ui;
+
+class DialogCalibrationWidget : public QDialog, public DialogCalibration {};
+class AboutDialogWidget : public QDialog, public AboutDialog {};
 
 namespace view {
 
@@ -31,7 +34,7 @@ public:
 	~CvMobMainWindow();
 private:
 	cvMob2Class ui;
-	DialogCalibration *dialogCalibration;
+	DialogCalibrationWidget *dialogCalibration;
         imageViewer *imgVwr;
 	QGridLayout *gridLayout;
 	QList<Plot*> plots;

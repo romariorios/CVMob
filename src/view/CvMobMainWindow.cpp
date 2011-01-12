@@ -26,7 +26,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
         this->posSliderOld=1;
         this->setWindowFlags(Qt::WindowMaximizeButtonHint|Qt::WindowMinimizeButtonHint);;
 
-	dialogCalibration = new DialogCalibration();
+	dialogCalibration = new DialogCalibrationWidget();
         dialogCalibration->setupUi(dialogCalibration);
         this->imgVwr= new imageViewer;
         this->tableModelFixPoints = new QStandardItemModel(4, 2);
@@ -578,7 +578,7 @@ void CvMobMainWindow::selectY_Trajectory(){
 
 
 void CvMobMainWindow::aboutClicked(){
-	AboutDialog *dialog = new AboutDialog();
+	AboutDialogWidget *dialog = new AboutDialogWidget();
 	dialog->setupUi(dialog);
 	dialog->show();
 }
