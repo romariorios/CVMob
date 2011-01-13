@@ -32,7 +32,7 @@ Q_OBJECT
 public:
 
 	static FacadeController *getInstance()	;
-	bool openVideo(char * fileName);
+	bool openVideo(const QString &fileName);
         bool openCam();
         bool freeFixPoints();
         bool freeTrajPoints();

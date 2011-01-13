@@ -23,8 +23,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 	ui.setupUi(this);
 	state = STOP;
         this->inputMethod=AVI;
-        this->posSliderOld=1;
-        this->setWindowFlags(Qt::WindowMaximizeButtonHint|Qt::WindowMinimizeButtonHint);;
+	this->posSliderOld=1;
 
 	dialogCalibration = new DialogCalibrationWidget();
         dialogCalibration->setupUi(dialogCalibration);
@@ -135,7 +134,7 @@ void CvMobMainWindow::initializePlots(){
 }
 
 void CvMobMainWindow::FileOpen() {
-	QString filename = QFileDialog::getOpenFileName(this,"Choose a file to open",".","Movie (*.avi)");
+	QString filename = QFileDialog::getOpenFileName(this,"Choose a file to open",".","Movie (*.avi)").toUtf8();
         if(!filename.isEmpty())
         {
             if(!this->imgVwr->isHidden())
@@ -151,7 +150,7 @@ void CvMobMainWindow::FileOpen() {
                 };
 
 
-            if(FacadeController::getInstance()->openVideo(filename.toAscii().data()))
+	    if(FacadeController::getInstance()->openVideo(filename))
             {
 
                         FacadeController::getInstance()->captureFrame(1);

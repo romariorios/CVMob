@@ -118,7 +118,7 @@ public:
         void captureTrajectoriePoint(Point2f point);
         void captureFixedPoint(CvPoint2D32f point);
         void captureVerticePoint(Point2f point);
-	bool openVideo(char *fileName);
+	bool openVideo(const QString &fileName);
         bool openCam();
 
         bool freeFixPoints();

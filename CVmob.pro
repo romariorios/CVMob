@@ -58,3 +58,6 @@ INCLUDEPATH += qwt
 OTHER_FILES += \
     pt_BR_cvmob.ts \
     pt_BR_cvmob.qm
+
+RESOURCES += \
+    cvmob_resource.qrc

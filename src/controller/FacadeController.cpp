@@ -31,7 +31,7 @@ FacadeController *FacadeController::getInstance() {
 	return facade;
 }
 
-bool FacadeController::openVideo(char * fileName) {
+bool FacadeController::openVideo(const QString &fileName) {
 	return ProxyOpenCv::getInstance()->openVideo(fileName);
 }
 

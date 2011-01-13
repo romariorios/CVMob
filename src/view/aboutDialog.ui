@@ -16,23 +16,24 @@
   <property name="windowTitle">
    <string>About</string>
   </property>
-  <widget class="QLabel" name="lblImagem">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>715</width>
-     <height>340</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-image: url(:/AboutImage);</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="lblImagem">
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/AboutImage);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../cvmob_resource.qrc">:/images/about.jpg</pixmap>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../cvmob_resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

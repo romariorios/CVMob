@@ -8,6 +8,8 @@
 #include "ProxyOpenCv.h"
 #include <QWidget>
 
+#include <QDebug>
+
 namespace model {
 
 /**
@@ -282,10 +284,10 @@ void ProxyOpenCv::ShowImage() {
 /**
  * Open a video file
  */
-bool ProxyOpenCv::openVideo(char *fileName) {
+bool ProxyOpenCv::openVideo(const QString &fileName) {
 
-    this->videoStream.open(fileName);
-        if (!(this->videoStream.isOpened())) {
+	this->videoStream.open(fileName.toStdString());
+	if (!this->videoStream.isOpened()) {
                 MSG("Could not initialize capturing...\n A possible encoder problem.\nDownload a codec pack\nlike K-Lite codec");
                 return fileOpen=false;
 	}

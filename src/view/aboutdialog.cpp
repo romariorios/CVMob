@@ -1,5 +1,7 @@
 #include "aboutdialog.h"
 
+#include <QPixmap>
+
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent){
     ui.setupUi(this);
