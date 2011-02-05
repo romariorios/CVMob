@@ -109,15 +109,13 @@ void CvMobMainWindow::MakesModelConections()
 
 void CvMobMainWindow::initializePlots(){
 
-	plots.insert(VELOCITY,new Plot("Velocity","Frames" ,"vel (pxl/frame)"));
+	plots.insert(VELOCITY,new Plot(tr("Velocity"), tr("Frames") , tr("vel (pxl/frame)")));
 
-	plots.insert(ACCELERATION,new Plot ("Acceleration", "Frames", "acc (pxl/frame²)"));
+	plots.insert(ACCELERATION,new Plot (tr("Acceleration"), tr("Frames"), tr("acc (pxl/frame²)")));
 
-        plots.insert(TRAJ_X,new Plot ("x(t)", "time", "x(t) (pxl)"));
+		plots.insert(TRAJ_X,new Plot (tr("x(t)"), tr("Time"), tr("x(t) (pxl)")));
 
-        plots.insert(TRAJ_Y,new Plot ("y(t)", "time", "y(t) (pxl)"));
-
-       // plots.insert(WORK,new Plot ("Work/Mass", "Frames", "work ((pxl²/frame²))"));
+		plots.insert(TRAJ_Y,new Plot (tr("y(t)"), tr("time"), tr("y(t) (pxl)")));
 
 	foreach(Plot* plot, plots){
 		plot->setAutoReplot(true);
@@ -134,7 +132,7 @@ void CvMobMainWindow::initializePlots(){
 }
 
 void CvMobMainWindow::FileOpen() {
-	QString filename = QFileDialog::getOpenFileName(this,"Choose a file to open",".","Movie (*.avi)").toUtf8();
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose a file to open"),".",tr("Movie (*.avi)")).toUtf8();
         if(!filename.isEmpty())
         {
             if(!this->imgVwr->isHidden())
@@ -170,7 +168,7 @@ void CvMobMainWindow::ExportAngle() {
 }
 
 void CvMobMainWindow::ExportTrajectory() {
-	QString filename = QFileDialog::getSaveFileName(this,"Choose a name to save",".");
+	QString filename = QFileDialog::getSaveFileName(this, tr("Choose a name to save"),".");
 	if(!filename.isEmpty()){
 		FacadeController::getInstance()->exportTrajectory(filename.toAscii().data());
 	}
@@ -182,7 +180,7 @@ void CvMobMainWindow::PressStepFoward() {
 }
 
 void CvMobMainWindow::PressStepBack() {
-        if (ui.slider->value() > 1)
+		if (ui.slider->value() > 1)
 		ui.slider->setValue(ui.slider->value()-1);
 }
 
@@ -210,7 +208,7 @@ void CvMobMainWindow::TextGrid(const QString &text) {
 }
 
 void CvMobMainWindow::SliderChange(int i ) {
-	char buff[50];
+    char buff[50];
         if(this->totalFrames)
         {
             if(ProxyOpenCv::getInstance()->points.size()>0)
@@ -325,12 +323,12 @@ void CvMobMainWindow::PressPlay() {
         if(this->state==PLAY)   // same as REC
         {
             state=PAUSE;
-            ui.pushButtonPlay->setText("REC");
+            ui.pushButtonPlay->setText(tr("REC"));
             FacadeController::getInstance()->setRecording(false);
         }else                   // PAUSE
         {
             state=PLAY;
-            ui.pushButtonPlay->setText("Pause");
+            ui.pushButtonPlay->setText(tr("Pause"));
             FacadeController::getInstance()->setRecording(true);
         }
 
@@ -339,11 +337,11 @@ void CvMobMainWindow::PressPlay() {
         if(this->state==PLAY)
         {
             state=PAUSE;
-            ui.pushButtonPlay->setText("Play");
+            ui.pushButtonPlay->setText(tr("Play"));
         }else                   // PAUSE
         {
             state = PLAY;
-            ui.pushButtonPlay->setText("Pause");
+            ui.pushButtonPlay->setText(tr("Pause"));
             for(int i= ui.slider->value()+1; i < ui.slider->maximum(); i++) {
                     if (state == PLAY)
                     {
@@ -378,7 +376,7 @@ void CvMobMainWindow::oKDialogCalibration(){
                 FacadeController::getInstance()->startCalibration(Distance);
 	else{
 		QMessageBox *message = new QMessageBox();
-		message->setText("Set a valid value for Calibration");
+		message->setText(tr("Set a valid value for Calibration"));
 		message->show();
 	}
 	dialogCalibration->close();
@@ -391,9 +389,9 @@ void CvMobMainWindow::calibrateOk(bool ok){
 //		change plots to work with seconds and
 		calibratePlots();
                 this->freeTrajPoints();
-		message->setText("Calibration successful");
+        message->setText(tr("Calibration successful"));
 	}else{
-                message->setText("Error on Calibration. Use 2 points.");
+				message->setText(tr("Error on Calibration. Use 2 points."));
 	}
 	message->show();
 }
@@ -583,20 +581,17 @@ void CvMobMainWindow::aboutClicked(){
 }
 
 void CvMobMainWindow::calibratePlots(){
-	plots.at(VELOCITY)->setXAxisTitle("seconds");
-	plots.at(VELOCITY)->setYAxisTitle("vel (m/s)");
+	plots.at(VELOCITY)->setXAxisTitle(tr("seconds"));
+	plots.at(VELOCITY)->setYAxisTitle(tr("vel (m/s)"));
 
-	plots.at(ACCELERATION)->setXAxisTitle("seconds");
-	plots.at(ACCELERATION)->setYAxisTitle("acc (m/s²)");
+	plots.at(ACCELERATION)->setXAxisTitle(tr("seconds"));
+	plots.at(ACCELERATION)->setYAxisTitle(tr("acc (m/s²)"));
 
-        plots.at(TRAJ_X)->setXAxisTitle("seconds");
-        plots.at(TRAJ_X)->setYAxisTitle("x(T) (m)");
+    plots.at(TRAJ_X)->setXAxisTitle(tr("seconds"));
+    plots.at(TRAJ_X)->setYAxisTitle(tr("x(T) (m)"));
 
-        plots.at(TRAJ_Y)->setXAxisTitle("seconds");
-        plots.at(TRAJ_Y)->setYAxisTitle("y(T) (m)");
-
-        //plots.at(WORK)->setXAxisTitle("seconds");
-        //plots.at(WORK)->setYAxisTitle("work (J)");
+    plots.at(TRAJ_Y)->setXAxisTitle(tr("seconds"));
+    plots.at(TRAJ_Y)->setYAxisTitle(tr("y(T) (m)"));
 }
 
 CvMobMainWindow::~CvMobMainWindow() {
@@ -680,7 +675,7 @@ void view::CvMobMainWindow::on_actionOpen_Cam_triggered()
 {
     this->ui.pushButtonStepBack->setEnabled(false);
     this->ui.pushButtonStepFoward->setEnabled(false);
-    this->ui.pushButtonPlay->setText("REC");
+    this->ui.pushButtonPlay->setText(tr("REC"));
     this->ui.pushButtonStop->setEnabled(false);
     this->ui.slider->setEnabled(false);
     this->state=PAUSE;
@@ -720,7 +715,7 @@ void view::CvMobMainWindow::on_closedImgView()
 {
     this->ui.pushButtonStepBack->setEnabled(true);
     this->ui.pushButtonStepFoward->setEnabled(true);
-    this->ui.pushButtonPlay->setText("Play");
+    this->ui.pushButtonPlay->setText(tr("Play"));
     this->ui.pushButtonStop->setEnabled(true);
     this->ui.slider->setEnabled(true);
     this->state=PAUSE;

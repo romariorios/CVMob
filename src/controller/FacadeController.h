@@ -33,25 +33,25 @@ public:
 
 	static FacadeController *getInstance()	;
 	bool openVideo(const QString &fileName);
-        bool openCam();
-        bool freeFixPoints();
-        bool freeTrajPoints();
-        bool freeAnglePoints();
+		bool openCam();
+		bool freeFixPoints();
+		bool freeTrajPoints();
+		bool freeAnglePoints();
 	void captureFrame(int frame);
 	void calculateData(int frame);
 	int getTotalFrames();
 	int getFrameRate();
-        double getWinSize();
+		double getWinSize();
 	void calculateTime(int actualFrame, char* buff);
-        void setShowVectors(bool value, char type);
+		void setShowVectors(bool value, char type);
 
 	void exportTrajectory(char* filename);
-        void exportReport();
-        void setVideoStreamType(int type);
-        void setRecording(bool flag);
+		void exportReport();
+		void setVideoStreamType(int type);
+		void setRecording(bool flag);
 
 
-        void startCalibration(double Distance);
+		void startCalibration(double Distance);
 
 	void addVelocity();
 	void removeVelocity();
@@ -59,7 +59,7 @@ public:
 	void removeAcceleration();
 	void addTrabalho();
 	void removeTrabalho();
-        void setWinSize(double value);
+		void setWinSize(double value);
 
 	~FacadeController();
 private:
