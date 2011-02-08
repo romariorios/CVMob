@@ -16,7 +16,6 @@
 
 
 using namespace std;
-namespace view {
 
 //TODO : change X title with the constructor
 /**
@@ -80,4 +79,3 @@ Plot::~Plot() {
 	// TODO Auto-generated destructor stub
 }
 
-}

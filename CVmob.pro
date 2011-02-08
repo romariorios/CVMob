@@ -17,31 +17,31 @@ HEADERS += src/model/OpenCV/Angle.h \
     src/model/OpenCV/Point.h \
     src/model/OpenCV/ProxyOpenCv.h \
     src/controller/FacadeController.h \
-    src/view/CvMobMainWindow.h \
     src/view/imageviewer.h \
     src/view/options.h \
     src/view/aboutdialog.h \
-    src/view/reportdialog.h
+    src/view/reportdialog.h \
+    src/view/cvmobmainwindow.h
 SOURCES += src/model/exporter/ExportText.cpp \
     src/model/exporter/IExportStrategy.cpp \
     src/model/PhisicsCalc.cpp \
     src/view/graphs/Plot.cpp \
     src/model/OpenCV/ProxyOpenCv.cpp \
     src/controller/FacadeController.cpp \
-    src/view/CvMobMainWindow.cpp \
     src/main.cpp \
     src/view/imageviewer.cpp \
     src/view/options.cpp \
     src/view/aboutdialog.cpp \
     src/model/OpenCV/Angle.cpp \
-    src/view/reportdialog.cpp
+    src/view/reportdialog.cpp \
+    src/view/cvmobmainwindow.cpp
 
 FORMS    += \
     src/view/reportdialog.ui \
-    src/view/FormCvMob.ui \
     src/view/DialogCalibration.ui \
     src/view/dialog.ui \
-    src/view/aboutDialog.ui
+    src/view/aboutDialog.ui \
+    src/view/cvmobmainwindow.ui
 
 TRANSLATIONS += pt_BR_cvmob.ts
 

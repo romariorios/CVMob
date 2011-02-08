@@ -28,11 +28,9 @@
  **
  ****************************************************************************/
 
-#include "view/CvMobMainWindow.h"
+#include "view/cvmobmainwindow.h"
 #include <QtGui>
 #include <QApplication>
-
-using namespace view;
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);

@@ -18,8 +18,6 @@
 
 using namespace std;
 
-namespace view {
-
 class Plot : public QwtPlot{
 public:
 	Plot(QString Title, QString AxisXTitle, QString AxisYTitle);
@@ -36,7 +34,5 @@ private:
 	QwtPlotZoomer* zoomer;
 
 };
-
-}
 
 #endif /* PLOT_H_ */
