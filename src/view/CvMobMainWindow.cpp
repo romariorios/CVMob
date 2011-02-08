@@ -19,91 +19,82 @@ using namespace controller;
 namespace view {
 
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
-	QMainWindow(parent) {
+	QMainWindow(parent)
+{
 	ui.setupUi(this);
 	state = STOP;
-        this->inputMethod=AVI;
-	this->posSliderOld=1;
+	inputMethod=AVI;
+	posSliderOld=1;
 
 	dialogCalibration = new DialogCalibrationWidget();
-        dialogCalibration->setupUi(dialogCalibration);
-        this->imgVwr= new imageViewer;
-        this->tableModelFixPoints = new QStandardItemModel(4, 2);
-        this->tableModelTrajPoints = new QStandardItemModel(4, 7);
-        this->tableModelAnglePoints = new QStandardItemModel(4, 2);
-        this->fixPointHeader=QStringList()<<"Point"<<"Distance";
-        this->trajPointHeader=QStringList()<<"Frame"<<"Time"<<"Vel"<< "Acce"<<"X"<<"Y"<<"VelX"<<"VelY";
-        this->anglePointHeader=QStringList()<<"Time"<<"Angle";
-        this->tableModelFixPoints->setHorizontalHeaderLabels(this->fixPointHeader);
-        this->tableModelTrajPoints->setHorizontalHeaderLabels(this->trajPointHeader);
-        this->tableModelAnglePoints->setHorizontalHeaderLabels(this->anglePointHeader);
+	dialogCalibration->setupUi(dialogCalibration);
+	imgVwr = new imageViewer;
+	tableModelFixPoints = new QStandardItemModel(4, 2);
+	tableModelTrajPoints = new QStandardItemModel(4, 7);
+	tableModelAnglePoints = new QStandardItemModel(4, 2);
+	fixPointHeader=QStringList()<<"Point"<<"Distance";
+	trajPointHeader=QStringList()<<"Frame"<<"Time"<<"Vel"<< "Acce"<<"X"<<"Y"<<"VelX"<<"VelY";
+	anglePointHeader=QStringList()<<"Time"<<"Angle";
+	tableModelFixPoints->setHorizontalHeaderLabels(fixPointHeader);
+	tableModelTrajPoints->setHorizontalHeaderLabels(trajPointHeader);
+	tableModelAnglePoints->setHorizontalHeaderLabels(anglePointHeader);
 
+    ui.gridMainLay->setColumnStretch(0,10);
+    ui.gridMainLay->setColumnStretch(1,0);
 
-        this->ui.gridMainLay->setColumnStretch(0,10);
-        this->ui.gridMainLay->setColumnStretch(1,0);
-
-        this->ui.tableViewFixPt->setModel(this->tableModelFixPoints);
-        this->ui.tableViewTraj->setModel(this->tableModelTrajPoints);
-        this->ui.tableViewAngle->setModel(this->tableModelAnglePoints);
-        gridLayout = new QGridLayout();
+    ui.tableViewFixPt->setModel(tableModelFixPoints);
+    ui.tableViewTraj->setModel(tableModelTrajPoints);
+    ui.tableViewAngle->setModel(tableModelAnglePoints);
+    gridLayout = new QGridLayout();
 	initializePlots();
 	ui.GraphGroupBox->setLayout(gridLayout);
 	totalFrames = 0;
-	connect(ui.pushButtonStepFoward, SIGNAL(clicked()), this, SLOT(PressStepFoward()));
-	connect(ui.pushButtonStepBack, SIGNAL(clicked()), this, SLOT(PressStepBack()));
-	connect(ui.slider, SIGNAL(valueChanged(int)), this, SLOT(SliderChange(int)));
-	connect(ui.pushButtonPlay, SIGNAL(clicked()), this, SLOT(PressPlay()));
-	connect(ui.pushButtonStop, SIGNAL(clicked()), this, SLOT(PressStop()));
-        connect(ui.pushButtonClearPoints, SIGNAL(clicked()), this, SLOT(FreeFixPoints()));
-        connect(ui.pushButtonClearTrajectories, SIGNAL(clicked()), this, SLOT(freeTrajPoints()));
-	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(FileOpen()));
-	connect(ui.actionAngle, SIGNAL(triggered()), this, SLOT(ExportAngle()));
-	connect(ui.actionTrajectory, SIGNAL(triggered()), this, SLOT(ExportTrajectory()));
+	connect(ui.pushButtonStepFoward, SIGNAL(clicked()), SLOT(PressStepFoward()));
+	connect(ui.pushButtonStepBack, SIGNAL(clicked()), SLOT(PressStepBack()));
+	connect(ui.slider, SIGNAL(valueChanged(int)), SLOT(SliderChange(int)));
+	connect(ui.pushButtonPlay, SIGNAL(clicked()), SLOT(PressPlay()));
+	connect(ui.pushButtonStop, SIGNAL(clicked()), SLOT(PressStop()));
+	connect(ui.pushButtonClearPoints, SIGNAL(clicked()), SLOT(FreeFixPoints()));
+	connect(ui.pushButtonClearTrajectories, SIGNAL(clicked()), SLOT(freeTrajPoints()));
+	connect(ui.actionOpen, SIGNAL(triggered()), SLOT(FileOpen()));
+	connect(ui.actionAngle, SIGNAL(triggered()), SLOT(ExportAngle()));
+	connect(ui.actionTrajectory, SIGNAL(triggered()), SLOT(ExportTrajectory()));
 
 	// Calibration Menu
-	connect(ui.actionStart_Calibration, SIGNAL(triggered()), this, SLOT(StartCalibration()));
-        // Graphs  Menu
-        connect(ui.actionVelocity, SIGNAL(triggered()),this, SLOT(selectVelocity()));
-	connect(ui.actionAcceleration, SIGNAL(triggered()),this, SLOT(selectAcceleration()));
-	connect(ui.actionTrabalho, SIGNAL(triggered()),this,SLOT(selectTrabalho()));
-        connect(ui.actionX_Trajectory, SIGNAL(triggered()),this,SLOT(selectX_Trajectory()));
-        connect(ui.actionY_Trajectory, SIGNAL(triggered()),this,SLOT(selectY_Trajectory()));
+	connect(ui.actionStart_Calibration, SIGNAL(triggered()), SLOT(StartCalibration()));
+	// Graphs  Menu
+	connect(ui.actionVelocity, SIGNAL(triggered()), SLOT(selectVelocity()));
+	connect(ui.actionAcceleration, SIGNAL(triggered()), SLOT(selectAcceleration()));
+	connect(ui.actionTrabalho, SIGNAL(triggered()), SLOT(selectTrabalho()));
+	connect(ui.actionX_Trajectory, SIGNAL(triggered()), SLOT(selectX_Trajectory()));
+	connect(ui.actionY_Trajectory, SIGNAL(triggered()), SLOT(selectY_Trajectory()));
 
-        // Image Viewer
-        connect( imgVwr, SIGNAL(updateKeyboard(int)),this,SLOT(updateKeyboard(int)));
-        connect( imgVwr, SIGNAL(updatWinSize(double)),this,SLOT(on_doubleSpinBoxWinSize_valueChanged(double )));
-        connect( imgVwr, SIGNAL(closedImgView()),this,SLOT(on_closedImgView()));
-
-
+    // Image Viewer
+    connect(imgVwr, SIGNAL(updateKeyboard(int)), SLOT(updateKeyboard(int)));
+    connect(imgVwr, SIGNAL(updatWinSize(double)), SLOT(on_doubleSpinBoxWinSize_valueChanged(double)));
+    connect(imgVwr, SIGNAL(closedImgView()), SLOT(on_closedImgView()));
 
 	// About Menu
-
-	connect(ui.actionAbout_CvMob2, SIGNAL(triggered()), this, SLOT(aboutClicked()));
-
+	connect(ui.actionAbout_CvMob2, SIGNAL(triggered()), SLOT(aboutClicked()));
 
 	// Calibration Dialog
-	connect(dialogCalibration->btnOK, SIGNAL(clicked()),this, SLOT(oKDialogCalibration()));
-	connect(dialogCalibration->btnCancel, SIGNAL(clicked()),this, SLOT(cancelDialogCalibration()));
-
-	// connect model to receive updates
-        //Only when open the file
-
-
-
+	connect(dialogCalibration->btnOK, SIGNAL(clicked()), SLOT(oKDialogCalibration()));
+	connect(dialogCalibration->btnCancel, SIGNAL(clicked()), SLOT(cancelDialogCalibration()));
 }
+
 void CvMobMainWindow::MakesModelConections()
 {
     // connect model to receive updates
-    connect(ProxyOpenCv::getInstance(),SIGNAL(calibrateOk(bool)),this,SLOT(calibrateOk(bool)));
-    connect(ProxyOpenCv::getInstance(),SIGNAL(addCurve(int, int , int, int)),this,SLOT(addCurve(int, int, int, int)));
-    connect( ProxyOpenCv::getInstance(), SIGNAL(updateVelocity(int, QVector <double>, QVector <double>, int)),this,SLOT(updateVelocity(int, QVector <double>, QVector <double>, int)));
-    connect( ProxyOpenCv::getInstance(), SIGNAL(updateAcceleration(int, QVector <double>, QVector <double>, int)),this,SLOT(updateAcceleration(int, QVector <double>, QVector <double>, int)));
-    connect( ProxyOpenCv::getInstance(), SIGNAL(updateWork(int, QVector <double>, QVector <double>, int)),this,SLOT(updateWork(int, QVector <double>, QVector <double>, int)));
-    connect( ProxyOpenCv::getInstance(), SIGNAL(updateTraj_x(int, QVector <double>, QVector <double>, int)),this,SLOT(updateTraj_x(int, QVector <double>, QVector <double>, int)));
-    connect( ProxyOpenCv::getInstance(), SIGNAL(updateTraj_y(int, QVector <double>, QVector <double>, int)),this,SLOT(updateTraj_y(int, QVector <double>, QVector <double>, int)));
-    connect( ProxyOpenCv::getInstance(), SIGNAL(updateImage(Mat )),this,SLOT(updateImage(Mat )));
-    connect( ProxyOpenCv::getInstance(), SIGNAL(newTrajPoint()),this,SLOT(newTrajPoint()));
-    connect( ProxyOpenCv::getInstance(), SIGNAL(newAnglePoint()),this,SLOT(newAnglePoint()));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(calibrateOk(bool)), this, SLOT(calibrateOk(bool)));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(addCurve(int, int , int, int)),this,SLOT(addCurve(int, int, int, int)));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(updateVelocity(int, QVector <double>, QVector <double>, int)),this,SLOT(updateVelocity(int, QVector <double>, QVector <double>, int)));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(updateAcceleration(int, QVector <double>, QVector <double>, int)),this,SLOT(updateAcceleration(int, QVector <double>, QVector <double>, int)));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(updateWork(int, QVector <double>, QVector <double>, int)),this,SLOT(updateWork(int, QVector <double>, QVector <double>, int)));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(updateTraj_x(int, QVector <double>, QVector <double>, int)),this,SLOT(updateTraj_x(int, QVector <double>, QVector <double>, int)));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(updateTraj_y(int, QVector <double>, QVector <double>, int)),this,SLOT(updateTraj_y(int, QVector <double>, QVector <double>, int)));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(updateImage(Mat )),this,SLOT(updateImage(Mat )));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(newTrajPoint()),this,SLOT(newTrajPoint()));
+    connect(ProxyOpenCv::getInstance(), SIGNAL(newAnglePoint()),this,SLOT(newAnglePoint()));
 
 }
 
@@ -135,12 +126,12 @@ void CvMobMainWindow::FileOpen() {
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose a file to open"),".",tr("Movie (*.avi)")).toUtf8();
         if(!filename.isEmpty())
         {
-            if(!this->imgVwr->isHidden())
+            if(!imgVwr->isHidden())
             {
-                this->imgVwr->close();
+                imgVwr->close();
             }
             // connect model to receive updates
-            this->MakesModelConections();
+            MakesModelConections();
             // Free grap
             foreach ( Plot* plot , plots){
                                 plot->releaseCurves();
@@ -153,10 +144,10 @@ void CvMobMainWindow::FileOpen() {
 
                         FacadeController::getInstance()->captureFrame(1);
 			totalFrames = FacadeController::getInstance()->getTotalFrames();
-                        this->state=STOP;
+						state=STOP;
                         ui.slider->setRange(1,totalFrames);
                         ui.slider->setValue(1);
-                        this->imgVwr->show();
+                        imgVwr->show();
             }
 	}
 
@@ -195,7 +186,7 @@ void CvMobMainWindow::freeTrajPoints() {
                     plot->replot();
     };
         FacadeController::getInstance()->freeTrajPoints();
-        this->ui.comboBoxPoint->clear();
+        ui.comboBoxPoint->clear();
 
 }
 
@@ -209,14 +200,14 @@ void CvMobMainWindow::TextGrid(const QString &text) {
 
 void CvMobMainWindow::SliderChange(int i ) {
     char buff[50];
-        if(this->totalFrames)
+        if(totalFrames)
         {
             if(ProxyOpenCv::getInstance()->points.size()>0)
             {
-                if(abs(this->posSliderOld-i)>1 && this->state!=STOP)
+                if(abs(posSliderOld-i)>1 && state!=STOP)
                 {
-                    int signal = (i-this->posSliderOld)/abs(i-this->posSliderOld);
-                    this->ui.slider->setValue(this->posSliderOld+(1*signal));
+                    int signal = (i-posSliderOld)/abs(i-posSliderOld);
+                    ui.slider->setValue(posSliderOld+(1*signal));
                     return;
                 }
             }
@@ -227,7 +218,7 @@ void CvMobMainWindow::SliderChange(int i ) {
             FacadeController::getInstance()->captureFrame(i);
             FacadeController::getInstance()->calculateData(i);
 
-            this->posSliderOld=i;
+            posSliderOld=i;
         }
 }
 
@@ -237,76 +228,76 @@ void CvMobMainWindow::atualizeTableFixPoints() {
     cV=ProxyOpenCv::getInstance();
     if(cV->fixedPoints.size()==0)
         return;
-    this->tableModelFixPoints->clear();
-    this->tableModelFixPoints->setHorizontalHeaderLabels(this->fixPointHeader);
+    tableModelFixPoints->clear();
+    tableModelFixPoints->setHorizontalHeaderLabels(fixPointHeader);
 
     for (unsigned int i = 0; i < cV->fixedPoints.size(); i++) {
         if(i%2)
         {
-            d=this->calcDistance(cV->fixedPoints[i].markedPoint,
+            d=calcDistance(cV->fixedPoints[i].markedPoint,
                                  cV->fixedPoints[i-1].markedPoint,
                                  cV->get_horizontalRazao(),cV->get_verticalRazao());
             // atualize distance text
             //item=;
-            this->tableModelFixPoints->setItem(i/2,0,new QStandardItem(QString::number(i/2+1)));
-            this->tableModelFixPoints->setItem(i/2,1,new QStandardItem(QString::number(d,'f',this->imgVwr->op.prec)));
+            tableModelFixPoints->setItem(i/2,0,new QStandardItem(QString::number(i/2+1)));
+            tableModelFixPoints->setItem(i/2,1,new QStandardItem(QString::number(d,'f',imgVwr->op.prec)));
         }
     }
-    this->ui.tabFixedPoints->repaint();
+    ui.tabFixedPoints->repaint();
 }
 
 void CvMobMainWindow::atualizeTableTrajPoints() {
     ProxyOpenCv *cV;
-    int pt=this->ui.comboBoxPoint->currentIndex();
+    int pt=ui.comboBoxPoint->currentIndex();
     cV=ProxyOpenCv::getInstance();
     if(cV->getCountPoints()==0)         // if there is any point, do nothing
         return;
     if(pt>cV->getCountPoints()-1) // In the case of the maximum spinBox are not atualizated
         pt=cV->getCountPoints()-1;
 
-    this->tableModelTrajPoints->clear();
-    this->tableModelTrajPoints->setHorizontalHeaderLabels(this->trajPointHeader);
+    tableModelTrajPoints->clear();
+    tableModelTrajPoints->setHorizontalHeaderLabels(trajPointHeader);
     int iF=cV->points[pt].initFrame;
     for (int i =0 ; i < cV->points[pt].time.size(); i++) {
         // atualize distance text
-            this->tableModelTrajPoints->setItem(i,0,new QStandardItem(QString::number(i+iF)));
-            this->tableModelTrajPoints->setItem(i,1,new QStandardItem(QString::number(cV->points[pt].time[i],'f',this->imgVwr->op.prec)));
-            this->tableModelTrajPoints->setItem(i,2,new QStandardItem(
-                    QString::number(cV->points[pt].velocity[i],'f',this->imgVwr->op.prec)));
-            this->tableModelTrajPoints->setItem(i,3,new QStandardItem(
-                    QString::number(cV->points[pt].acceleration[i],'f',this->imgVwr->op.prec)));
-            this->tableModelTrajPoints->setItem(i,4,new QStandardItem(
-                    QString::number(cV->points[pt].trajectorie[i].x,'f',this->imgVwr->op.prec)));
-            this->tableModelTrajPoints->setItem(i,5,new QStandardItem(
-                    QString::number(cV->points[pt].trajectorie[i].y,'f',this->imgVwr->op.prec)));
-            this->tableModelTrajPoints->setItem(i,6,new QStandardItem(
-                    QString::number(cV->points[pt].xVelocity[i],'f',this->imgVwr->op.prec)));
-            this->tableModelTrajPoints->setItem(i,7,new QStandardItem(
-                    QString::number(cV->points[pt].yVelocity[i],'f',this->imgVwr->op.prec)));
+            tableModelTrajPoints->setItem(i,0,new QStandardItem(QString::number(i+iF)));
+            tableModelTrajPoints->setItem(i,1,new QStandardItem(QString::number(cV->points[pt].time[i],'f',imgVwr->op.prec)));
+            tableModelTrajPoints->setItem(i,2,new QStandardItem(
+                    QString::number(cV->points[pt].velocity[i],'f',imgVwr->op.prec)));
+            tableModelTrajPoints->setItem(i,3,new QStandardItem(
+                    QString::number(cV->points[pt].acceleration[i],'f',imgVwr->op.prec)));
+            tableModelTrajPoints->setItem(i,4,new QStandardItem(
+                    QString::number(cV->points[pt].trajectorie[i].x,'f',imgVwr->op.prec)));
+            tableModelTrajPoints->setItem(i,5,new QStandardItem(
+                    QString::number(cV->points[pt].trajectorie[i].y,'f',imgVwr->op.prec)));
+            tableModelTrajPoints->setItem(i,6,new QStandardItem(
+                    QString::number(cV->points[pt].xVelocity[i],'f',imgVwr->op.prec)));
+            tableModelTrajPoints->setItem(i,7,new QStandardItem(
+                    QString::number(cV->points[pt].yVelocity[i],'f',imgVwr->op.prec)));
 
 
     }
-    this->ui.tabTrajectory->repaint();
+    ui.tabTrajectory->repaint();
 }
 
 void CvMobMainWindow::atualizeTableAnglePoints() {
     ProxyOpenCv *cV;
-    int pt=this->ui.comboBoxAngle->currentIndex();
+    int pt=ui.comboBoxAngle->currentIndex();
     cV=ProxyOpenCv::getInstance();
     if(cV->angles.size()==0)         // if there is any point, do nothing
         return;
     if(pt>cV->angles.size()-1) // In the case of the maximum spinBox are not atualizated
         pt=cV->angles.size()-1;
 
-    this->tableModelAnglePoints->clear();
-    this->tableModelAnglePoints->setHorizontalHeaderLabels(this->anglePointHeader);
+    tableModelAnglePoints->clear();
+    tableModelAnglePoints->setHorizontalHeaderLabels(anglePointHeader);
     int iF=cV->angles[pt].initFrame;
     for (int i =0 ; i < cV->angles[pt].time.size(); i++) {
-            this->tableModelAnglePoints->setItem(i,0,new QStandardItem(QString::number(cV->angles[pt].time[i],'f',this->imgVwr->op.prec)));
-            this->tableModelAnglePoints->setItem(i,1,new QStandardItem(
-                    QString::number(cV->angles[pt].value[i],'f',this->imgVwr->op.prec)));
+            tableModelAnglePoints->setItem(i,0,new QStandardItem(QString::number(cV->angles[pt].time[i],'f',imgVwr->op.prec)));
+            tableModelAnglePoints->setItem(i,1,new QStandardItem(
+                    QString::number(cV->angles[pt].value[i],'f',imgVwr->op.prec)));
     }
-    this->ui.tabTrajectory->repaint();
+    ui.tabTrajectory->repaint();
 }
 
 
@@ -318,9 +309,9 @@ double CvMobMainWindow::calcDistance(CvPoint2D32f p1,CvPoint2D32f p2,float hR,fl
 }
 
 void CvMobMainWindow::PressPlay() {
-    if(this->inputMethod==CAM)
+    if(inputMethod==CAM)
     {
-        if(this->state==PLAY)   // same as REC
+        if(state==PLAY)   // same as REC
         {
             state=PAUSE;
             ui.pushButtonPlay->setText(tr("REC"));
@@ -334,7 +325,7 @@ void CvMobMainWindow::PressPlay() {
 
     }else
     {
-        if(this->state==PLAY)
+        if(state==PLAY)
         {
             state=PAUSE;
             ui.pushButtonPlay->setText(tr("Play"));
@@ -361,7 +352,7 @@ void CvMobMainWindow::PressStop() {
 	state = STOP;
         FreeFixPoints();
         freeTrajPoints();
-        this->on_pushButtonClearAngles_clicked();
+        on_pushButtonClearAngles_clicked();
         ui.slider->setValue(1);
 	QApplication::processEvents();
 }
@@ -388,7 +379,7 @@ void CvMobMainWindow::calibrateOk(bool ok){
 	if (ok){
 //		change plots to work with seconds and
 		calibratePlots();
-                this->freeTrajPoints();
+				freeTrajPoints();
         message->setText(tr("Calibration successful"));
 	}else{
 				message->setText(tr("Error on Calibration. Use 2 points."));
@@ -428,11 +419,11 @@ void CvMobMainWindow::updateTraj_y(int index, QVector <double> time, QVector <do
 }
 
 void CvMobMainWindow::updateImage(Mat image ){
-    if(this->imgVwr->geometry().height()==0)
-        this->imgVwr->setGeometry(geometry().x()+geometry().width(),
+    if(imgVwr->geometry().height()==0)
+        imgVwr->setGeometry(geometry().x()+geometry().width(),
                                  geometry().y(),image.cols,image.rows);
-    this->imgVwr->setImage(image);
-    this->imgVwr->repaint();
+    imgVwr->setImage(image);
+    imgVwr->repaint();
 }
 
 
@@ -447,18 +438,18 @@ void CvMobMainWindow::keyPressEvent(QKeyEvent *e)
         QStringList headerList;
         int r,c;
 
-        if(this->ui.tabWidgetData->currentIndex()==0) // case first tab selected
+        if(ui.tabWidgetData->currentIndex()==0) // case first tab selected
         {
-            table=this->ui.tableViewTraj;
-            headerList=this->trajPointHeader;
-        }else if(this->ui.tabWidgetData->currentIndex()==1)
+            table=ui.tableViewTraj;
+            headerList=trajPointHeader;
+        }else if(ui.tabWidgetData->currentIndex()==1)
         {
-            table=this->ui.tableViewFixPt;
-            headerList=this->fixPointHeader;
+            table=ui.tableViewFixPt;
+            headerList=fixPointHeader;
         }else
         {
-            table=this->ui.tableViewAngle;
-            headerList=this->anglePointHeader;
+            table=ui.tableViewAngle;
+            headerList=anglePointHeader;
         }
         selectionModel = table->selectionModel();
         if(selectionModel->hasSelection())
@@ -488,7 +479,7 @@ void CvMobMainWindow::keyPressEvent(QKeyEvent *e)
 
         clipboard->setText(strClipBoard);
     }
-    this->updateKeyboard(e->key());
+    updateKeyboard(e->key());
 }
 
 
@@ -496,22 +487,22 @@ void CvMobMainWindow::keyPressEvent(QKeyEvent *e)
 void CvMobMainWindow::updateKeyboard(int c ){
     switch (c) {
             case Qt::Key_Left:
-                this->PressStepBack();
+                PressStepBack();
                 break;
             case Qt::Key_Right:
-                this->PressStepFoward();
+                PressStepFoward();
                 break;
             case Qt::Key_F:
-                this->FreeFixPoints();
+                FreeFixPoints();
                 break;
             case Qt::Key_T:
-                this->freeTrajPoints();
+                freeTrajPoints();
                 break;
             case Qt::Key_R:
-                this->PressStop();
+                PressStop();
                 break;
             case Qt::Key_Space:
-                this->PressPlay();
+                PressPlay();
                 break;
 
     }
@@ -595,7 +586,7 @@ void CvMobMainWindow::calibratePlots(){
 }
 
 CvMobMainWindow::~CvMobMainWindow() {
-    this->imgVwr->deleteLater();
+    imgVwr->deleteLater();
 }
 void CvMobMainWindow::newTrajPoint(){
     QPixmap iten(10,10);
@@ -604,7 +595,7 @@ void CvMobMainWindow::newTrajPoint(){
 
     int f=cV->points.size()-1;  // The last Item
     iten.fill(QColor(cV->points[f].color[0],cV->points[f].color[1],cV->points[f].color[2]));
-    this->ui.comboBoxPoint->addItem(QIcon(iten)," ");
+    ui.comboBoxPoint->addItem(QIcon(iten)," ");
 }
 
 void CvMobMainWindow::newAnglePoint(){
@@ -612,7 +603,7 @@ void CvMobMainWindow::newAnglePoint(){
     cV=ProxyOpenCv::getInstance();
 
     int f=cV->angles.size();  // The last Item
-    this->ui.comboBoxAngle->addItem(QString::number(f)," ");
+    ui.comboBoxAngle->addItem(QString::number(f)," ");
 }
 
 
@@ -640,17 +631,17 @@ void view::CvMobMainWindow::on_actionReport_triggered()
 void view::CvMobMainWindow::on_doubleSpinBoxWinSize_valueChanged(double value)
 {
     FacadeController::getInstance()->setWinSize(value);
-    this->ui.doubleSpinBoxWinSize->setValue(value);
+    ui.doubleSpinBoxWinSize->setValue(value);
 }
 
 void view::CvMobMainWindow::closeEvent(QCloseEvent *event){
-    this->imgVwr->close();
+    imgVwr->close();
 }
 
 void view::CvMobMainWindow::on_updateFixButton_clicked()
 {
-    this->atualizeTableFixPoints();
-    this->ui.tableViewFixPt->resizeColumnsToContents();
+    atualizeTableFixPoints();
+    ui.tableViewFixPt->resizeColumnsToContents();
 }
 
 void view::CvMobMainWindow::on_tabWidgetData_selected(QString )
@@ -659,33 +650,33 @@ void view::CvMobMainWindow::on_tabWidgetData_selected(QString )
 
 void view::CvMobMainWindow::on_updateTrajButton_clicked()
 {
-    this->atualizeTableTrajPoints();
-    this->ui.tableViewTraj->resizeColumnsToContents();
+    atualizeTableTrajPoints();
+    ui.tableViewTraj->resizeColumnsToContents();
 
 }
 
 void view::CvMobMainWindow::on_updateAngleButton_clicked()
 {
-  this->atualizeTableAnglePoints();
-  this->ui.tableViewAngle->resizeColumnsToContents();
+  atualizeTableAnglePoints();
+  ui.tableViewAngle->resizeColumnsToContents();
 }
 
 
 void view::CvMobMainWindow::on_actionOpen_Cam_triggered()
 {
-    this->ui.pushButtonStepBack->setEnabled(false);
-    this->ui.pushButtonStepFoward->setEnabled(false);
-    this->ui.pushButtonPlay->setText(tr("REC"));
-    this->ui.pushButtonStop->setEnabled(false);
-    this->ui.slider->setEnabled(false);
-    this->state=PAUSE;
-    this->inputMethod=CAM;
+    ui.pushButtonStepBack->setEnabled(false);
+    ui.pushButtonStepFoward->setEnabled(false);
+    ui.pushButtonPlay->setText(tr("REC"));
+    ui.pushButtonStop->setEnabled(false);
+    ui.slider->setEnabled(false);
+    state=PAUSE;
+    inputMethod=CAM;
 
-    if(!this->imgVwr->isHidden())
-        this->imgVwr->close();
+    if(!imgVwr->isHidden())
+        imgVwr->close();
 
     // connect model to receive updates
-    this->MakesModelConections();
+    MakesModelConections();
     // Free graph
     foreach ( Plot* plot , plots){
                         plot->releaseCurves();
@@ -697,10 +688,10 @@ void view::CvMobMainWindow::on_actionOpen_Cam_triggered()
      FacadeController::getInstance()->captureFrame(1);
      FacadeController::getInstance()->setVideoStreamType(CAM);
      totalFrames = 0;
-     this->imgVwr->show();
+     imgVwr->show();
     }
     int ifrm=0;
-    while (this->inputMethod==CAM)
+    while (inputMethod==CAM)
     {
         FacadeController::getInstance()->captureFrame(ifrm);
         FacadeController::getInstance()->calculateData(ifrm);
@@ -713,13 +704,13 @@ void view::CvMobMainWindow::on_actionOpen_Cam_triggered()
 
 void view::CvMobMainWindow::on_closedImgView()
 {
-    this->ui.pushButtonStepBack->setEnabled(true);
-    this->ui.pushButtonStepFoward->setEnabled(true);
-    this->ui.pushButtonPlay->setText(tr("Play"));
-    this->ui.pushButtonStop->setEnabled(true);
-    this->ui.slider->setEnabled(true);
-    this->state=PAUSE;
-    this->inputMethod=AVI;
+    ui.pushButtonStepBack->setEnabled(true);
+    ui.pushButtonStepFoward->setEnabled(true);
+    ui.pushButtonPlay->setText(tr("Play"));
+    ui.pushButtonStop->setEnabled(true);
+    ui.slider->setEnabled(true);
+    state=PAUSE;
+    inputMethod=AVI;
 
 }
 
@@ -727,6 +718,6 @@ void view::CvMobMainWindow::on_closedImgView()
 void view::CvMobMainWindow::on_pushButtonClearAngles_clicked()
 {
     FacadeController::getInstance()->freeAnglePoints();
-    this->ui.comboBoxAngle->clear();
+    ui.comboBoxAngle->clear();
 }
 
