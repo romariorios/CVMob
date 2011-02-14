@@ -314,14 +314,14 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_3">
+  <widget class="QDockWidget" name="graphsDock">
    <property name="windowTitle">
     <string>Graphs</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
+   <widget class="QWidget" name="graphsDockContents">
     <layout class="QVBoxLayout" name="verticalLayout_7">
      <item>
       <widget class="QScrollArea" name="scrollArea">
@@ -337,7 +337,7 @@
           <x>0</x>
           <y>0</y>
           <width>862</width>
-          <height>147</height>
+          <height>174</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="graphsLayout">
@@ -348,28 +348,28 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_8">
             <item>
-             <widget class="QCheckBox" name="checkBox">
+             <widget class="QCheckBox" name="accelerationCheckBox">
               <property name="text">
                <string>Acceleration</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="checkBox_2">
+             <widget class="QCheckBox" name="velocityCheckBox">
               <property name="text">
                <string>Velocity</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="checkBox_3">
+             <widget class="QCheckBox" name="XCheckBox">
               <property name="text">
                <string>X</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="checkBox_4">
+             <widget class="QCheckBox" name="YCheckBox">
               <property name="text">
                <string>Y</string>
               </property>
@@ -390,19 +390,6 @@
             </item>
            </layout>
           </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>

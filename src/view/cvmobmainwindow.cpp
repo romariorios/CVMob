@@ -25,11 +25,16 @@ void CvMobMainWindow::initializePlots()
 	foreach (Plot *plot, _plots) {
 		plot->setAutoReplot(true);
 		plot->hide();
-		_ui->graphsLayout->insertWidget(0, plot);
+		_ui->graphsLayout->addWidget(plot);
 	}
 
-	_plots.at(0)->show();
-	_plots.at(1)->show();
+	connect(_ui->velocityCheckBox, SIGNAL(toggled(bool)), _plots.at(0), SLOT(setShown(bool)));
+	connect(_ui->accelerationCheckBox, SIGNAL(toggled(bool)), _plots.at(1), SLOT(setShown(bool)));
+	connect(_ui->XCheckBox, SIGNAL(toggled(bool)), _plots.at(2), SLOT(setShown(bool)));
+	connect(_ui->YCheckBox, SIGNAL(toggled(bool)), _plots.at(3), SLOT(setShown(bool)));
+
+	_ui->velocityCheckBox->toggle();
+	_ui->accelerationCheckBox->toggle();
 }
 
 CvMobMainWindow::~CvMobMainWindow()
