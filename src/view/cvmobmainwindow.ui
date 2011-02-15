@@ -14,7 +14,7 @@
    <string>CvMob</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QVBoxLayout" name="centralLayout">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>

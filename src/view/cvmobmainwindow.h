@@ -2,9 +2,14 @@
 #define CVMOBMAINWINDOW_H
 
 #include <QMainWindow>
+
+#include <opencv/cv.h>
 #include <QList>
 
+class imageViewer;
 class Plot;
+class QStandardItemModel;
+
 namespace Ui {
     class CvMobMainWindow;
 }
@@ -15,8 +20,17 @@ class CvMobMainWindow : public QMainWindow
 
     Ui::CvMobMainWindow *_ui;
     QList<Plot *> _plots;
+    QStandardItemModel *_tableModelFixPoints;
+    QStandardItemModel *_tableModelAnglePoints;
+    QStandardItemModel *_tableModelTrajPoints;
+    imageViewer *_imageViewer;
 
-    void initializePlots();
+	void initializePlots();
+	void atualizeTableFixPoints();
+	void atualizeTableAnglePoints();
+	void atualizeTableTrajPoints();
+	double calcDistance(CvPoint2D32f p1,CvPoint2D32f p2,float hR,float vR);
+	void MakesModelConections();
 
 public:
     explicit CvMobMainWindow(QWidget *parent = 0);
