@@ -21,7 +21,8 @@ HEADERS += src/model/OpenCV/Angle.h \
     src/view/options.h \
     src/view/aboutdialog.h \
     src/view/reportdialog.h \
-    src/view/cvmobmainwindow.h
+    src/view/cvmobmainwindow.h \
+    src/model/fixedpointstablemodel.h
 SOURCES += src/model/exporter/ExportText.cpp \
     src/model/exporter/IExportStrategy.cpp \
     src/model/PhisicsCalc.cpp \
@@ -34,7 +35,8 @@ SOURCES += src/model/exporter/ExportText.cpp \
     src/view/aboutdialog.cpp \
     src/model/OpenCV/Angle.cpp \
     src/view/reportdialog.cpp \
-    src/view/cvmobmainwindow.cpp
+    src/view/cvmobmainwindow.cpp \
+    src/model/fixedpointstablemodel.cpp
 
 FORMS    += \
     src/view/reportdialog.ui \

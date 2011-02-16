@@ -24,13 +24,17 @@ class CvMobMainWindow : public QMainWindow
     QStandardItemModel *_tableModelAnglePoints;
     QStandardItemModel *_tableModelTrajPoints;
     imageViewer *_imageViewer;
+    int _totalFrames;
 
 	void initializePlots();
 	void atualizeTableFixPoints();
 	void atualizeTableAnglePoints();
 	void atualizeTableTrajPoints();
 	double calcDistance(CvPoint2D32f p1,CvPoint2D32f p2,float hR,float vR);
-	void MakesModelConections();
+	void MakesModelConnections();
+
+protected slots:
+	void openFile();
 
 public:
     explicit CvMobMainWindow(QWidget *parent = 0);

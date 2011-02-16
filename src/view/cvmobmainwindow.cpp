@@ -25,6 +25,9 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _ui->openButton->setDefaultAction(_ui->action_Open);
 
     initializePlots();
+    MakesModelConnections();
+
+    connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
 }
 
 void CvMobMainWindow::initializePlots()
@@ -134,7 +137,7 @@ double CvMobMainWindow::calcDistance(CvPoint2D32f p1,CvPoint2D32f p2,float hR,fl
     return sqrt(dx*dx*hR*hR+dy*dy*vR*vR);
 }
 
-void CvMobMainWindow::MakesModelConections()
+void CvMobMainWindow::MakesModelConnections()
 {
     // connect model to receive updates
     connect(ProxyOpenCv::getInstance(), SIGNAL(calibrateOk(bool)), this, SLOT(calibrateOk(bool)));
@@ -147,6 +150,36 @@ void CvMobMainWindow::MakesModelConections()
     connect(ProxyOpenCv::getInstance(), SIGNAL(updateImage(Mat )),this,SLOT(updateImage(Mat )));
     connect(ProxyOpenCv::getInstance(), SIGNAL(newTrajPoint()),this,SLOT(newTrajPoint()));
     connect(ProxyOpenCv::getInstance(), SIGNAL(newAnglePoint()),this,SLOT(newAnglePoint()));
+}
+
+void CvMobMainWindow::openFile() {
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose a file to open"),".",tr("Movie (*.avi)")).toUtf8();
+
+    if (!filename.isEmpty()) {
+        if (!_imageViewer->isHidden()) {
+            _imageViewer->close();
+        }
+
+        // connect model to receive updates
+        MakesModelConnections();
+
+        // Free grap
+        foreach (Plot* plot, _plots) {
+            plot->releaseCurves();
+            plot->replot();
+        }
+
+        if (FacadeController::getInstance()->openVideo(filename)) {
+            FacadeController::getInstance()->captureFrame(1);
+
+            // TODO: group video player in a separate class.
+            _totalFrames = FacadeController::getInstance()->getTotalFrames();
+//            state=STOP;
+            _ui->videoProgress->setRange(1, _totalFrames);
+            _ui->videoProgress->setValue(1);
+            _imageViewer->show();
+        }
+    }
 }
 
 CvMobMainWindow::~CvMobMainWindow()
