@@ -6,6 +6,7 @@
 #include <opencv/cv.h>
 #include <QList>
 
+class FixedPointsDistancesListModel;
 class imageViewer;
 class Plot;
 class QStandardItemModel;
@@ -20,17 +21,15 @@ class CvMobMainWindow : public QMainWindow
 
     Ui::CvMobMainWindow *_ui;
     QList<Plot *> _plots;
-    QStandardItemModel *_tableModelFixPoints;
+    FixedPointsDistancesListModel *_fixedPointsDistancesModel;
     QStandardItemModel *_tableModelAnglePoints;
     QStandardItemModel *_tableModelTrajPoints;
     imageViewer *_imageViewer;
     int _totalFrames;
 
 	void initializePlots();
-	void atualizeTableFixPoints();
 	void atualizeTableAnglePoints();
 	void atualizeTableTrajPoints();
-	double calcDistance(CvPoint2D32f p1,CvPoint2D32f p2,float hR,float vR);
 	void MakesModelConnections();
 
 protected slots:

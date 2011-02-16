@@ -1,9 +1,10 @@
 #include "cvmobmainwindow.h"
 #include "ui_cvmobmainwindow.h"
 
-#include "src/controller/FacadeController.h"
 #include "graphs/Plot.h"
-#include "src/view/imageviewer.h"
+#include "controller/FacadeController.h"
+#include "model/fixedpointsdistanceslistmodel.h"
+#include "view/imageviewer.h"
 
 #include <QStandardItemModel>
 
@@ -13,7 +14,7 @@ using namespace controller;
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::CvMobMainWindow),
-    _tableModelFixPoints(new QStandardItemModel(this)),
+    _fixedPointsDistancesModel(new FixedPointsDistancesListModel(this)),
     _tableModelAnglePoints(new QStandardItemModel(this)),
     _tableModelTrajPoints(new QStandardItemModel(this)),
     _imageViewer(new imageViewer)
@@ -23,6 +24,8 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     _ui->playPauseButton->setDefaultAction(_ui->actionPlay_Pause);
     _ui->openButton->setDefaultAction(_ui->action_Open);
+
+    _ui->fixedPointsTableView->setModel(_fixedPointsDistancesModel);
 
     initializePlots();
     MakesModelConnections();
@@ -50,30 +53,6 @@ void CvMobMainWindow::initializePlots()
 
 	_ui->velocityCheckBox->toggle();
 	_ui->accelerationCheckBox->toggle();
-}
-
-void CvMobMainWindow::atualizeTableFixPoints() {
-    ProxyOpenCv *cV;
-    double d;
-    cV=ProxyOpenCv::getInstance();
-    if(cV->fixedPoints.size()==0)
-        return;
-    _tableModelFixPoints->clear();
-//    tableModelFixPoints->setHorizontalHeaderLabels(fixPointHeader); // TODO: MAKE CUSTOM MODELS FOR EACH TABLE!
-
-    for (unsigned int i = 0; i < cV->fixedPoints.size(); i++) {
-        if(i%2)
-        {
-            d=calcDistance(cV->fixedPoints[i].markedPoint,
-                                 cV->fixedPoints[i-1].markedPoint,
-                                 cV->get_horizontalRazao(),cV->get_verticalRazao());
-            // atualize distance text
-            //item=;
-            _tableModelFixPoints->setItem(i/2,0,new QStandardItem(QString::number(i/2+1)));
-            _tableModelFixPoints->setItem(i/2,1,new QStandardItem(QString::number(d,'f',_imageViewer->op.prec)));
-        }
-    }
-    _ui->tabFixedPoints->repaint();
 }
 
 void CvMobMainWindow::atualizeTableTrajPoints() {
@@ -128,13 +107,6 @@ void CvMobMainWindow::atualizeTableAnglePoints() {
                     QString::number(cV->angles[pt].value[i],'f',_imageViewer->op.prec)));
     }
     _ui->tabTrajectory->repaint();
-}
-
-double CvMobMainWindow::calcDistance(CvPoint2D32f p1,CvPoint2D32f p2,float hR,float vR)
-{
-    double dx=(p2.x-p1.x);
-    double dy=(p2.y-p1.y);
-    return sqrt(dx*dx*hR*hR+dy*dy*vR*vR);
 }
 
 void CvMobMainWindow::MakesModelConnections()
