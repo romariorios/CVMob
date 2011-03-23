@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>cvMob(main)</string>
+   <string>CvMob - (No video opened)</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -384,7 +384,7 @@ p, li { white-space: pre-wrap; }
               <x>1</x>
               <y>10</y>
               <width>199</width>
-              <height>26</height>
+              <height>27</height>
              </rect>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -644,7 +644,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>690</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

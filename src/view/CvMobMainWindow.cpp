@@ -152,6 +152,7 @@ void CvMobMainWindow::FileOpen() {
 	}
 
 
+		setWindowTitle(tr("CvMob - %1").arg(filename));
 }
 
 void CvMobMainWindow::ExportAngle() {
@@ -176,11 +177,34 @@ void CvMobMainWindow::PressStepBack() {
 }
 
 void CvMobMainWindow::FreeFixPoints() {
+    QMessageBox confirmClear;
+    confirmClear.setWindowTitle(tr("Confirm clearing"));
+    confirmClear.setText(tr("Are you sure you want to clear all fixed points from the video?"));
+    confirmClear.setInformativeText(tr("Note that all the data related to the points will also be deleted."));
+    confirmClear.setIcon(QMessageBox::Question);
+    confirmClear.addButton(tr("Clear all points"), QMessageBox::AcceptRole);
+    confirmClear.addButton(tr("Cancel"), QMessageBox::RejectRole);
+
+    if (confirmClear.exec() != QMessageBox::Accepted) {
+        return;
+    }
 
         FacadeController::getInstance()->freeFixPoints();
 }
 
 void CvMobMainWindow::freeTrajPoints() {
+    QMessageBox confirmClear;
+    confirmClear.setWindowTitle(tr("Confirm clearing"));
+    confirmClear.setText(tr("Are you sure you want to clear all the trajectories from the video?"));
+    confirmClear.setInformativeText(tr("Note that all the data related to the trajectories will also be deleted."));
+    confirmClear.setIcon(QMessageBox::Question);
+    confirmClear.addButton(tr("Clear all trajectories"), QMessageBox::AcceptRole);
+    confirmClear.addButton(tr("Cancel"), QMessageBox::RejectRole);
+
+    if (confirmClear.exec() != QMessageBox::Accepted) {
+        return;
+    }
+
     foreach ( Plot* plot , plots){
                     plot->releaseCurves();
                     plot->replot();
@@ -267,9 +291,9 @@ void CvMobMainWindow::atualizeTableTrajPoints() {
             tableModelTrajPoints->setItem(i,3,new QStandardItem(
                     QString::number(cV->points[pt].acceleration[i],'f',imgVwr->op.prec)));
             tableModelTrajPoints->setItem(i,4,new QStandardItem(
-                    QString::number(cV->points[pt].trajectorie[i].x,'f',imgVwr->op.prec)));
+                    QString::number(cV->points[pt].trajectorie[i].x*cV->get_horizontalRazao(),'f',imgVwr->op.prec)));
             tableModelTrajPoints->setItem(i,5,new QStandardItem(
-                    QString::number(cV->points[pt].trajectorie[i].y,'f',imgVwr->op.prec)));
+                    QString::number(cV->points[pt].trajectorie[i].y*cV->get_verticalRazao(),'f',imgVwr->op.prec)));
             tableModelTrajPoints->setItem(i,6,new QStandardItem(
                     QString::number(cV->points[pt].xVelocity[i],'f',imgVwr->op.prec)));
             tableModelTrajPoints->setItem(i,7,new QStandardItem(
@@ -717,6 +741,18 @@ void view::CvMobMainWindow::on_closedImgView()
 
 void view::CvMobMainWindow::on_pushButtonClearAngles_clicked()
 {
+    QMessageBox confirmClear;
+    confirmClear.setWindowTitle(tr("Confirm clearing"));
+    confirmClear.setText(tr("Are you sure you want to clear all the angles from the video?"));
+    confirmClear.setInformativeText(tr("Note that all the data related to the angles will also be deleted."));
+    confirmClear.setIcon(QMessageBox::Question);
+    confirmClear.addButton(tr("Clear all angles"), QMessageBox::AcceptRole);
+    confirmClear.addButton(tr("Cancel"), QMessageBox::RejectRole);
+
+    if (confirmClear.exec() != QMessageBox::Accepted) {
+        return;
+    }
+
     FacadeController::getInstance()->freeAnglePoints();
     ui.comboBoxAngle->clear();
 }
