@@ -61,6 +61,8 @@ public:
 	void removeTrabalho();
 		void setWinSize(double value);
 
+	double calcDistance(QPoint point1, QPoint point2) const;
+
 	~FacadeController();
 private:
 	FacadeController();

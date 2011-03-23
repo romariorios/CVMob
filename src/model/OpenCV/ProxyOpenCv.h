@@ -116,7 +116,7 @@ public:
 	void goodFeaturesToTrack();
 
         void captureTrajectoriePoint(Point2f point);
-        void captureFixedPoint(CvPoint2D32f point);
+        void captureFixedPoint(QPoint point);
         void captureVerticePoint(Point2f point);
 	bool openVideo(const QString &fileName);
         bool openCam();

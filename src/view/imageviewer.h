@@ -29,7 +29,6 @@ private:
     void drawTrajPoints(QPainter *estojo,ProxyOpenCv *cV,double fx,double fy);
     void drawAnglePoints(QPainter *estojo,ProxyOpenCv *cV,double fx,double fy);
 
-    double calcDistance(CvPoint2D32f p1,CvPoint2D32f p2,float hR,float vR);
     QPen penFixPoint;
     QPen penLineFixPoint;
     QBrush bruTextPanel;

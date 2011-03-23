@@ -1,6 +1,11 @@
 #include "imageviewer.h"
 
+#include "controller/FacadeController.h"
+
+#include <QPoint>
 #include <vector>
+
+using namespace controller;
 using namespace std;
 
 imageViewer::imageViewer()
@@ -72,7 +77,7 @@ void imageViewer::mousePressEvent(QMouseEvent *event)
             ProxyOpenCv::getInstance()->captureTrajectoriePoint(Point2f(x, y));
         break;
     case Qt::RightButton:
-        ProxyOpenCv::getInstance()->captureFixedPoint(cvPointTo32f(cvPoint(x,y)));
+        ProxyOpenCv::getInstance()->captureFixedPoint(QPoint(x,y));
         break;
     }
  }
@@ -207,8 +212,8 @@ void imageViewer::drawFixedPoints(QPainter *estojo,ProxyOpenCv *cV,double fx,dou
 
 
     for (unsigned int i = 0; i < cV->fixedPoints.size(); i++) {
-        p.setX(cV->fixedPoints[i].markedPoint.x * fx);
-        p.setY(cV->fixedPoints[i].markedPoint.y * fy);
+        p.setX(cV->fixedPoints[i].markedPoint.x() * fx);
+        p.setY(cV->fixedPoints[i].markedPoint.y() * fy);
 
         p1.setX(p.x());
         p1.setY(p.y()-sz);
@@ -229,9 +234,10 @@ void imageViewer::drawFixedPoints(QPainter *estojo,ProxyOpenCv *cV,double fx,dou
         {
             estojo->setPen(this->penLineFixPoint);
             estojo->drawLine(p,pa);
-            d=this->calcDistance(cV->fixedPoints[i].markedPoint,
-                                 cV->fixedPoints[i-1].markedPoint,
-                                 cV->get_horizontalRazao(),cV->get_verticalRazao());
+            d = FacadeController::getInstance()->calcDistance(
+                        cV->fixedPoints[i].markedPoint,
+                        cV->fixedPoints[i-1].markedPoint
+                        );
             // Draw distance text
             pt.setX(p.x()-(p.x()-pa.x())/2);
             pt.setY(p.y()-(p.y()-pa.y())/2);
@@ -301,12 +307,4 @@ void imageViewer::drawAnglePoints (QPainter *estojo,ProxyOpenCv *cV,double fx,do
 //                            (int)cV->angles[i].ang2*16);
         }
     }
-}
-
-
-double imageViewer::calcDistance(CvPoint2D32f p1,CvPoint2D32f p2,float hR,float vR)
-{
-    double dx=(p2.x-p1.x);
-    double dy=(p2.y-p1.y);
-    return sqrt(dx*dx*hR*hR+dy*dy*vR*vR);
 }

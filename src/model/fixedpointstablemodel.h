@@ -3,13 +3,11 @@
 
 #include <QAbstractListModel>
 
-#include <opencv/cv.h>
+#include <QPoint>
 
 class FixedPointsTableModel : public QAbstractTableModel
 {
     Q_OBJECT
-
-    double calcDistance(CvPoint2D32f point1, CvPoint2D32f point2, float horizontalRatio, float verticalRatio) const;
 
 public:
     explicit FixedPointsTableModel(QObject *parent = 0);

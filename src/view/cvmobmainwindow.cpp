@@ -30,6 +30,11 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     MakesModelConnections();
 
     connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
+
+    // Image Viewer
+    connect(_imageViewer, SIGNAL(updateKeyboard(int)), SLOT(updateKeyboard(int)));
+//    connect(_imageViewer, SIGNAL(updatWinSize(double)), SLOT(on_doubleSpinBoxWinSize_valueChanged(double)));
+    connect(_imageViewer, SIGNAL(closedImgView()), SLOT(on_closedImgView()));
 }
 
 void CvMobMainWindow::initializePlots()
@@ -58,7 +63,7 @@ void CvMobMainWindow::atualizeTableTrajPoints() {
     ProxyOpenCv *cV;
     int pt=_ui->comboBoxPoint->currentIndex();
     cV=ProxyOpenCv::getInstance();
-    if(cV->getCountPoints()==0)         // if there is any point, do nothing
+    if(cV->getCountPoints()==0)         // if there is no point, do nothing
         return;
     if(pt>cV->getCountPoints()-1) // In the case of the maximum spinBox are not atualizated
         pt=cV->getCountPoints()-1;
@@ -127,9 +132,9 @@ void CvMobMainWindow::openFile() {
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose a file to open"),".",tr("Movie (*.avi)")).toUtf8();
 
     if (!filename.isEmpty()) {
-        if (!_imageViewer->isHidden()) {
-            _imageViewer->close();
-        }
+//        if (!_imageViewer->isHidden()) {
+//            _imageViewer->close();
+//        }
 
         // connect model to receive updates
         MakesModelConnections();
@@ -200,6 +205,8 @@ void CvMobMainWindow::updateTraj_y(int index, QVector <double> time, QVector <do
 }
 
 void CvMobMainWindow::updateImage(Mat image ){
+    qDebug() << "updateImage is called!";
+
     if(_imageViewer->geometry().height()==0)
         _imageViewer->setGeometry(geometry().x()+geometry().width(),
                                  geometry().y(),image.cols,image.rows);
@@ -223,6 +230,39 @@ void CvMobMainWindow::newAnglePoint(){
 
     int f=cV->angles.size();  // The last Item
     _ui->comboBoxAngle->addItem(QString::number(f)," ");
+}
+
+void CvMobMainWindow::updateKeyboard(int c ){
+    switch (c) {
+    case Qt::Key_Left:
+//        PressStepBack();
+        break;
+    case Qt::Key_Right:
+//        PressStepFoward();
+        break;
+    case Qt::Key_F:
+//        FreeFixPoints();
+        break;
+    case Qt::Key_T:
+//        freeTrajPoints();
+        break;
+    case Qt::Key_R:
+//        PressStop();
+        break;
+    case Qt::Key_Space:
+//        PressPlay();
+        break;
+    }
+}
+
+void CvMobMainWindow::on_closedImgView()
+{
+//    ui.pushButtonStepBack->setEnabled(true);
+//    ui.pushButtonStepFoward->setEnabled(true);
+//    ui.pushButtonPlay->setText(tr("Play"));
+//    ui.pushButtonStop->setEnabled(true);
+//    ui.slider->setEnabled(true);
+	_state=PAUSE;
 }
 
 // Deprecated (but still needed) methods

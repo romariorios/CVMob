@@ -11,7 +11,10 @@
 #define MAX_FRAMES 10000
 
 #include <opencv/cv.h>
+
+#include <QPoint>
 #include <QVector>
+
 using namespace std;
 using namespace cv;
 
@@ -42,9 +45,9 @@ struct FixedPoint
 {
         int index;
         int color[3];
-        CvPoint2D32f markedPoint;
-        CvPoint2D32f features[1];
-        CvPoint2D32f prev_features[1];
+        QPoint markedPoint;
+        QPoint features[1];
+        QPoint prev_features[1];
         int initFrame;   // initial captured frame (the frame of the first mouse clicked on video)
 
 };

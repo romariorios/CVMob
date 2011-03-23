@@ -1,20 +1,12 @@
 #include "fixedpointstablemodel.h"
 
-#include "model/OpenCV/ProxyOpenCv.h"
+#include "controller/FacadeController.h"
 
-using namespace model;
+using namespace controller;
 
 FixedPointsTableModel::FixedPointsTableModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
-}
-
-// TODO: Convert to QPoint.
-double FixedPointsTableModel::calcDistance(CvPoint2D32f point1, CvPoint2D32f point2, float horizontalRatio, float verticalRatio) const
-{
-    double dx = point2.x - point1.x;
-    double dy = point2.y - point1.y;
-    return sqrt(dx * dx * horizontalRatio * horizontalRatio + dy * dy * verticalRatio * verticalRatio);
 }
 
 int FixedPointsTableModel::columnCount(const QModelIndex &parent) const
@@ -36,10 +28,9 @@ QVariant FixedPointsTableModel::data(const QModelIndex &index, int role) const
 
     if (index.column() == 1) {
         ProxyOpenCv *cvInstance = ProxyOpenCv::getInstance();
-        return calcDistance(cvInstance->fixedPoints.at(index.row() * 2).markedPoint,
-                            cvInstance->fixedPoints.at(index.row() * 2 + 1).markedPoint,
-                            cvInstance->get_horizontalRazao(),
-                            cvInstance->get_verticalRazao());
+        FacadeController *facadeInstance = FacadeController::getInstance();
+        return facadeInstance->calcDistance(cvInstance->fixedPoints.at(index.row() * 2).markedPoint,
+                                            cvInstance->fixedPoints.at(index.row() * 2 + 1).markedPoint);
     }
 
     return index.row() + 1;

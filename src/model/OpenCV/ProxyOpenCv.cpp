@@ -97,7 +97,7 @@ void ProxyOpenCv::captureTrajectoriePoint(Point2f poin) {
 	ShowImage();
 }
 
-void ProxyOpenCv::captureFixedPoint(CvPoint2D32f point) {
+void ProxyOpenCv::captureFixedPoint(QPoint point) {
     FixedPoint pt;
     pt.markedPoint=point;
     fixedPoints.push_back(pt);

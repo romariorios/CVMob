@@ -161,6 +161,13 @@ void FacadeController::startCalibration(double Distance) {
         ProxyOpenCv::getInstance()->calibrate(Distance);
 }
 
+double FacadeController::calcDistance(QPoint point1, QPoint point2) const
+{
+    QPoint diff = point2 - point1;
+    return sqrt(pow(diff.x(), 2) * pow(ProxyOpenCv::getInstance()->get_horizontalRazao(), 2) +
+                pow(diff.y(), 2) * pow(ProxyOpenCv::getInstance()->get_verticalRazao(), 2));
+}
+
 FacadeController::~FacadeController() {
 	//	plots.clear();
 	//facade = 0;

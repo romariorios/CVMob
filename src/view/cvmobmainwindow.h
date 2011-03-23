@@ -21,6 +21,13 @@ class CvMobMainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    enum statusBar
+    {
+        PLAY,
+        PAUSE,
+        STOP
+    };
+
     Ui::CvMobMainWindow *_ui;
     QList<Plot *> _plots;
     FixedPointsTableModel *_fixedPointsDistancesModel;
@@ -28,6 +35,7 @@ class CvMobMainWindow : public QMainWindow
     QStandardItemModel *_tableModelTrajPoints;
     imageViewer *_imageViewer;
     int _totalFrames;
+    int _state;
 
 	void initializePlots();
 	void atualizeTableAnglePoints();
@@ -47,6 +55,8 @@ private slots:
 	void updateImage(Mat image);
 	void newTrajPoint();
 	void newAnglePoint();
+	void updateKeyboard(int c);
+	void on_closedImgView();
 
 	// Deprecated end
 
