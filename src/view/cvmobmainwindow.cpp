@@ -1,12 +1,11 @@
 #include "cvmobmainwindow.h"
 #include "ui_cvmobmainwindow.h"
 
+#include <QStandardItemModel>
+
 #include "graphs/Plot.h"
 #include "controller/FacadeController.h"
-#include "model/fixedpointsdistanceslistmodel.h"
-#include "view/imageviewer.h"
-
-#include <QStandardItemModel>
+#include "model/fixedpointstablemodel.h"
 
 using namespace model;
 using namespace controller;
@@ -14,7 +13,7 @@ using namespace controller;
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::CvMobMainWindow),
-    _fixedPointsDistancesModel(new FixedPointsDistancesListModel(this)),
+    _fixedPointsDistancesModel(new FixedPointsTableModel(this)),
     _tableModelAnglePoints(new QStandardItemModel(this)),
     _tableModelTrajPoints(new QStandardItemModel(this)),
     _imageViewer(new imageViewer)
@@ -157,4 +156,97 @@ void CvMobMainWindow::openFile() {
 CvMobMainWindow::~CvMobMainWindow()
 {
 	delete _ui;
+}
+
+// Deprecated (but still needed) slots:
+
+void CvMobMainWindow::calibrateOk(bool ok){
+	QMessageBox *message = new QMessageBox();
+	if (ok){
+//		change plots to work with seconds and
+		calibratePlots();
+				freeTrajPoints();
+		message->setText(tr("Calibration successful"));
+	}else{
+				message->setText(tr("Error on Calibration. Use 2 points."));
+	}
+	message->show();
+}
+
+void CvMobMainWindow::addCurve(int index, int r, int g, int b){
+		foreach(Plot* plot, _plots){
+		plot->addCurve(index, r, g, b);
+	}
+}
+
+void CvMobMainWindow::updateVelocity(int index, QVector <double> time, QVector <double> velocity, int actualTime ){
+	_plots.at(0)->setData(index,time.data()+2,velocity.data()+2,velocity.size()-2);
+}
+
+void CvMobMainWindow::updateAcceleration(int index, QVector <double> time, QVector <double> acceleration, int actualTime ){
+	_plots.at(1)->setData(index,time.data()+4,acceleration.data()+4,acceleration.size()-4);
+}
+
+void CvMobMainWindow::updateWork(int index, QVector <double> time, QVector <double> work, int actualTime ){
+//	plots.at(WORK)->setData(index,time.data(),work.data(),work.size());
+}
+
+void CvMobMainWindow::updateTraj_x(int index, QVector <double> time, QVector <double> traj_x, int actualTime ){
+	_plots.at(2)->setData(index,time.data(),traj_x.data(),traj_x.size());
+}
+
+void CvMobMainWindow::updateTraj_y(int index, QVector <double> time, QVector <double> traj_y, int actualTime ){
+	_plots.at(3)->setData(index,time.data(),traj_y.data(),traj_y.size());
+}
+
+void CvMobMainWindow::updateImage(Mat image ){
+    if(_imageViewer->geometry().height()==0)
+        _imageViewer->setGeometry(geometry().x()+geometry().width(),
+                                 geometry().y(),image.cols,image.rows);
+    _imageViewer->setImage(image);
+    _imageViewer->repaint();
+}
+
+void CvMobMainWindow::newTrajPoint(){
+    QPixmap iten(10,10);
+    ProxyOpenCv *cV;
+    cV=ProxyOpenCv::getInstance();
+
+    int f=cV->points.size()-1;  // The last Item
+    iten.fill(QColor(cV->points[f].color[0],cV->points[f].color[1],cV->points[f].color[2]));
+    _ui->comboBoxPoint->addItem(QIcon(iten)," ");
+}
+
+void CvMobMainWindow::newAnglePoint(){
+    ProxyOpenCv *cV;
+    cV=ProxyOpenCv::getInstance();
+
+    int f=cV->angles.size();  // The last Item
+    _ui->comboBoxAngle->addItem(QString::number(f)," ");
+}
+
+// Deprecated (but still needed) methods
+
+void CvMobMainWindow::calibratePlots(){
+	_plots.at(0)->setXAxisTitle(tr("seconds"));
+	_plots.at(0)->setYAxisTitle(tr("vel (m/s)"));
+
+	_plots.at(1)->setXAxisTitle(tr("seconds"));
+	_plots.at(1)->setYAxisTitle(tr("acc (m/s²)"));
+
+    _plots.at(2)->setXAxisTitle(tr("seconds"));
+    _plots.at(2)->setYAxisTitle(tr("x(T) (m)"));
+
+    _plots.at(3)->setXAxisTitle(tr("seconds"));
+    _plots.at(3)->setYAxisTitle(tr("y(T) (m)"));
+}
+
+void CvMobMainWindow::freeTrajPoints() {
+    foreach ( Plot* plot , _plots){
+                    plot->releaseCurves();
+                    plot->replot();
+    };
+        FacadeController::getInstance()->freeTrajPoints();
+        _ui->comboBoxPoint->clear();
+
 }
