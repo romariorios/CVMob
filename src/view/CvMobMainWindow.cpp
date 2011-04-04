@@ -749,6 +749,10 @@ int view::CvMobMainWindow::_clearConfirmationDialog(const QString &message,
                                                     const QString &informativeMessage,
                                                     const QString &clearAllButton)
 {
+    if (static_cast<QPushButton *>(sender())->objectName() == "pushButtonStop") {
+        return false; // Should be true, but, for some reason, clicking cancel returns accepted.
+    }
+
     QMessageBox confirmClear;
     confirmClear.setWindowTitle(tr("Confirm clearing"));
     confirmClear.setText(message);

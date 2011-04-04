@@ -454,7 +454,7 @@ p, li { white-space: pre-wrap; }
         <translation>Escolha um nome para salvar</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="753"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="757"/>
         <source>Confirm clearing</source>
         <translation>Confirmar limpeza</translation>
     </message>
@@ -474,7 +474,7 @@ p, li { white-space: pre-wrap; }
         <translation>Limpar todos os pontos</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="758"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="762"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
