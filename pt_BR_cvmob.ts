@@ -112,7 +112,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="src/view/FormCvMob.ui" line="73"/>
-        <location filename="src/view/FormCvMob.ui" line="675"/>
+        <location filename="src/view/FormCvMob.ui" line="646"/>
         <source>Graphs</source>
         <translation>Gráficos</translation>
     </message>
@@ -201,8 +201,9 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="src/view/FormCvMob.ui" line="256"/>
-        <source>Trajectory</source>
-        <translation>Trajetória</translation>
+        <source>Trajectories</source>
+        <oldsource>Trajectory</oldsource>
+        <translation>Trajetórias</translation>
     </message>
     <message>
         <location filename="src/view/FormCvMob.ui" line="264"/>
@@ -211,50 +212,40 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="src/view/FormCvMob.ui" line="287"/>
-        <location filename="src/view/FormCvMob.ui" line="356"/>
-        <location filename="src/view/FormCvMob.ui" line="417"/>
+        <location filename="src/view/FormCvMob.ui" line="418"/>
+        <location filename="src/view/FormCvMob.ui" line="511"/>
         <source>Update</source>
         <translation>Atualizar</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="329"/>
-        <source>Fixed Points</source>
-        <translation>Pontos fixos</translation>
-    </message>
-    <message>
-        <location filename="src/view/FormCvMob.ui" line="379"/>
+        <location filename="src/view/FormCvMob.ui" line="480"/>
         <source>Angles</source>
         <translation>Ângulos</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="394"/>
+        <location filename="src/view/FormCvMob.ui" line="488"/>
         <source>Angle</source>
         <translation>Ângulo</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="475"/>
+        <location filename="src/view/FormCvMob.ui" line="571"/>
         <source>Window Search Size</source>
         <translation>Tamanho da janela de pesquisa</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="524"/>
-        <source>Show Vectors</source>
-        <translation>Mostrar vetores</translation>
-    </message>
-    <message>
-        <location filename="src/view/FormCvMob.ui" line="541"/>
-        <location filename="src/view/FormCvMob.ui" line="730"/>
+        <location filename="src/view/FormCvMob.ui" line="353"/>
+        <location filename="src/view/FormCvMob.ui" line="701"/>
         <source>Velocity</source>
         <translation>Velocidade</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="551"/>
-        <location filename="src/view/FormCvMob.ui" line="741"/>
+        <location filename="src/view/FormCvMob.ui" line="363"/>
+        <location filename="src/view/FormCvMob.ui" line="712"/>
         <source>Acceleration</source>
         <translation>Aceleração</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="586"/>
+        <location filename="src/view/FormCvMob.ui" line="431"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -267,107 +258,110 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Limpar pontos fixos (F)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="593"/>
-        <source>Clear Fix Points</source>
-        <translation>Limpar pontos fixos</translation>
-    </message>
-    <message>
-        <location filename="src/view/FormCvMob.ui" line="606"/>
+        <location filename="src/view/FormCvMob.ui" line="300"/>
         <source>Clear Trajectory points (T)</source>
         <translation>Limpar pontos de trajetórias</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="609"/>
-        <source>Clear Trajectories</source>
-        <translation>Limpar trajetórias</translation>
+        <location filename="src/view/FormCvMob.ui" line="303"/>
+        <location filename="src/view/FormCvMob.ui" line="438"/>
+        <location filename="src/view/FormCvMob.ui" line="518"/>
+        <source>Clear all</source>
+        <oldsource>Clear</oldsource>
+        <translation>Limpar tudo</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="616"/>
-        <source>Clear Angles</source>
-        <translation>Limpar Ângulos</translation>
+        <location filename="src/view/FormCvMob.ui" line="336"/>
+        <source>Show vectors in video</source>
+        <translation>Mostrar vetores no vídeo</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="652"/>
+        <location filename="src/view/FormCvMob.ui" line="410"/>
+        <source>Fixed points</source>
+        <translation>Pontos fixos</translation>
+    </message>
+    <message>
+        <location filename="src/view/FormCvMob.ui" line="623"/>
         <source>&amp;File</source>
         <translation>A&amp;rquivo</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="656"/>
+        <location filename="src/view/FormCvMob.ui" line="627"/>
         <source>&amp;Export</source>
         <translation>&amp;Exportar</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="668"/>
+        <location filename="src/view/FormCvMob.ui" line="639"/>
         <source>Calibration</source>
         <translation>Calibração</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="684"/>
+        <location filename="src/view/FormCvMob.ui" line="655"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="696"/>
+        <location filename="src/view/FormCvMob.ui" line="667"/>
         <source>&amp;Open</source>
         <translation>&amp;Abrir</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="704"/>
+        <location filename="src/view/FormCvMob.ui" line="675"/>
         <source>&amp;Angle</source>
         <translation>Â&amp;ngulo</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="709"/>
+        <location filename="src/view/FormCvMob.ui" line="680"/>
         <source>&amp;Trajectory</source>
         <translation>&amp;Trajetória</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="714"/>
+        <location filename="src/view/FormCvMob.ui" line="685"/>
         <source>Start Calibration</source>
         <translation>Iniciar calibração</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="719"/>
+        <location filename="src/view/FormCvMob.ui" line="690"/>
         <source>Set Error Point</source>
         <translation>Definir ponto de erro</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="749"/>
+        <location filename="src/view/FormCvMob.ui" line="720"/>
         <source>Smooth Acceleration</source>
         <translation>Aceleração suave</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="757"/>
+        <location filename="src/view/FormCvMob.ui" line="728"/>
         <source>Trabalho</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="762"/>
+        <location filename="src/view/FormCvMob.ui" line="733"/>
         <source>About CvMob...</source>
         <translation>Sobe CvMob...</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="767"/>
+        <location filename="src/view/FormCvMob.ui" line="738"/>
         <source>&amp;Report</source>
         <translation>&amp;Relatório</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="770"/>
+        <location filename="src/view/FormCvMob.ui" line="741"/>
         <source>Print Report</source>
         <translation>Imprimir relatório</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="778"/>
+        <location filename="src/view/FormCvMob.ui" line="749"/>
         <source>X Trajectory</source>
         <translation>Trajetória do X</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="786"/>
+        <location filename="src/view/FormCvMob.ui" line="757"/>
         <source>Y Trajectory</source>
         <translation>Trajetória do Y</translation>
     </message>
     <message>
-        <location filename="src/view/FormCvMob.ui" line="794"/>
+        <location filename="src/view/FormCvMob.ui" line="765"/>
         <source>Open &amp;Cam</source>
         <translation>Abrir &amp;câmera</translation>
     </message>
@@ -460,124 +454,125 @@ p, li { white-space: pre-wrap; }
         <translation>Escolha um nome para salvar</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="181"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="197"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="745"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="753"/>
         <source>Confirm clearing</source>
         <translation>Confirmar limpeza</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="182"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="181"/>
         <source>Are you sure you want to clear all fixed points from the video?</source>
         <translation>Você está certo que deseja limpar todos os pontos fixos do vídeo?</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="183"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="182"/>
         <source>Note that all the data related to the points will also be deleted.</source>
         <translation>Note que todos os dados relacionados aos pontos também serão excluídos.</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="185"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="183"/>
         <source>Clear all points</source>
         <translation>Limpar todos os pontos</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="186"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="202"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="750"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="758"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="198"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="193"/>
         <source>Are you sure you want to clear all the trajectories from the video?</source>
         <translation>Você está certo que deseja limpar todas as trajetórias do vídeo?</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="199"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="194"/>
         <source>Note that all the data related to the trajectories will also be deleted.</source>
         <translation>Note que todos os dados relacionados às trajetórias também serão excluídos.</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="201"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="195"/>
         <source>Clear all trajectories</source>
         <translation>Limpar todas as trajetórias</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="341"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="693"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="333"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="685"/>
         <source>REC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="346"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="359"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="338"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="351"/>
         <source>Pause</source>
         <translation>Pausar</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="355"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="733"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="347"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="725"/>
         <source>Play</source>
         <translation>Reproduzir</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="394"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="386"/>
         <source>Set a valid value for Calibration</source>
         <translation>Defina um valor válido para a calibração</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="407"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="399"/>
         <source>Calibration successful</source>
         <translation>Calibração concluída com sucesso</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="409"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="401"/>
         <source>Error on Calibration. Use 2 points.</source>
         <translation>Erro ao calibrar. Use 2 pontos.</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="599"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="602"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="605"/>
-        <location filename="src/view/CvMobMainWindow.cpp" line="608"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="591"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="594"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="597"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="600"/>
         <source>seconds</source>
         <translation>segundos</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="600"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="592"/>
         <source>vel (m/s)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="603"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="595"/>
         <source>acc (m/s²)</source>
         <translation>acel (m/s²)</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="606"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="598"/>
         <source>x(T) (m)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="609"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="601"/>
         <source>y(T) (m)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="746"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="737"/>
         <source>Are you sure you want to clear all the angles from the video?</source>
         <translation>Você está certo que deseja limpar todas os ângulos do vídeo?</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="747"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="738"/>
         <source>Note that all the data related to the angles will also be deleted.</source>
         <translation>Note que todos os dados relacionados aos ângulos também serão excluídos.</translation>
     </message>
     <message>
-        <location filename="src/view/CvMobMainWindow.cpp" line="749"/>
+        <location filename="src/view/CvMobMainWindow.cpp" line="739"/>
         <source>Clear all angles</source>
         <translation>Limpar todos os ângulos</translation>
+    </message>
+    <message>
+        <location filename="src/view/CvMobMainWindow.h" line="62"/>
+        <source>Clear all</source>
+        <translation>Limpar tudo</translation>
     </message>
 </context>
 </TS>

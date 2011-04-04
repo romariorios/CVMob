@@ -57,6 +57,10 @@ private:
 
 	int posSliderOld;
 
+	int _clearConfirmationDialog(const QString &message,
+								 const QString &informativeMessage,
+								 const QString &clearAllButton = tr("Clear all"));
+
 private slots:
     void on_updateAngleButton_clicked();
     void on_pushButtonClearAngles_clicked();

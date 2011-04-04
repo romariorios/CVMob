@@ -177,32 +177,24 @@ void CvMobMainWindow::PressStepBack() {
 }
 
 void CvMobMainWindow::FreeFixPoints() {
-    QMessageBox confirmClear;
-    confirmClear.setWindowTitle(tr("Confirm clearing"));
-    confirmClear.setText(tr("Are you sure you want to clear all fixed points from the video?"));
-    confirmClear.setInformativeText(tr("Note that all the data related to the points will also be deleted."));
-    confirmClear.setIcon(QMessageBox::Question);
-    confirmClear.addButton(tr("Clear all points"), QMessageBox::AcceptRole);
-    confirmClear.addButton(tr("Cancel"), QMessageBox::RejectRole);
-
-    if (confirmClear.exec() != QMessageBox::Accepted) {
-        return;
+    if (_clearConfirmationDialog(
+                tr("Are you sure you want to clear all fixed points from the video?"),
+                tr("Note that all the data related to the points will also be deleted."),
+                tr("Clear all points")
+                )) {
+        return; // I don't understand why, but it works this way
     }
 
         FacadeController::getInstance()->freeFixPoints();
 }
 
 void CvMobMainWindow::freeTrajPoints() {
-    QMessageBox confirmClear;
-    confirmClear.setWindowTitle(tr("Confirm clearing"));
-    confirmClear.setText(tr("Are you sure you want to clear all the trajectories from the video?"));
-    confirmClear.setInformativeText(tr("Note that all the data related to the trajectories will also be deleted."));
-    confirmClear.setIcon(QMessageBox::Question);
-    confirmClear.addButton(tr("Clear all trajectories"), QMessageBox::AcceptRole);
-    confirmClear.addButton(tr("Cancel"), QMessageBox::RejectRole);
-
-    if (confirmClear.exec() != QMessageBox::Accepted) {
-        return;
+    if (_clearConfirmationDialog(
+                tr("Are you sure you want to clear all the trajectories from the video?"),
+                tr("Note that all the data related to the trajectories will also be deleted."),
+                tr("Clear all trajectories")
+                )) {
+        return; // I don't understand why, but it works this way
     }
 
     foreach ( Plot* plot , plots){
@@ -741,19 +733,30 @@ void view::CvMobMainWindow::on_closedImgView()
 
 void view::CvMobMainWindow::on_pushButtonClearAngles_clicked()
 {
-    QMessageBox confirmClear;
-    confirmClear.setWindowTitle(tr("Confirm clearing"));
-    confirmClear.setText(tr("Are you sure you want to clear all the angles from the video?"));
-    confirmClear.setInformativeText(tr("Note that all the data related to the angles will also be deleted."));
-    confirmClear.setIcon(QMessageBox::Question);
-    confirmClear.addButton(tr("Clear all angles"), QMessageBox::AcceptRole);
-    confirmClear.addButton(tr("Cancel"), QMessageBox::RejectRole);
-
-    if (confirmClear.exec() != QMessageBox::Accepted) {
-        return;
+    if (_clearConfirmationDialog(
+                tr("Are you sure you want to clear all the angles from the video?"),
+                tr("Note that all the data related to the angles will also be deleted."),
+                tr("Clear all angles")
+                )) {
+        return; // I don't understand why, but it works this way
     }
 
     FacadeController::getInstance()->freeAnglePoints();
     ui.comboBoxAngle->clear();
+}
+
+int view::CvMobMainWindow::_clearConfirmationDialog(const QString &message,
+                                                    const QString &informativeMessage,
+                                                    const QString &clearAllButton)
+{
+    QMessageBox confirmClear;
+    confirmClear.setWindowTitle(tr("Confirm clearing"));
+    confirmClear.setText(message);
+    confirmClear.setInformativeText(informativeMessage);
+    confirmClear.setIcon(QMessageBox::Question);
+    confirmClear.addButton(clearAllButton, QMessageBox::AcceptRole);
+    confirmClear.addButton(tr("Cancel"), QMessageBox::RejectRole);
+
+    return confirmClear.exec() == QMessageBox::Accepted;
 }
 
