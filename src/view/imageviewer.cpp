@@ -6,7 +6,6 @@ using namespace std;
 imageViewer::imageViewer()
 {
     this->setGeometry(0,0,0,0);
-    this->setCursor(Qt::CrossCursor);
     this->penFixPoint = QPen(QColor(0, 0, 255));
     this->penLineFixPoint = QPen(QColor(0, 0, 255));
     this->bruTextPanel = QBrush(QColor(0,0,255,100));
