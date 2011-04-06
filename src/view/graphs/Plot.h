@@ -24,7 +24,7 @@ class Plot : public QwtPlot{
 public:
 	Plot(QString Title, QString AxisXTitle, QString AxisYTitle);
 	void addCurve(int index, int r, int g, int b);
-        void setData(int curve, double *xData,double *yData, int sizeData);
+        void setData(int curve, QVector<double> xData, QVector<double> yData);
 	void releaseCurves();
 	void setXAxisTitle(QString title);
 	void setYAxisTitle(QString title);

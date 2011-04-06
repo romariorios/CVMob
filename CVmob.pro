@@ -45,15 +45,26 @@ FORMS    += \
 
 TRANSLATIONS += pt_BR_cvmob.ts
 
-#OTHER_FILES += \
-#    src/model/exporter/exporter.event
+win32 {
+    LIBS += \
+        -LC:\OpenCV2.2\lib \
+        -lopencv_core220 \
+        -lopencv_highgui220 \
+        -lopencv_imgproc220 \
+        -lopencv_video220 \
+        -LC:\Qwt-6.0.0-rc5\lib \
 
-LIBS += -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml \
-    -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect \
-    -lopencv_contrib -lopencv_legacy -lopencv_flann \
-    -lqwt \
-    -lQtSvg
-INCLUDEPATH += qwt
+    INCLUDEPATH += C:\Qwt-6.0.0-rc5\include
+    INCLUDEPATH += C:\OpenCV2.2\include
+}
+linux-g++ {
+    LIBS += -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml \
+        -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect \
+        -lopencv_contrib -lopencv_legacy -lopencv_flann \
+        -lQtSvg
+    INCLUDEPATH += qwt
+}
+LIBS += -lqwt
 
 OTHER_FILES += \
     pt_BR_cvmob.ts \

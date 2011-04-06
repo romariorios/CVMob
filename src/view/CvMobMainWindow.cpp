@@ -123,7 +123,7 @@ void CvMobMainWindow::initializePlots(){
 }
 
 void CvMobMainWindow::FileOpen() {
-    QString filename = QFileDialog::getOpenFileName(this, tr("Choose a file to open"),".",tr("Movie (*.avi)")).toUtf8();
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose a file to open"),".",tr("Movie (*.avi)")).toLocal8Bit();
         if(!filename.isEmpty())
         {
             if(!imgVwr->isHidden())
@@ -415,23 +415,23 @@ void CvMobMainWindow::addCurve(int index, int r, int g, int b){
 }
 
 void CvMobMainWindow::updateVelocity(int index, QVector <double> time, QVector <double> velocity, int actualTime ){
-    plots.at(VELOCITY)->setData(index,time.data()+2,velocity.data()+2,velocity.size()-2);
+    plots.at(VELOCITY)->setData(index, time, velocity);
 }
 
 void CvMobMainWindow::updateAcceleration(int index, QVector <double> time, QVector <double> acceleration, int actualTime ){
-    plots.at(ACCELERATION)->setData(index,time.data()+4,acceleration.data()+4,acceleration.size()-4);
+    plots.at(ACCELERATION)->setData(index, time, acceleration);
 }
 
 void CvMobMainWindow::updateWork(int index, QVector <double> time, QVector <double> work, int actualTime ){
-    plots.at(WORK)->setData(index,time.data(),work.data(),work.size());
+    plots.at(WORK)->setData(index, time, work);
 }
 
 void CvMobMainWindow::updateTraj_x(int index, QVector <double> time, QVector <double> traj_x, int actualTime ){
-    plots.at(TRAJ_X)->setData(index,time.data(),traj_x.data(),traj_x.size());
+    plots.at(TRAJ_X)->setData(index, time, traj_x);
 }
 
 void CvMobMainWindow::updateTraj_y(int index, QVector <double> time, QVector <double> traj_y, int actualTime ){
-    plots.at(TRAJ_Y)->setData(index,time.data(),traj_y.data(),traj_y.size());
+    plots.at(TRAJ_Y)->setData(index, time, traj_y);
 }
 
 void CvMobMainWindow::updateImage(Mat image ){
