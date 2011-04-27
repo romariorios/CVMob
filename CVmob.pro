@@ -54,17 +54,17 @@ win32 {
         -lopencv_video220 \
         -LC:\Qwt-6.0.0-rc5\lib \
 
-    INCLUDEPATH += C:\Qwt-6.0.0-rc5\include
+    INCLUDEPATH += C:\Qwt-6.0.0\include
     INCLUDEPATH += C:\OpenCV2.2\include
 }
-linux-g++ {
+linux-g++-64 {
     LIBS += -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml \
         -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect \
         -lopencv_contrib -lopencv_legacy -lopencv_flann \
         -lQtSvg
     INCLUDEPATH += qwt
+    LIBS += -lqwt
 }
-LIBS += -lqwt
 
 OTHER_FILES += \
     pt_BR_cvmob.ts \

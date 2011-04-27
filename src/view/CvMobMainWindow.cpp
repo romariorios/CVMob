@@ -186,6 +186,7 @@ void CvMobMainWindow::FreeFixPoints() {
     }
 
         FacadeController::getInstance()->freeFixPoints();
+        ui.tableViewFixPt->model()->removeRows(0, ui.tableViewFixPt->model()->rowCount(QModelIndex()));
 }
 
 void CvMobMainWindow::freeTrajPoints() {
@@ -203,7 +204,7 @@ void CvMobMainWindow::freeTrajPoints() {
     };
         FacadeController::getInstance()->freeTrajPoints();
         ui.comboBoxPoint->clear();
-
+    ui.tableViewTraj->model()->removeRows(0, ui.tableViewTraj->model()->rowCount(QModelIndex()));
 }
 
 void CvMobMainWindow::CheckGrid(int checked) {
@@ -743,6 +744,7 @@ void view::CvMobMainWindow::on_pushButtonClearAngles_clicked()
 
     FacadeController::getInstance()->freeAnglePoints();
     ui.comboBoxAngle->clear();
+    ui.tableViewAngle->model()->removeRows(0, ui.tableViewAngle->model()->rowCount(QModelIndex()));
 }
 
 int view::CvMobMainWindow::_clearConfirmationDialog(const QString &message,
