@@ -42,10 +42,10 @@ Plot::Plot(QString Title, QString AxisXTitle, QString AxisYTitle) {
 void Plot::addCurve(int index, int r, int g, int b){
 	QwtPlotCurve* curve = new QwtPlotCurve();
 	curve->setStyle(QwtPlotCurve::Lines);
-	QwtSymbol sym;
-	sym.setStyle(QwtSymbol::Cross);
-	sym.setPen(QColor::fromRgb(r,g,b));
-	sym.setSize(5);
+        QwtSymbol *sym = new QwtSymbol;
+        sym->setStyle(QwtSymbol::Cross);
+        sym->setPen(QColor::fromRgb(r,g,b));
+        sym->setSize(5);
 	curve->setSymbol(sym);
 
 #if QT_VERSION >= 0x040000
@@ -57,8 +57,9 @@ void Plot::addCurve(int index, int r, int g, int b){
 }
 
 
-void Plot::setData(int curve, double *xData,double *yData, int sizeData){
-    curves.at(curve)->setData(xData,yData, sizeData);
+void Plot::setData(int curve, QVector<double> xData, QVector<double> yData){
+
+    curves.at(curve)->setSamples(xData, yData);
 }
 
 void Plot::releaseCurves(){

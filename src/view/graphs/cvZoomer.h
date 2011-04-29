@@ -8,6 +8,7 @@
 #ifndef CVZOOMER_H_
 #define CVZOOMER_H_
 #include <qwt/qwt_plot_zoomer.h>
+#include <qwt/qwt_compat.h>
 
 class cvZoomer: public QwtPlotZoomer
 {
@@ -18,12 +19,12 @@ public:
         setTrackerMode(AlwaysOn);
     }
 
-    virtual QwtText trackerText(const QwtDoublePoint &pos) const
+    virtual QwtText trackerTextF(const QwtDoublePoint &pos) const
     {
         QColor bg(Qt::white);
        bg.setAlpha(200);
 
-        QwtText text = QwtPlotZoomer::trackerText(pos);
+        QwtText text = QwtPlotZoomer::trackerTextF(pos);
         text.setBackgroundBrush( QBrush( bg ));
         return text;
     }
