@@ -16,32 +16,29 @@ HEADERS += model/OpenCV/Angle.h \
     view/graphs/cvZoomer.h \
     model/OpenCV/Point.h \
     model/OpenCV/ProxyOpenCv.h \
-    controller/FacadeController.h \
-    view/imageviewer.h \
     view/options.h \
     view/aboutdialog.h \
     view/reportdialog.h \
     view/cvmobmainwindow.h \
-    model/fixedpointstablemodel.h
+    view/videoview.h \
+    model/cvmobmodel.hpp
 SOURCES += model/exporter/ExportText.cpp \
     model/exporter/IExportStrategy.cpp \
     model/PhisicsCalc.cpp \
     view/graphs/Plot.cpp \
     model/OpenCV/ProxyOpenCv.cpp \
-    controller/FacadeController.cpp \
     main.cpp \
-    view/imageviewer.cpp \
     view/options.cpp \
     view/aboutdialog.cpp \
     model/OpenCV/Angle.cpp \
     view/reportdialog.cpp \
     view/cvmobmainwindow.cpp \
-    model/fixedpointstablemodel.cpp
+    view/videoview.cpp \
+    model/cvmobmodel.cpp
 
 FORMS    += \
     view/reportdialog.ui \
     view/DialogCalibration.ui \
-    view/dialog.ui \
     view/aboutDialog.ui \
     view/cvmobmainwindow.ui
 
