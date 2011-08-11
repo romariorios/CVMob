@@ -7,14 +7,14 @@
 #include <QPair>
 #include <QPointF>
 
-class CvmobModel : public QAbstractItemModel
+class CvmobVideoModel : public QAbstractItemModel
 {
     Q_OBJECT
 
     struct LinearTrajectoryInstant
     {
         int frame;
-        QPoint position, speed, acceleration;
+        QPointF position, speed, acceleration;
     };
 
     struct LinearTrajectory
@@ -25,8 +25,8 @@ class CvmobModel : public QAbstractItemModel
     struct AngularTrajectoryInstant
     {
         int frame, speed, acceleration;
-        QPoint centralEdge;
-        QPair<QPoint, QPoint> peripheralEdges;
+        QPointF centralEdge;
+        QPair<QPointF, QPointF> peripheralEdges;
     };
 
     struct AngularTrajectory
@@ -66,12 +66,16 @@ class CvmobModel : public QAbstractItemModel
             parent(e_parent) {}
     };
 
-    QList<Video> *_cvmobData;
+    QList<Video> *_cvmobVideoData;
 
-    double _calculateDistance(long row) const;
+    double calculateDistance(long row) const;
+    template <class T> bool checkAndInsertRowsIn(QList<T> &l,
+                                                 int row,
+                                                 int count,
+                                                 QModelIndex parent = QModelIndex());
 
 public:
-    explicit CvmobModel(QObject *parent = 0);
+    explicit CvmobVideoModel(QObject *parent = 0);
 
     enum GraphicsViewRole
     {

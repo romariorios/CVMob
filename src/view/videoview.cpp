@@ -34,7 +34,7 @@ QRect VideoView::visualRect(const QModelIndex &index) const
 
 void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
-    CvmobModel *model = static_cast<CvmobModel *>(const_cast<QAbstractItemModel *>(topLeft.model()));
+    CvmobVideoModel *model = static_cast<CvmobVideoModel *>(const_cast<QAbstractItemModel *>(topLeft.model()));
 
     for (int i = topLeft.row(); i < bottomRight.row(); ++i) {
         QGraphicsLineItem *line = new QGraphicsLineItem(QLineF(model->data(model->index(i, 0)).toPointF(),

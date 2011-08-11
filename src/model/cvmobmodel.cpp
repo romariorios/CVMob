@@ -2,13 +2,13 @@
 
 #include <cmath>
 
-CvmobModel::CvmobModel(QObject *parent) :
+CvmobVideoModel::CvmobVideoModel(QObject *parent) :
     QAbstractItemModel(parent),
-    _cvmobData(new QList<CvmobModel::Video>)
+    _cvmobVideoData(new QList<CvmobVideoModel::Video>)
 {
 }
 
-QModelIndex CvmobModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex CvmobVideoModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
         return createIndex(row, column, new InternalData(VideoData, row));
@@ -41,7 +41,7 @@ QModelIndex CvmobModel::index(int row, int column, const QModelIndex &parent) co
     return QModelIndex();
 }
 
-QModelIndex CvmobModel::parent(const QModelIndex &child) const
+QModelIndex CvmobVideoModel::parent(const QModelIndex &child) const
 {
     if (!child.isValid()) {
         return QModelIndex();
@@ -76,7 +76,7 @@ QModelIndex CvmobModel::parent(const QModelIndex &child) const
     return createIndex(childParent->row, parentColumn, childParent);
 }
 
-QVariant CvmobModel::data(const QModelIndex &index, int role) const
+QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
 {
     if (role != VideoSceneRole ||
         role != VideoSceneEditRole ||
@@ -88,7 +88,7 @@ QVariant CvmobModel::data(const QModelIndex &index, int role) const
     InternalData *internalPointer = static_cast<InternalData *>(index.internalPointer());
 
     if (internalPointer->type == VideoData) {
-        Video currentVideo = _cvmobData->at(index.row());
+        Video currentVideo = _cvmobVideoData->at(index.row());
 
         switch (index.column()) {
         case 0:
@@ -105,7 +105,7 @@ QVariant CvmobModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
 
-        Video currentVideo = _cvmobData->at(internalPointer->parent->row);
+        Video currentVideo = _cvmobVideoData->at(internalPointer->parent->row);
 
         switch (index.column()) {
         case 0:
@@ -121,7 +121,7 @@ QVariant CvmobModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
 
-        Video currentVideo = _cvmobData->at(parentPointer->parent->row);
+        Video currentVideo = _cvmobVideoData->at(parentPointer->parent->row);
 
         if (internalPointer->type == LinearTrajectoryInstantData) {
             LinearTrajectory currentTrajectory = currentVideo.linearTrajectories.at(parentPointer->row);
@@ -161,7 +161,7 @@ QVariant CvmobModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant CvmobModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant CvmobVideoModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != VideoSceneRole ||
         role != VideoSceneEditRole ||
@@ -185,7 +185,7 @@ QVariant CvmobModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant();
 }
 
-int CvmobModel::columnCount(const QModelIndex &parent) const
+int CvmobVideoModel::columnCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
         return 7;
@@ -209,14 +209,14 @@ int CvmobModel::columnCount(const QModelIndex &parent) const
     return 0;
 }
 
-int CvmobModel::rowCount(const QModelIndex &parent) const
+int CvmobVideoModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
-        return _cvmobData->size();
+        return _cvmobVideoData->size();
     }
 
     InternalData *internalPointer = static_cast<InternalData *>(parent.internalPointer());
-    Video parentVideo = _cvmobData->at(internalPointer->row);
+    Video parentVideo = _cvmobVideoData->at(internalPointer->row);
 
     if (internalPointer->type == VideoData) {
         switch (parent.column()) {
@@ -242,4 +242,178 @@ int CvmobModel::rowCount(const QModelIndex &parent) const
     }
 
     return 0;
+}
+
+Qt::ItemFlags CvmobVideoModel::flags(const QModelIndex &index) const
+{
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}
+
+bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (role != VideoSceneEditRole ||
+        !index.isValid() ||
+        !value.isValid()) {
+        return false;
+    }
+
+    InternalData *internalPointer = static_cast<InternalData *>(index.internalPointer());
+
+    if (internalPointer->type == VideoData) {
+        Video &currentVideo = (*_cvmobVideoData)[index.row()];
+
+        switch (index.column()) {
+        case 0:
+            currentVideo.fileName = value.toString();
+            return true;
+        case 1:
+            currentVideo.currentFrame = value.toInt();
+            return true;
+        case 2:
+            currentVideo.frameCount = value.toInt();
+            return true;
+        case 3:
+            currentVideo.frameDuration = value.toInt();
+            return true;
+        }
+    } else if (internalPointer->type == DistanceData) {
+        if (!internalPointer->parent) {
+            return false;
+        }
+
+        Video &currentVideo = (*_cvmobVideoData)[internalPointer->parent->row];
+
+        switch (index.column()) {
+        case 0:
+            currentVideo.distances[index.row()].first = value.toPointF();
+            return true;
+        case 1:
+            currentVideo.distances[index.row()].second = value.toPointF();
+            return true;
+        }
+    } else {
+        InternalData *parentPointer = internalPointer->parent;
+
+        if (!parentPointer &&
+            !parentPointer->parent) {
+            return false;
+        }
+
+        Video &currentVideo = (*_cvmobVideoData)[parentPointer->parent->row];
+
+        if (internalPointer->type == LinearTrajectoryInstantData) {
+            LinearTrajectory &currentTrajectory = currentVideo.linearTrajectories[parentPointer->row];
+            LinearTrajectoryInstant &currentInstant = currentTrajectory.instants[index.row()];
+
+            switch (index.column()) {
+            case 0:
+                currentInstant.frame = value.toInt();
+                return true;
+            case 1:
+                currentInstant.position = value.toPointF();
+                return true;
+            case 2:
+                currentInstant.speed = value.toPointF();
+                return true;
+            case 3:
+                currentInstant.acceleration = value.toPointF();
+                return true;
+            }
+        } else if (internalPointer->type == AngularTrajectoryInstantData) {
+            AngularTrajectory &currentTrajectory = currentVideo.angularTrajectories[parentPointer->row];
+            AngularTrajectoryInstant &currentInstant = currentTrajectory.instants[index.row()];
+
+            switch (index.column()) {
+            case 0:
+                currentInstant.frame = value.toInt();
+                return true;
+            case 1:
+                currentInstant.speed = value.toInt();
+                return true;
+            case 2:
+                currentInstant.acceleration = value.toInt();
+                return true;
+            case 3:
+                currentInstant.centralEdge = value.toPointF();
+                return true;
+            case 4:
+                currentInstant.peripheralEdges.first = value.toPointF();
+                return true;
+            case 5:
+                currentInstant.peripheralEdges.second = value.toPointF();
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+template <class T> bool CvmobVideoModel::checkAndInsertRowsIn(QList<T> &l,
+                                                              int row,
+                                                              int count,
+                                                              QModelIndex parent)
+{
+    int first = row;
+    int last = row + count - 1;
+
+    if (first > l.size()) {
+        return false;
+    }
+
+    beginInsertRows(parent, first, last);
+
+    for (int i = 0; i < count; ++i) {
+        l.insert(row, *new T);
+    }
+
+    endInsertRows();
+
+    return true;
+}
+
+bool CvmobVideoModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    if (!parent.isValid()) {
+        return checkAndInsertRowsIn<Video>(*_cvmobVideoData, row, count);
+    }
+
+    InternalData *parentPointer = static_cast<InternalData *>(parent.internalPointer());
+    Video &currentVideo = (*_cvmobVideoData)[parentPointer->row];
+
+    if (parentPointer->type == VideoData) {
+        switch (parent.column()) {
+        case 4:
+            return checkAndInsertRowsIn<QPair<QPointF, QPointF> >(currentVideo.distances, row, count, parent);
+        case 5:
+            return checkAndInsertRowsIn<LinearTrajectory>(currentVideo.linearTrajectories, row, count, parent);
+        case 6:
+            return checkAndInsertRowsIn<AngularTrajectory>(currentVideo.angularTrajectories, row, count, parent);
+        default:
+            return false;
+        }
+    }
+    else if (parent.column() != 0) {
+        return false;
+    } else {
+        InternalData *grandparentPointer = parentPointer->parent;
+
+        if (!grandparentPointer) {
+            return false;
+        }
+
+        if (parentPointer->type == LinearTrajectoryData) {
+            return checkAndInsertRowsIn<LinearTrajectoryInstant>(
+                        currentVideo.linearTrajectories[grandparentPointer->row].instants,
+                        row,
+                        count,
+                        parent);
+        } else if (parentPointer->type == AngularTrajectoryData) {
+            return checkAndInsertRowsIn<AngularTrajectoryInstant>(
+                        currentVideo.angularTrajectories[grandparentPointer->row].instants,
+                        row,
+                        count,
+                        parent);
+        }
+    }
 }

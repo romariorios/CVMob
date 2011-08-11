@@ -6,7 +6,7 @@
 #include <opencv/cv.h>
 #include <QList>
 
-class CvmobModel;
+class CvmobVideoModel;
 class QStandardItemModel;
 class VideoView;
 
@@ -19,7 +19,7 @@ class CvMobMainWindow : public QMainWindow
     Q_OBJECT
 
     Ui::CvMobMainWindow *_ui;
-    CvmobModel *_distancesModel;
+    CvmobVideoModel *_distancesModel;
     VideoView *_videoView;
 
 private slots:

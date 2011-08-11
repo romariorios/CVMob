@@ -10,7 +10,7 @@
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::CvMobMainWindow),
-    _distancesModel(new CvmobModel),
+    _distancesModel(new CvmobVideoModel),
     _videoView(new VideoView)
 {
     _ui->setupUi(this);
