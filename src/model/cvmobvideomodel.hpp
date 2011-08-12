@@ -72,7 +72,11 @@ class CvmobVideoModel : public QAbstractItemModel
     template <class T> bool checkAndInsertRowsIn(QList<T> &l,
                                                  int row,
                                                  int count,
-                                                 QModelIndex parent = QModelIndex());
+                                                 const QModelIndex &parent = QModelIndex());
+    template <class T> bool checkAndRemoveRowsFrom(QList<T> &l,
+                                                   int row,
+                                                   int count,
+                                                   const QModelIndex &parent = QModelIndex());
 
 public:
     explicit CvmobVideoModel(QObject *parent = 0);

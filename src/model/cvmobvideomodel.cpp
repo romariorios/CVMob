@@ -1,4 +1,4 @@
-#include "cvmobmodel.hpp"
+#include "cvmobvideomodel.hpp"
 
 #include <cmath>
 
@@ -27,6 +27,8 @@ QModelIndex CvmobVideoModel::index(int row, int column, const QModelIndex &paren
             return createIndex(row, column, new InternalData(LinearTrajectoryData, row, parentInternalPointer));
         case 6:
             return createIndex(row, column, new InternalData(AngularTrajectoryData, row, parentInternalPointer));
+        default:
+            break;
         }
     case LinearTrajectoryData:
         if (parentColumn == 0) {
@@ -36,6 +38,8 @@ QModelIndex CvmobVideoModel::index(int row, int column, const QModelIndex &paren
         if (parentColumn == 0) {
             return createIndex(row, column, new InternalData(AngularTrajectoryInstantData, row, parentInternalPointer));
         }
+    default:
+        break;
     }
 
     return QModelIndex();
@@ -199,11 +203,15 @@ int CvmobVideoModel::columnCount(const QModelIndex &parent) const
         case 5:
         case 6:
             return 1;
+        default:
+            break;
         }
     case LinearTrajectoryData:
         return 4;
     case AngularTrajectoryData:
         return 6;
+    default:
+        break;
     }
 
     return 0;
@@ -352,7 +360,7 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
 template <class T> bool CvmobVideoModel::checkAndInsertRowsIn(QList<T> &l,
                                                               int row,
                                                               int count,
-                                                              QModelIndex parent)
+                                                              const QModelIndex &parent)
 {
     int first = row;
     int last = row + count - 1;
@@ -416,4 +424,77 @@ bool CvmobVideoModel::insertRows(int row, int count, const QModelIndex &parent)
                         parent);
         }
     }
+
+    return false;
+}
+
+template <class T> bool CvmobVideoModel::checkAndRemoveRowsFrom(QList<T> &l,
+                                                                int row,
+                                                                int count,
+                                                                const QModelIndex &parent)
+{
+    int first = row;
+    int last = row + count - 1;
+
+    if (last >= l.size()) {
+        return false;
+    }
+
+    beginRemoveRows(parent, first, last);
+
+    for (int i = 0; i < count; ++i) {
+        l.removeAt(row);
+    }
+
+    endInsertRows();
+
+    return true;
+}
+
+bool CvmobVideoModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    if (!parent.isValid()) {
+        return checkAndRemoveRowsFrom<Video>(*_cvmobVideoData, row, count);
+    }
+
+    InternalData *parentPointer = static_cast<InternalData *>(parent.internalPointer());
+    Video &currentVideo = (*_cvmobVideoData)[parentPointer->row];
+
+    if (parentPointer->type == VideoData) {
+        switch (parent.column()) {
+        case 4:
+            return checkAndRemoveRowsFrom<QPair<QPointF, QPointF> >(currentVideo.distances, row, count, parent);
+        case 5:
+            return checkAndRemoveRowsFrom<LinearTrajectory>(currentVideo.linearTrajectories, row, count, parent);
+        case 6:
+            return checkAndRemoveRowsFrom<AngularTrajectory>(currentVideo.angularTrajectories, row, count, parent);
+        default:
+            return false;
+        }
+    }
+    else if (parent.column() != 0) {
+        return false;
+    } else {
+        InternalData *grandparentPointer = parentPointer->parent;
+
+        if (!grandparentPointer) {
+            return false;
+        }
+
+        if (parentPointer->type == LinearTrajectoryData) {
+            return checkAndRemoveRowsFrom<LinearTrajectoryInstant>(
+                        currentVideo.linearTrajectories[grandparentPointer->row].instants,
+                        row,
+                        count,
+                        parent);
+        } else if (parentPointer->type == AngularTrajectoryData) {
+            return checkAndRemoveRowsFrom<AngularTrajectoryInstant>(
+                        currentVideo.angularTrajectories[grandparentPointer->row].instants,
+                        row,
+                        count,
+                        parent);
+        }
+    }
+
+    return false;
 }
