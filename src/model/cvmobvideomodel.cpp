@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include <QDebug>
+
 CvmobVideoModel::CvmobVideoModel(QObject *parent) :
     QAbstractItemModel(parent),
     _cvmobVideoData(new QList<CvmobVideoModel::Video>)
@@ -21,11 +23,11 @@ QModelIndex CvmobVideoModel::index(int row, int column, const QModelIndex &paren
     switch (parentInternalPointerType) {
     case VideoData:
         switch (parentColumn) {
-        case 4:
+        case 0:
             return createIndex(row, column, new InternalData(DistanceData, row, parentInternalPointer));
-        case 5:
+        case 1:
             return createIndex(row, column, new InternalData(LinearTrajectoryData, row, parentInternalPointer));
-        case 6:
+        case 2:
             return createIndex(row, column, new InternalData(AngularTrajectoryData, row, parentInternalPointer));
         default:
             break;
@@ -61,13 +63,13 @@ QModelIndex CvmobVideoModel::parent(const QModelIndex &child) const
 
     switch (childParent->type) {
     case DistanceData:
-        parentColumn = 4;
+        parentColumn = 0;
         break;
     case LinearTrajectoryData:
-        parentColumn = 5;
+        parentColumn = 1;
         break;
     case AngularTrajectoryData:
-        parentColumn = 6;
+        parentColumn = 2;
         break;
     case LinearTrajectoryInstantData:
     case AngularTrajectoryInstantData:

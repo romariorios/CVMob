@@ -19,7 +19,7 @@ class CvMobMainWindow : public QMainWindow
     Q_OBJECT
 
     Ui::CvMobMainWindow *_ui;
-    CvmobVideoModel *_distancesModel;
+    CvmobVideoModel *_videoModel;
     VideoView *_videoView;
 
 private slots:

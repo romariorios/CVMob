@@ -84,8 +84,11 @@ public:
     enum GraphicsViewRole
     {
         VideoSceneRole,
-        VideoSceneEditRole
+        VideoSceneEditRole,
+        VideoListRole
     };
+
+    void qDebugDataInRow(int row);
 
 signals:
 

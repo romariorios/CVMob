@@ -1,17 +1,15 @@
 #ifndef VIDEOVIEW_H
 #define VIDEOVIEW_H
 
-#include <QAbstractItemView>
+#include <QtGui/QAbstractItemView>
+#include <QtGui/QGraphicsView>
 
 class QGraphicsScene;
-class QGraphicsView;
 
-class VideoView : public QAbstractItemView
+// FIXME: Qt doesn't support multiple inheritance
+class VideoView : public QAbstractItemView, public QGraphicsView
 {
     Q_OBJECT
-
-    QGraphicsScene *_scene;
-    QGraphicsView *_view;
 
 public:
     explicit VideoView(QWidget *parent = 0);

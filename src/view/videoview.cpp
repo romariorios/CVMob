@@ -1,6 +1,6 @@
 #include "videoview.h"
 
-#include <model/cvmobmodel.hpp>
+#include <model/cvmobvideomodel.hpp>
 #include <QtGui/QGraphicsItem>
 #include <QtGui/QGraphicsLineItem>
 #include <QtGui/QGraphicsScene>
@@ -12,15 +12,8 @@
 
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
-    _scene(new QGraphicsScene)
-{
-    _view = new QGraphicsView(_scene);
-
-    QVBoxLayout *layout = new QVBoxLayout(this->viewport());
-    layout->addWidget(_view);
-
-    _scene->addEllipse(0, 0, 100, 100);
-}
+    QGraphicsView(new QGraphicsScene, parent)
+{}
 
 QRect VideoView::visualRect(const QModelIndex &index) const
 {
@@ -37,10 +30,11 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
     CvmobVideoModel *model = static_cast<CvmobVideoModel *>(const_cast<QAbstractItemModel *>(topLeft.model()));
 
     for (int i = topLeft.row(); i < bottomRight.row(); ++i) {
-        QGraphicsLineItem *line = new QGraphicsLineItem(QLineF(model->data(model->index(i, 0)).toPointF(),
-                                                               model->data(model->index(i, 1)).toPointF()));
+        QGraphicsLineItem *line = new QGraphicsLineItem(
+                    QLineF(model->data(model->index(0, 0, model->index(0, 4))).toPointF(),
+                           model->data(model->index(0, 1, model->index(0, 4))).toPointF()));
 
-        _scene->addItem(line);
+        scene()->addItem(line);
     }
 }
 
@@ -52,7 +46,7 @@ void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint
 
 QModelIndex VideoView::indexAt(const QPoint &point) const
 {
-    foreach (QGraphicsItem *item, _scene->items(point, Qt::ContainsItemShape, Qt::AscendingOrder)) {
+    foreach (QGraphicsItem *item, scene()->items(point, Qt::ContainsItemShape, Qt::AscendingOrder)) {
         for (int i = 0; i < model()->rowCount(); ++i) {
             QModelIndex index = model()->index(i, 0);
             if (index.data().toPointF() == item->boundingRect().topLeft()) {
@@ -112,13 +106,13 @@ void VideoView::resizeEvent(QResizeEvent *event)
         change.setHeight(3*change.width()/4);
     }
 
-    QSizeF sceneSize = _scene->sceneRect().size() + change;
-    QRectF sceneRect = _scene->sceneRect();
+    QSizeF sceneSize = scene()->sceneRect().size() + change;
+    QRectF sceneRect = scene()->sceneRect();
     sceneRect.setSize(sceneSize);
 
     qDebug() << event->size();
     qDebug() << event->oldSize();
     qDebug() << sceneRect;
 
-    _scene->setSceneRect(sceneRect);
+    scene()->setSceneRect(sceneRect);
 }
