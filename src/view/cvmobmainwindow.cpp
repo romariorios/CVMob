@@ -26,16 +26,16 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
 
     _videoModel->insertRow(0);
-    _videoModel->insertColumns(0, 7);
+    _videoModel->insertColumns(0, 4);
     _videoModel->setData(_videoModel->index(0, 0), "test.avi", CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(0, 1), 0, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(0, 2), 600, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(0, 3), 100, CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->insertRow(0, _videoModel->index(0, 4));
-    _videoModel->insertColumns(0, 2, _videoModel->index(0, 4));
-    _videoModel->setData(_videoModel->index(0, 0, _videoModel->index(0, 4)), QPointF(0, 0),
+    _videoModel->insertRow(0, _videoModel->index(0, 0));
+    _videoModel->insertColumns(0, 2, _videoModel->index(0, 0));
+    _videoModel->setData(_videoModel->index(0, 0, _videoModel->index(0, 0)), QPointF(0, 0),
                          CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(0, 1, _videoModel->index(0, 4)), QPointF(100, 100),
+    _videoModel->setData(_videoModel->index(0, 1, _videoModel->index(0, 0)), QPointF(100, 100),
                          CvmobVideoModel::VideoSceneEditRole);
 }
 

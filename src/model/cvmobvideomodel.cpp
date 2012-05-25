@@ -393,11 +393,11 @@ bool CvmobVideoModel::insertRows(int row, int count, const QModelIndex &parent)
 
     if (parentPointer->type == VideoData) {
         switch (parent.column()) {
-        case 4:
+        case 0:
             return checkAndInsertRowsIn<QPair<QPointF, QPointF> >(currentVideo.distances, row, count, parent);
-        case 5:
+        case 1:
             return checkAndInsertRowsIn<LinearTrajectory>(currentVideo.linearTrajectories, row, count, parent);
-        case 6:
+        case 2:
             return checkAndInsertRowsIn<AngularTrajectory>(currentVideo.angularTrajectories, row, count, parent);
         default:
             return false;

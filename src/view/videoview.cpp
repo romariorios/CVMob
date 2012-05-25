@@ -5,20 +5,25 @@
 #include <QtGui/QGraphicsLineItem>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QVBoxLayout>
+
+#include <QtGui/QLabel>
 
 #include <QDebug>
 
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
-    _viewport(new QGraphicsView)
+    _view(new QGraphicsView)
 {
-    setViewport(_viewport);
+    _view->setScene(new QGraphicsScene(_view));
+    _view->setSceneRect(0, 0, _view->width() - 7, _view->height() - 7);
 
-    _viewport->setScene(new QGraphicsScene(fitRectWithProportion(_viewport->rect(), 4./3),
-                                           _viewport));
-    _viewport->scene()->addLine(0, 0, 100, 100);
+    new QHBoxLayout(viewport());
+    viewport()->layout()->addWidget(_view);
+    viewport()->layout()->setMargin(0);
+    viewport()->layout()->setSpacing(0);
 }
 
 QRect VideoView::visualRect(const QModelIndex &index) const
@@ -40,7 +45,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
                     QLineF(model->data(model->index(0, 0, model->index(0, 0))).toPointF(),
                            model->data(model->index(0, 1, model->index(0, 0))).toPointF()));
 
-        _viewport->scene()->addItem(line);
+        _view->scene()->addItem(line);
     }
 }
 
@@ -52,7 +57,7 @@ void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint
 
 QModelIndex VideoView::indexAt(const QPoint &point) const
 {
-    foreach (QGraphicsItem *item, _viewport->scene()->items(point, Qt::ContainsItemShape, Qt::AscendingOrder)) {
+    foreach (QGraphicsItem *item, _view->scene()->items(point, Qt::ContainsItemShape, Qt::AscendingOrder)) {
         for (int i = 0; i < model()->rowCount(); ++i) {
             QModelIndex index = model()->index(i, 0);
             if (index.data().toPointF() == item->boundingRect().topLeft()) {
@@ -102,9 +107,11 @@ QRegion VideoView::visualRegionForSelection(const QItemSelection &selection) con
     return QRegion();
 }
 
-void VideoView::resizeEvent(QResizeEvent *)
+void VideoView::resizeEvent(QResizeEvent *event)
 {
-    _viewport->scene()->setSceneRect(fitRectWithProportion(_viewport->rect(), 4./3));
+    _view->setSceneRect(0, 0, event->size().width() - 7, event->size().height() - 7);
+
+    QAbstractItemView::resizeEvent(event);
 }
 
 
