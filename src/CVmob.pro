@@ -12,10 +12,10 @@ HEADERS += model/OpenCV/Angle.h \
     model/exporter/IExportStrategy.h \
     model/PhisicsCalc.h \
     view/graphs/EnumGraphs.h \
-    view/graphs/Plot.h \
+#    view/graphs/Plot.h \
     view/graphs/cvZoomer.h \
     model/OpenCV/Point.h \
-    model/OpenCV/ProxyOpenCv.h \
+#    model/OpenCV/ProxyOpenCv.h \
     view/options.h \
     view/aboutdialog.h \
     view/reportdialog.h \
@@ -25,8 +25,8 @@ HEADERS += model/OpenCV/Angle.h \
 SOURCES += model/exporter/ExportText.cpp \
     model/exporter/IExportStrategy.cpp \
     model/PhisicsCalc.cpp \
-    view/graphs/Plot.cpp \
-    model/OpenCV/ProxyOpenCv.cpp \
+#    view/graphs/Plot.cpp \
+#    model/OpenCV/ProxyOpenCv.cpp \
     main.cpp \
     view/options.cpp \
     view/aboutdialog.cpp \
@@ -44,6 +44,10 @@ FORMS    += \
 
 TRANSLATIONS += pt_BR_cvmob.ts
 
+# The link libraries vary a lot, depending on the system,
+# so you'll have to modify this part of the .pro in order
+# to compile CVmob.
+
 win32 {
     LIBS += \
         -LC:\OpenCV2.2\lib \
@@ -57,12 +61,15 @@ win32 {
     INCLUDEPATH += C:\OpenCV2.2\include
 }
 linux-g++-64 {
-    LIBS += -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml \
-        -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect \
-        -lopencv_contrib -lopencv_legacy -lopencv_flann \
+    LIBS += -L/usr/lib/libopencv_core.so -L/usr/lib/libopencv_imgproc.so\
+        -L/usr/lib/libopencv_highgui.so -L/usr/lib/libopencv_ml.so \
+        -L/usr/lib/libopencv_video.so -L/usr/lib/libopencv_features2d.so \
+        -L/usr/lib/libopencv_calib3d.so -L/usr/lib/libopencv_objdetect.so \
+        -L/usr/lib/libopencv_contrib.so -L/usr/lib/libopencv_legacy.so \
+        -L/usr/lib/libopencv_flann.so \
         -lQtSvg
     INCLUDEPATH += qwt
-    LIBS += -lqwt
+    LIBS += -L/usr/lib/libqwt.so -L/usr/lib/libqwtmathml.so
 }
 
 OTHER_FILES += \

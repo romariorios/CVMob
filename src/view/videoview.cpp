@@ -12,8 +12,14 @@
 
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
-    QGraphicsView(new QGraphicsScene, parent)
-{}
+    _viewport(new QGraphicsView)
+{
+    setViewport(_viewport);
+
+    _viewport->setScene(new QGraphicsScene(fitRectWithProportion(_viewport->rect(), 4./3),
+                                           _viewport));
+    _viewport->scene()->addLine(0, 0, 100, 100);
+}
 
 QRect VideoView::visualRect(const QModelIndex &index) const
 {
@@ -31,10 +37,10 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 
     for (int i = topLeft.row(); i < bottomRight.row(); ++i) {
         QGraphicsLineItem *line = new QGraphicsLineItem(
-                    QLineF(model->data(model->index(0, 0, model->index(0, 4))).toPointF(),
-                           model->data(model->index(0, 1, model->index(0, 4))).toPointF()));
+                    QLineF(model->data(model->index(0, 0, model->index(0, 0))).toPointF(),
+                           model->data(model->index(0, 1, model->index(0, 0))).toPointF()));
 
-        scene()->addItem(line);
+        _viewport->scene()->addItem(line);
     }
 }
 
@@ -46,7 +52,7 @@ void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint
 
 QModelIndex VideoView::indexAt(const QPoint &point) const
 {
-    foreach (QGraphicsItem *item, scene()->items(point, Qt::ContainsItemShape, Qt::AscendingOrder)) {
+    foreach (QGraphicsItem *item, _viewport->scene()->items(point, Qt::ContainsItemShape, Qt::AscendingOrder)) {
         for (int i = 0; i < model()->rowCount(); ++i) {
             QModelIndex index = model()->index(i, 0);
             if (index.data().toPointF() == item->boundingRect().topLeft()) {
@@ -96,23 +102,25 @@ QRegion VideoView::visualRegionForSelection(const QItemSelection &selection) con
     return QRegion();
 }
 
-void VideoView::resizeEvent(QResizeEvent *event)
+void VideoView::resizeEvent(QResizeEvent *)
 {
-    QSizeF change = event->size() - event->oldSize();
+    _viewport->scene()->setSceneRect(fitRectWithProportion(_viewport->rect(), 4./3));
+}
 
-    if (change.width() > 4*change.height()/3) {
-        change.setWidth(4*change.height()/3);
-    } else {
-        change.setHeight(3*change.width()/4);
+
+const QRectF VideoView::fitRectWithProportion(const QRectF &rect, qreal proportion) const
+{
+    if (rect.width() > rect.height() * proportion) {
+        qreal newWidth = rect.height() * proportion;
+        qreal widthDiff = rect.width() - newWidth;
+        return QRectF(rect.left() + widthDiff / 2, rect.top(), newWidth, rect.height());
     }
 
-    QSizeF sceneSize = scene()->sceneRect().size() + change;
-    QRectF sceneRect = scene()->sceneRect();
-    sceneRect.setSize(sceneSize);
+    if (rect.width() < rect.height() * proportion) {
+        qreal newHeight = rect.width() * (1 / proportion);
+        qreal heightDiff = rect.height() - newHeight;
+        return QRectF(rect.left(), rect.top() + heightDiff / 2, rect.width(), newHeight);
+    }
 
-    qDebug() << event->size();
-    qDebug() << event->oldSize();
-    qDebug() << sceneRect;
-
-    scene()->setSceneRect(sceneRect);
+    return rect;
 }

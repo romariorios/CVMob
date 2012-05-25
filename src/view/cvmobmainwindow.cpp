@@ -21,7 +21,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _ui->distancesView->setModel(_videoModel);
     _videoView->setModel(_videoModel);
 
-    setCentralWidget(dynamic_cast<QGraphicsView *>(_videoView));
+    setCentralWidget(_videoView);
 
     connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
 

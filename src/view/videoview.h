@@ -2,12 +2,11 @@
 #define VIDEOVIEW_H
 
 #include <QtGui/QAbstractItemView>
-#include <QtGui/QGraphicsView>
 
-class QGraphicsScene;
+class QGraphicsView;
 
 // FIXME: Qt doesn't support multiple inheritance
-class VideoView : public QAbstractItemView, public QGraphicsView
+class VideoView : public QAbstractItemView
 {
     Q_OBJECT
 
@@ -25,7 +24,14 @@ protected:
     bool isIndexHidden(const QModelIndex &index) const;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command);
     QRegion visualRegionForSelection(const QItemSelection &selection) const;
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent *);
+
+private:
+    // This method returns the biggest rect with the given width:height proportion that fits the
+    // given rect
+    const QRectF fitRectWithProportion(const QRectF &rect, qreal proportion) const;
+
+    QGraphicsView *_viewport;
 
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
