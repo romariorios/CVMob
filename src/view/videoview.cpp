@@ -20,6 +20,8 @@ VideoView::VideoView(QWidget *parent) :
     _view->setScene(new QGraphicsScene(_view));
     _view->setSceneRect(0, 0, _view->width() - 7, _view->height() - 7);
 
+    _bgRect = _view->scene()->addRect(_view->sceneRect(), Qt::NoPen, Qt::black);
+
     new QHBoxLayout(viewport());
     viewport()->layout()->addWidget(_view);
     viewport()->layout()->setMargin(0);
@@ -110,6 +112,7 @@ QRegion VideoView::visualRegionForSelection(const QItemSelection &selection) con
 void VideoView::resizeEvent(QResizeEvent *event)
 {
     _view->setSceneRect(0, 0, event->size().width() - 7, event->size().height() - 7);
+    _bgRect->setRect(fitRectWithProportion(_view->sceneRect(), 4./3));
 
     QAbstractItemView::resizeEvent(event);
 }

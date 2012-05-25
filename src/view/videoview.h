@@ -33,6 +33,7 @@ private:
     const QRectF fitRectWithProportion(const QRectF &rect, qreal proportion) const;
 
     QGraphicsView *_view;
+    QGraphicsRectItem *_bgRect;
 
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
