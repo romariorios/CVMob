@@ -84,9 +84,9 @@ QModelIndex CvmobVideoModel::parent(const QModelIndex &child) const
 
 QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
 {
-    if (role != VideoSceneRole ||
-        role != VideoSceneEditRole ||
-        role != Qt::DisplayRole ||
+    if ((role != VideoSceneRole &&
+        role != VideoSceneEditRole &&
+        role != Qt::DisplayRole) ||
         !index.isValid()) {
         return QVariant();
     }
@@ -94,6 +94,10 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
     InternalData *internalPointer = static_cast<InternalData *>(index.internalPointer());
 
     if (internalPointer->type == VideoData) {
+        if (index.row() >= _cvmobVideoData->size()) {
+            return QVariant();
+        }
+
         Video currentVideo = _cvmobVideoData->at(index.row());
 
         switch (index.column()) {
@@ -105,6 +109,8 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
             return currentVideo.frameCount;
         case 3:
             return currentVideo.frameDuration;
+        default:
+            return QVariant();
         }
     } else if (internalPointer->type == DistanceData) {
         if (!internalPointer->parent) {
@@ -113,11 +119,17 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
 
         Video currentVideo = _cvmobVideoData->at(internalPointer->parent->row);
 
+        if (index.row() >= currentVideo.distances.size()) {
+            return QVariant();
+        }
+
         switch (index.column()) {
         case 0:
             return currentVideo.distances.at(index.row()).first;
         case 1:
             return currentVideo.distances.at(index.row()).second;
+        default:
+            return QVariant();
         }
     } else {
         InternalData *parentPointer = internalPointer->parent;
@@ -194,16 +206,16 @@ QVariant CvmobVideoModel::headerData(int section, Qt::Orientation orientation, i
 int CvmobVideoModel::columnCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
-        return 7;
+        return 4;
     }
 
     switch (static_cast<InternalData *>(parent.internalPointer())->type) {
     case VideoData:
         switch (parent.column()) {
-        case 4:
+        case 0:
             return 2;
-        case 5:
-        case 6:
+        case 1:
+        case 2:
             return 1;
         default:
             break;
@@ -230,11 +242,11 @@ int CvmobVideoModel::rowCount(const QModelIndex &parent) const
 
     if (internalPointer->type == VideoData) {
         switch (parent.column()) {
-        case 4:
+        case 0:
             return parentVideo.distances.size();
-        case 5:
+        case 1:
             return parentVideo.linearTrajectories.size();
-        case 6:
+        case 2:
             return parentVideo.angularTrajectories.size();
         }
     } else if (internalPointer->parent) {
@@ -464,11 +476,11 @@ bool CvmobVideoModel::removeRows(int row, int count, const QModelIndex &parent)
 
     if (parentPointer->type == VideoData) {
         switch (parent.column()) {
-        case 4:
+        case 0:
             return checkAndRemoveRowsFrom<QPair<QPointF, QPointF> >(currentVideo.distances, row, count, parent);
-        case 5:
+        case 1:
             return checkAndRemoveRowsFrom<LinearTrajectory>(currentVideo.linearTrajectories, row, count, parent);
-        case 6:
+        case 2:
             return checkAndRemoveRowsFrom<AngularTrajectory>(currentVideo.angularTrajectories, row, count, parent);
         default:
             return false;
@@ -499,4 +511,22 @@ bool CvmobVideoModel::removeRows(int row, int count, const QModelIndex &parent)
     }
 
     return false;
+}
+
+typedef QPair<QPointF, QPointF> QPointFPair;
+void CvmobVideoModel::qDebugAllData() const
+{
+    foreach (Video v, *_cvmobVideoData) {
+        qDebug() << "---";
+        qDebug() << v.fileName.toUtf8().constData();
+        qDebug() << QString("%1 frames (%2ms each)").arg(v.frameCount).arg(v.frameDuration).toUtf8().constData();
+        qDebug() << "Distances measured:";
+        foreach (QPointFPair dist, v.distances) {
+            qDebug() << QString("- %1 pixels (from point (%2, %3) to point (%4, %5))")
+                        .arg(sqrt(pow(dist.first.x() - dist.second.x(), 2) +
+                                  pow(dist.first.y() - dist.second.y(), 2)))
+                        .arg(dist.first.x()).arg(dist.first.y())
+                        .arg(dist.second.y()).arg(dist.second.y());
+        }
+    }
 }

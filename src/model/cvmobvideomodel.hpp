@@ -1,7 +1,7 @@
 #ifndef CVMOBMODEL_HPP
 #define CVMOBMODEL_HPP
 
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
 
 #include <QList>
 #include <QPair>
@@ -81,18 +81,6 @@ class CvmobVideoModel : public QAbstractItemModel
 public:
     explicit CvmobVideoModel(QObject *parent = 0);
 
-    enum GraphicsViewRole
-    {
-        VideoSceneRole,
-        VideoSceneEditRole,
-        VideoListRole
-    };
-
-    void qDebugDataInRow(int row);
-
-signals:
-
-public slots:
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &child) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -104,6 +92,16 @@ public slots:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+
+    enum GraphicsViewRole
+    {
+        VideoSceneRole,
+        VideoSceneEditRole,
+        VideoListRole
+    };
+
+    void qDebugDataInRow(int row) const;
+    void qDebugAllData() const;
 };
 
 #endif // CVMOBMODEL_HPP

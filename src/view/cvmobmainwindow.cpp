@@ -8,6 +8,8 @@
 
 #include "graphs/Plot.h"
 
+#include <QDebug>
+
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::CvMobMainWindow),
@@ -18,7 +20,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     _ui->openButton->setDefaultAction(_ui->action_Open);
 
-    _ui->distancesView->setModel(_videoModel);
+    _ui->openedVideosList->setModel(_videoModel);
     _videoView->setModel(_videoModel);
 
     setCentralWidget(_videoView);
@@ -46,4 +48,15 @@ void CvMobMainWindow::openFile() {
 CvMobMainWindow::~CvMobMainWindow()
 {
 	delete _ui;
+}
+
+
+void CvMobMainWindow::showInternalData() const
+{
+    qDebug() << "INTERNAL MODEL DATA:";
+    _videoModel->qDebugAllData();
+    qDebug() << "";
+    qDebug() << "DATA TAKEN FROM THE MODEL:";
+    qDebug() << "---";
+    qDebug() << _videoModel->data(_videoModel->index(0, 0));
 }

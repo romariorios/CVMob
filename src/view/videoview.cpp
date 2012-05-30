@@ -19,8 +19,9 @@ VideoView::VideoView(QWidget *parent) :
 {
     _view->setScene(new QGraphicsScene(_view));
     _view->setSceneRect(0, 0, _view->width() - 7, _view->height() - 7);
-
-    _bgRect = _view->scene()->addRect(_view->sceneRect(), Qt::NoPen, Qt::black);
+    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
+    _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     new QHBoxLayout(viewport());
     viewport()->layout()->addWidget(_view);
@@ -112,25 +113,7 @@ QRegion VideoView::visualRegionForSelection(const QItemSelection &selection) con
 void VideoView::resizeEvent(QResizeEvent *event)
 {
     _view->setSceneRect(0, 0, event->size().width() - 7, event->size().height() - 7);
-    _bgRect->setRect(fitRectWithProportion(_view->sceneRect(), 4./3));
+    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
 
     QAbstractItemView::resizeEvent(event);
-}
-
-
-const QRectF VideoView::fitRectWithProportion(const QRectF &rect, qreal proportion) const
-{
-    if (rect.width() > rect.height() * proportion) {
-        qreal newWidth = rect.height() * proportion;
-        qreal widthDiff = rect.width() - newWidth;
-        return QRectF(rect.left() + widthDiff / 2, rect.top(), newWidth, rect.height());
-    }
-
-    if (rect.width() < rect.height() * proportion) {
-        qreal newHeight = rect.width() * (1 / proportion);
-        qreal heightDiff = rect.height() - newHeight;
-        return QRectF(rect.left(), rect.top() + heightDiff / 2, rect.width(), newHeight);
-    }
-
-    return rect;
 }

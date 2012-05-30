@@ -28,12 +28,7 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 private:
-    // This method returns the biggest rect with the given width:height proportion that fits the
-    // given rect
-    const QRectF fitRectWithProportion(const QRectF &rect, qreal proportion) const;
-
     QGraphicsView *_view;
-    QGraphicsRectItem *_bgRect;
 
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
