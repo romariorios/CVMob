@@ -22,6 +22,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     _ui->openedVideosList->setModel(_videoModel);
     _videoView->setModel(_videoModel);
+    _videoView->setSelectionModel(_ui->openedVideosList->selectionModel());
 
     setCentralWidget(_videoView);
 
@@ -39,6 +40,17 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
                          CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(0, 1, _videoModel->index(0, 0)), QPointF(100, 100),
                          CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->insertRow(1);
+    _videoModel->setData(_videoModel->index(1, 0), "test2.avi", CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(1, 1), 0, CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(1, 2), 600, CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(1, 3), 100, CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->insertRow(0, _videoModel->index(1, 0));
+    _videoModel->insertColumns(0, 2, _videoModel->index(1, 0));
+    _videoModel->setData(_videoModel->index(0, 0, _videoModel->index(1, 0)), QPointF(60, 400),
+                         CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(0, 1, _videoModel->index(1, 0)), QPointF(200, 80),
+                         CvmobVideoModel::VideoSceneEditRole);
 }
 
 void CvMobMainWindow::openFile() {
@@ -48,15 +60,4 @@ void CvMobMainWindow::openFile() {
 CvMobMainWindow::~CvMobMainWindow()
 {
 	delete _ui;
-}
-
-
-void CvMobMainWindow::showInternalData() const
-{
-    qDebug() << "INTERNAL MODEL DATA:";
-    _videoModel->qDebugAllData();
-    qDebug() << "";
-    qDebug() << "DATA TAKEN FROM THE MODEL:";
-    qDebug() << "---";
-    qDebug() << _videoModel->data(_videoModel->index(0, 0));
 }

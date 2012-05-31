@@ -99,9 +99,6 @@ public:
         VideoSceneEditRole,
         VideoListRole
     };
-
-    void qDebugDataInRow(int row) const;
-    void qDebugAllData() const;
 };
 
 #endif // CVMOBMODEL_HPP

@@ -15,18 +15,27 @@
 
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
-    _view(new QGraphicsView)
+    _view(new QGraphicsView),
+    _noVideoScene(new QGraphicsScene(_view))
 {
-    _view->setScene(new QGraphicsScene(_view));
-    _view->setSceneRect(0, 0, _view->width() - 7, _view->height() - 7);
-    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
-    _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
     new QHBoxLayout(viewport());
     viewport()->layout()->addWidget(_view);
     viewport()->layout()->setMargin(0);
     viewport()->layout()->setSpacing(0);
+    _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    _view->setScene(_noVideoScene);
+    _view->setSceneRect(0, 0, _view->width() - 7, _view->height() - 7);
+    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
+
+    QGraphicsItem *noVideoText = _noVideoScene->addText(tr("No video"));
+    noVideoText->moveBy(100, 50);
+}
+
+VideoView::~VideoView()
+{
+    delete _view;
 }
 
 QRect VideoView::visualRect(const QModelIndex &index) const
@@ -41,14 +50,24 @@ QRect VideoView::visualRect(const QModelIndex &index) const
 
 void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
-    CvmobVideoModel *model = static_cast<CvmobVideoModel *>(const_cast<QAbstractItemModel *>(topLeft.model()));
+    Q_UNUSED(topLeft)
+    Q_UNUSED(bottomRight)
+    // TODO: Populate scenes (not here)
+    qDebug() << "dataChanged called";
+}
 
-    for (int i = topLeft.row(); i < bottomRight.row(); ++i) {
-        QGraphicsLineItem *line = new QGraphicsLineItem(
-                    QLineF(model->data(model->index(0, 0, model->index(0, 0))).toPointF(),
-                           model->data(model->index(0, 1, model->index(0, 0))).toPointF()));
-
-        _view->scene()->addItem(line);
+void VideoView::selectionChanged(const QItemSelection &selected, const QItemSelection &)
+{
+    const QModelIndex &distancesIndex = model()->index(selected.at(0).indexes().at(0).row(), 0);
+    // Draw distances:
+    for (int i = 0; i < model()->rowCount(distancesIndex); ++i) {
+        const QModelIndex &firstPointIndex = model()->index(i, 0, distancesIndex);
+        const QModelIndex &secondPointIndex = model()->index(i, 1, distancesIndex);
+        _view->scene()->addLine(QLineF(
+                                    model()->data(firstPointIndex, CvmobVideoModel::VideoSceneRole)
+                                    .toPointF(),
+                                    model()->data(secondPointIndex, CvmobVideoModel::VideoSceneRole)
+                                    .toPointF()));
     }
 }
 
@@ -116,4 +135,13 @@ void VideoView::resizeEvent(QResizeEvent *event)
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
 
     QAbstractItemView::resizeEvent(event);
+}
+
+void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
+{
+    if (!parent.isValid()) { // Level 0
+        for (int i = start; i <= end; ++i) {
+            _scenes.insert(i, new QGraphicsScene(_view));
+        }
+    }
 }

@@ -40,9 +40,6 @@ int main(int argc, char *argv[]) {
     app.installTranslator(&qtTranslator);
 
     CvMobMainWindow w;
-    QPushButton debugButton("Show internal data");
-    QObject::connect(&debugButton, SIGNAL(clicked()), &w, SLOT(showInternalData()));
     w.show();
-    debugButton.show();
     return app.exec();
 }

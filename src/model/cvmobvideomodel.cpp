@@ -512,21 +512,3 @@ bool CvmobVideoModel::removeRows(int row, int count, const QModelIndex &parent)
 
     return false;
 }
-
-typedef QPair<QPointF, QPointF> QPointFPair;
-void CvmobVideoModel::qDebugAllData() const
-{
-    foreach (Video v, *_cvmobVideoData) {
-        qDebug() << "---";
-        qDebug() << v.fileName.toUtf8().constData();
-        qDebug() << QString("%1 frames (%2ms each)").arg(v.frameCount).arg(v.frameDuration).toUtf8().constData();
-        qDebug() << "Distances measured:";
-        foreach (QPointFPair dist, v.distances) {
-            qDebug() << QString("- %1 pixels (from point (%2, %3) to point (%4, %5))")
-                        .arg(sqrt(pow(dist.first.x() - dist.second.x(), 2) +
-                                  pow(dist.first.y() - dist.second.y(), 2)))
-                        .arg(dist.first.x()).arg(dist.first.y())
-                        .arg(dist.second.y()).arg(dist.second.y());
-        }
-    }
-}

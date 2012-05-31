@@ -30,9 +30,6 @@ protected slots:
 public:
     explicit CvMobMainWindow(QWidget *parent = 0);
     ~CvMobMainWindow();
-
-public slots:
-    void showInternalData() const;
 };
 
 #endif // CVMOBMAINWINDOW_H

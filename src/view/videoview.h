@@ -3,8 +3,11 @@
 
 #include <QtGui/QAbstractItemView>
 
+#include <QtCore/QList>
+
 class QGraphicsView;
 class QGraphicsRectItem;
+class QGraphicsScene;
 
 // FIXME: Qt doesn't support multiple inheritance
 class VideoView : public QAbstractItemView
@@ -13,6 +16,7 @@ class VideoView : public QAbstractItemView
 
 public:
     explicit VideoView(QWidget *parent = 0);
+    ~VideoView();
 
     void scrollTo(const QModelIndex &index, ScrollHint hint);
     QModelIndex indexAt(const QPoint &point) const;
@@ -29,9 +33,13 @@ protected:
 
 private:
     QGraphicsView *_view;
+    QList<QGraphicsScene *> _scenes;
+    QGraphicsScene *_noVideoScene;
 
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &);
+    void rowsInserted(const QModelIndex &parent, int start, int end);
 
 signals:
 
