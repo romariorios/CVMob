@@ -463,7 +463,7 @@ template <class T> bool CvmobVideoModel::checkAndRemoveRowsFrom(QList<T> &l,
         l.removeAt(row);
     }
 
-    endInsertRows();
+    endRemoveRows();
 
     return true;
 }
