@@ -61,13 +61,9 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
     const QModelIndex &distancesIndex = model()->index(selected.at(0).indexes().at(0).row(), 0);
     // Draw distances:
     for (int i = 0; i < model()->rowCount(distancesIndex); ++i) {
-        const QModelIndex &firstPointIndex = model()->index(i, 0, distancesIndex);
-        const QModelIndex &secondPointIndex = model()->index(i, 1, distancesIndex);
-        _view->scene()->addLine(QLineF(
-                                    model()->data(firstPointIndex, CvmobVideoModel::VideoSceneRole)
-                                    .toPointF(),
-                                    model()->data(secondPointIndex, CvmobVideoModel::VideoSceneRole)
-                                    .toPointF()));
+        const QModelIndex &lineIndex = model()->index(i, 0, distancesIndex);
+        _view->scene()->addLine(model()->data(lineIndex, CvmobVideoModel::VideoSceneRole)
+                                .toLineF());
     }
 }
 

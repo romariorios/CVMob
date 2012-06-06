@@ -4,7 +4,7 @@
 #include <QAbstractItemModel>
 
 #include <QList>
-#include <QPair>
+#include <QLineF>
 #include <QPointF>
 
 class CvmobVideoModel : public QAbstractItemModel
@@ -39,7 +39,7 @@ class CvmobVideoModel : public QAbstractItemModel
         QString fileName;
         int currentFrame, frameCount, frameDuration;
 
-        QList<QPair<QPointF, QPointF> > distances;
+        QList<QLineF> distances;
         QList<LinearTrajectory> linearTrajectories;
         QList<AngularTrajectory> angularTrajectories;
     };

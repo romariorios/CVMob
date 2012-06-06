@@ -125,9 +125,7 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
 
         switch (index.column()) {
         case 0:
-            return currentVideo.distances.at(index.row()).first;
-        case 1:
-            return currentVideo.distances.at(index.row()).second;
+            return currentVideo.distances.at(index.row());
         default:
             return QVariant();
         }
@@ -213,7 +211,6 @@ int CvmobVideoModel::columnCount(const QModelIndex &parent) const
     case VideoData:
         switch (parent.column()) {
         case 0:
-            return 2;
         case 1:
         case 2:
             return 1;
@@ -307,10 +304,7 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
 
         switch (index.column()) {
         case 0:
-            currentVideo.distances[index.row()].first = value.toPointF();
-            break;
-        case 1:
-            currentVideo.distances[index.row()].second = value.toPointF();
+            currentVideo.distances[index.row()] = value.toLineF();
             break;
         }
     } else {
@@ -409,7 +403,7 @@ bool CvmobVideoModel::insertRows(int row, int count, const QModelIndex &parent)
     if (parentPointer->type == VideoData) {
         switch (parent.column()) {
         case 0:
-            return checkAndInsertRowsIn<QPair<QPointF, QPointF> >(currentVideo.distances, row, count, parent);
+            return checkAndInsertRowsIn<QLineF>(currentVideo.distances, row, count, parent);
         case 1:
             return checkAndInsertRowsIn<LinearTrajectory>(currentVideo.linearTrajectories, row, count, parent);
         case 2:
@@ -480,7 +474,7 @@ bool CvmobVideoModel::removeRows(int row, int count, const QModelIndex &parent)
     if (parentPointer->type == VideoData) {
         switch (parent.column()) {
         case 0:
-            return checkAndRemoveRowsFrom<QPair<QPointF, QPointF> >(currentVideo.distances, row, count, parent);
+            return checkAndRemoveRowsFrom<QLineF>(currentVideo.distances, row, count, parent);
         case 1:
             return checkAndRemoveRowsFrom<LinearTrajectory>(currentVideo.linearTrajectories, row, count, parent);
         case 2:

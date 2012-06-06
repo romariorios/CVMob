@@ -35,10 +35,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _videoModel->setData(_videoModel->index(0, 2), 600, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(0, 3), 100, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->insertRow(0, _videoModel->index(0, 0));
-    _videoModel->insertColumns(0, 2, _videoModel->index(0, 0));
-    _videoModel->setData(_videoModel->index(0, 0, _videoModel->index(0, 0)), QPointF(0, 0),
-                         CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(0, 1, _videoModel->index(0, 0)), QPointF(100, 100),
+    _videoModel->setData(_videoModel->index(0, 0, _videoModel->index(0, 0)), QLineF(0, 0, 100, 100),
                          CvmobVideoModel::VideoSceneEditRole);
     _videoModel->insertRow(1);
     _videoModel->setData(_videoModel->index(1, 0), "test2.avi", CvmobVideoModel::VideoSceneEditRole);
@@ -46,10 +43,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _videoModel->setData(_videoModel->index(1, 2), 600, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(1, 3), 100, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->insertRow(0, _videoModel->index(1, 0));
-    _videoModel->insertColumns(0, 2, _videoModel->index(1, 0));
-    _videoModel->setData(_videoModel->index(0, 0, _videoModel->index(1, 0)), QPointF(60, 400),
-                         CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(0, 1, _videoModel->index(1, 0)), QPointF(200, 80),
+    _videoModel->setData(_videoModel->index(0, 0, _videoModel->index(1, 0)), QLineF(60, 400, 200, 80),
                          CvmobVideoModel::VideoSceneEditRole);
 }
 
