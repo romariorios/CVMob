@@ -287,16 +287,16 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
         switch (index.column()) {
         case 0:
             currentVideo.fileName = value.toString();
-            return true;
+            break;
         case 1:
             currentVideo.currentFrame = value.toInt();
-            return true;
+            break;
         case 2:
             currentVideo.frameCount = value.toInt();
-            return true;
+            break;
         case 3:
             currentVideo.frameDuration = value.toInt();
-            return true;
+            break;
         }
     } else if (internalPointer->type == DistanceData) {
         if (!internalPointer->parent) {
@@ -308,10 +308,10 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
         switch (index.column()) {
         case 0:
             currentVideo.distances[index.row()].first = value.toPointF();
-            return true;
+            break;
         case 1:
             currentVideo.distances[index.row()].second = value.toPointF();
-            return true;
+            break;
         }
     } else {
         InternalData *parentPointer = internalPointer->parent;
@@ -330,16 +330,16 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
             switch (index.column()) {
             case 0:
                 currentInstant.frame = value.toInt();
-                return true;
+                break;
             case 1:
                 currentInstant.position = value.toPointF();
-                return true;
+                break;
             case 2:
                 currentInstant.speed = value.toPointF();
-                return true;
+                break;
             case 3:
                 currentInstant.acceleration = value.toPointF();
-                return true;
+                break;
             }
         } else if (internalPointer->type == AngularTrajectoryInstantData) {
             AngularTrajectory &currentTrajectory = currentVideo.angularTrajectories[parentPointer->row];
@@ -348,27 +348,30 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
             switch (index.column()) {
             case 0:
                 currentInstant.frame = value.toInt();
-                return true;
+                break;
             case 1:
                 currentInstant.speed = value.toInt();
-                return true;
+                break;
             case 2:
                 currentInstant.acceleration = value.toInt();
-                return true;
+                break;
             case 3:
                 currentInstant.centralEdge = value.toPointF();
-                return true;
+                break;
             case 4:
                 currentInstant.peripheralEdges.first = value.toPointF();
-                return true;
+                break;
             case 5:
                 currentInstant.peripheralEdges.second = value.toPointF();
-                return true;
+                break;
             }
+        } else {
+            return false;
         }
     }
 
-    return false;
+    emit dataChanged(index, index);
+    return true;
 }
 
 template <class T> bool CvmobVideoModel::checkAndInsertRowsIn(QList<T> &l,

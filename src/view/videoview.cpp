@@ -52,7 +52,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 {
     Q_UNUSED(topLeft)
     Q_UNUSED(bottomRight)
-    // TODO: Populate scenes (not here)
+    // TODO: Populate scenes (not here) (actually, it's probably here)
     qDebug() << "dataChanged called";
 }
 
