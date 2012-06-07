@@ -89,12 +89,14 @@ void DistancesProxyModel::selectionChanged(const QItemSelection &selected,
 {
     Q_UNUSED(deselected)
 
+    beginResetModel();
+
     if (selected.size() != 1 ||
         selected.at(0).indexes().size() != 1) {
         _parentIndex = QModelIndex();
-        emit dataChanged(QModelIndex(), QModelIndex());
     } else {
         _parentIndex = selected.at(0).indexes().at(0);
-        emit dataChanged(index(0, 0), index(rowCount() - 1, 3));
     }
+
+    endResetModel();
 }
