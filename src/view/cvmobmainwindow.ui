@@ -74,7 +74,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>400</width>
+         <width>1677215</width>
          <height>16777215</height>
         </size>
        </property>
@@ -171,8 +171,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>862</width>
-          <height>174</height>
+          <width>870</width>
+          <height>186</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="graphsLayout">
