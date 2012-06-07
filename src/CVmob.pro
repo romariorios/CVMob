@@ -21,7 +21,8 @@ HEADERS += model/OpenCV/Angle.h \
     view/reportdialog.h \
     view/cvmobmainwindow.h \
     view/videoview.h \
-    model/cvmobvideomodel.hpp
+    model/cvmobvideomodel.hpp \
+    model/distancesproxymodel.hpp
 SOURCES += model/exporter/ExportText.cpp \
     model/exporter/IExportStrategy.cpp \
     model/PhisicsCalc.cpp \
@@ -34,7 +35,8 @@ SOURCES += model/exporter/ExportText.cpp \
     view/reportdialog.cpp \
     view/cvmobmainwindow.cpp \
     view/videoview.cpp \
-    model/cvmobvideomodel.cpp
+    model/cvmobvideomodel.cpp \
+    model/distancesproxymodel.cpp
 
 FORMS    += \
     view/reportdialog.ui \

@@ -2,6 +2,7 @@
 #include "ui_cvmobmainwindow.h"
 
 #include <model/cvmobvideomodel.hpp>
+#include <model/distancesproxymodel.hpp>
 #include <QtCore/QPointF>
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QFileDialog>
@@ -24,6 +25,11 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _ui->openedVideosList->setModel(_videoModel);
     _videoView->setModel(_videoModel);
     _videoView->setSelectionModel(_ui->openedVideosList->selectionModel());
+
+    DistancesProxyModel *distancesModel = new DistancesProxyModel(this);
+    distancesModel->setSourceModel(_videoModel);
+    distancesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
+    _ui->distancesView->setModel(distancesModel);
 
     setCentralWidget(_videoView);
 
