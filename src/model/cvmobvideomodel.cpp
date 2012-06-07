@@ -109,6 +109,8 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
             return currentVideo.frameCount;
         case 3:
             return currentVideo.frameDuration;
+        case 4:
+            return currentVideo.frameSize;
         default:
             return QVariant();
         }
@@ -195,6 +197,8 @@ QVariant CvmobVideoModel::headerData(int section, Qt::Orientation orientation, i
             return tr("Frame count");
         case 3:
             return tr("Frame duration");
+        case 4:
+            return tr("Frame size");
         }
     }
 
@@ -204,7 +208,7 @@ QVariant CvmobVideoModel::headerData(int section, Qt::Orientation orientation, i
 int CvmobVideoModel::columnCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
-        return 4;
+        return 5;
     }
 
     switch (static_cast<InternalData *>(parent.internalPointer())->type) {
@@ -293,6 +297,9 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
             break;
         case 3:
             currentVideo.frameDuration = value.toInt();
+            break;
+        case 4:
+            currentVideo.frameSize = value.toSizeF();
             break;
         }
     } else if (internalPointer->type == DistanceData) {
