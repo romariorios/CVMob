@@ -48,23 +48,28 @@ QRect VideoView::visualRect(const QModelIndex &index) const
                  index.model()->index(index.row(), 1).data().toPoint());
 }
 
-void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
 {
-    Q_UNUSED(topLeft)
-    Q_UNUSED(bottomRight)
-    // TODO: Populate scenes (not here) (actually, it's probably here)
-    qDebug() << "dataChanged called";
+    const QModelIndex parent = topLeft.parent();
+
+    if (!parent.isValid()) { // Level 0
+        return;
+    }
+
+    if (!parent.parent().isValid()) { // Level 1
+        if (parent.column() == 0) { // Distances
+            QGraphicsLineItem *line = static_cast<QGraphicsLineItem *>(_scenes
+                                                                       .at(parent.row())
+                                                                       ->items()
+                                                                       .at(topLeft.row()));
+            line->setLine(topLeft.data(CvmobVideoModel::VideoSceneRole).toLineF());
+        }
+    }
 }
 
 void VideoView::selectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
-    const QModelIndex &distancesIndex = model()->index(selected.at(0).indexes().at(0).row(), 0);
-    // Draw distances:
-    for (int i = 0; i < model()->rowCount(distancesIndex); ++i) {
-        const QModelIndex &lineIndex = model()->index(i, 0, distancesIndex);
-        _view->scene()->addLine(model()->data(lineIndex, CvmobVideoModel::VideoSceneRole)
-                                .toLineF());
-    }
+    _view->setScene(_scenes.at(selected.at(0).indexes().at(0).row()));
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -138,6 +143,12 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
     if (!parent.isValid()) { // Level 0
         for (int i = start; i <= end; ++i) {
             _scenes.insert(i, new QGraphicsScene(_view));
+        }
+    } else if (!parent.parent().isValid()) { // Level 1
+        if (parent.column() == 0) { // Distances
+            for (int i = start; i <= end; ++i) {
+                _scenes[parent.row()]->addLine(0, 0, 0, 0);
+            }
         }
     }
 }

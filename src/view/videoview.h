@@ -37,7 +37,8 @@ private:
     QGraphicsScene *_noVideoScene;
 
 protected slots:
-    void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void dataChanged(const QModelIndex &topLeft, const QModelIndex &); // topLeft is always equal
+                                                                       // to bottomRight.
     void selectionChanged(const QItemSelection &selected, const QItemSelection &);
     void rowsInserted(const QModelIndex &parent, int start, int end);
 
