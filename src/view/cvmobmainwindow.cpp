@@ -4,6 +4,7 @@
 #include <model/cvmobvideomodel.hpp>
 #include <QtCore/QPointF>
 #include <QtGui/QStandardItemModel>
+#include <QtGui/QFileDialog>
 #include <view/videoview.h>
 
 #include "graphs/Plot.h"
@@ -48,7 +49,20 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 }
 
 void CvMobMainWindow::openFile() {
+    QString pathName = QFileDialog::getOpenFileName(this, tr("Open video"), ".", tr("Videoclips (*.avi)"));
 
+    if (pathName.isNull()) {
+        return;
+    }
+
+    int row = _videoModel->rowCount();
+    QStringList path = pathName.split('/');
+    QString fileName = path.at(path.size() - 1);
+    QModelIndex fileIndex = _videoModel->index(row, 0);
+
+    _videoModel->insertRow(row);
+    _videoModel->setData(fileIndex, fileName, CvmobVideoModel::VideoSceneEditRole);
+    _ui->openedVideosList->setCurrentIndex(fileIndex);
 }
 
 CvMobMainWindow::~CvMobMainWindow()
