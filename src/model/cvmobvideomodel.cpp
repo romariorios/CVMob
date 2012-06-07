@@ -53,15 +53,15 @@ QModelIndex CvmobVideoModel::parent(const QModelIndex &child) const
         return QModelIndex();
     }
 
-    InternalData *childParent = static_cast<InternalData *>(child.internalPointer())->parent;
+    InternalData *data = static_cast<InternalData *>(child.internalPointer());
 
-    if (!childParent) {
+    if (!data->parent) {
         return QModelIndex();
     }
 
     int parentColumn;
 
-    switch (childParent->type) {
+    switch (data->type) {
     case DistanceData:
         parentColumn = 0;
         break;
@@ -79,7 +79,7 @@ QModelIndex CvmobVideoModel::parent(const QModelIndex &child) const
         return QModelIndex();
     }
 
-    return createIndex(childParent->row, parentColumn, childParent);
+    return createIndex(data->parent->row, parentColumn, data->parent);
 }
 
 QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
