@@ -6,6 +6,7 @@
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QHBoxLayout>
+#include <QtGui/QImage>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QVBoxLayout>
 
@@ -24,13 +25,16 @@ VideoView::VideoView(QWidget *parent) :
     viewport()->layout()->setSpacing(0);
     _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    _view->setRenderHint(QPainter::Antialiasing);
 
-    _view->setScene(_noVideoScene);
-    _view->setSceneRect(0, 0, _view->width() - 7, _view->height() - 7);
-    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
-
+    QImage bgImage(":/images/translucent-logo.png");
+    _noVideoScene->setBackgroundBrush(bgImage);
+    _noVideoScene->setSceneRect(QRectF(QPointF(0, 0), bgImage.size()));
     QGraphicsItem *noVideoText = _noVideoScene->addText(tr("No video"));
     noVideoText->moveBy(100, 50);
+
+    _view->setScene(_noVideoScene);
+    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
 }
 
 VideoView::~VideoView()
@@ -53,10 +57,12 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
     const QModelIndex parent = topLeft.parent();
 
     if (!parent.isValid()) { // Level 0
-        return;
-    }
-
-    if (!parent.parent().isValid()) { // Level 1
+        if (topLeft.column() == 4) { // Frame size
+            _scenes.at(topLeft.row())->setSceneRect(QRectF(QPointF(0, 0),
+                                                           topLeft.data(CvmobVideoModel::VideoSceneRole)
+                                                           .toSizeF()));
+        }
+    } else if (!parent.parent().isValid()) { // Level 1
         if (parent.column() == 0) { // Distances
             QGraphicsLineItem *line = static_cast<QGraphicsLineItem *>(_scenes
                                                                        .at(parent.row())
@@ -70,6 +76,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
 void VideoView::selectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
     _view->setScene(_scenes.at(selected.at(0).indexes().at(0).row()));
+    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -131,8 +138,7 @@ QRegion VideoView::visualRegionForSelection(const QItemSelection &selection) con
 }
 
 void VideoView::resizeEvent(QResizeEvent *event)
-{
-    _view->setSceneRect(0, 0, event->size().width() - 7, event->size().height() - 7);
+{;
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
 
     QAbstractItemView::resizeEvent(event);
