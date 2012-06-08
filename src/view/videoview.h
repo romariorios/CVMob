@@ -5,6 +5,7 @@
 
 #include <QtCore/QList>
 
+class PlayBar;
 class QGraphicsView;
 class QGraphicsRectItem;
 class QGraphicsScene;
@@ -35,17 +36,13 @@ private:
     QGraphicsView *_view;
     QList<QGraphicsScene *> _scenes;
     QGraphicsScene *_noVideoScene;
+    PlayBar *_playBar;
 
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &); // topLeft is always equal
                                                                        // to bottomRight.
     void selectionChanged(const QItemSelection &selected, const QItemSelection &);
     void rowsInserted(const QModelIndex &parent, int start, int end);
-
-signals:
-
-public slots:
-
 };
 
 #endif // VIDEOVIEW_H

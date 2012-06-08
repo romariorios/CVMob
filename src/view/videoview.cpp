@@ -5,10 +5,10 @@
 #include <QtGui/QGraphicsLineItem>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
-#include <QtGui/QHBoxLayout>
 #include <QtGui/QImage>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QVBoxLayout>
+#include <view/playbar.hpp>
 
 #include <QtGui/QLabel>
 
@@ -17,15 +17,17 @@
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
     _view(new QGraphicsView),
-    _noVideoScene(new QGraphicsScene(_view))
+    _noVideoScene(new QGraphicsScene(_view)),
+    _playBar(new PlayBar(this))
 {
-    new QHBoxLayout(viewport());
+    new QVBoxLayout(viewport());
     viewport()->layout()->addWidget(_view);
     viewport()->layout()->setMargin(0);
     viewport()->layout()->setSpacing(0);
     _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _view->setRenderHint(QPainter::Antialiasing);
+    viewport()->layout()->addWidget(_playBar);
 
     QImage bgImage(":/images/translucent-logo.png");
     _noVideoScene->setBackgroundBrush(bgImage);
@@ -75,8 +77,12 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
 
 void VideoView::selectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
-    _view->setScene(_scenes.at(selected.at(0).indexes().at(0).row()));
+    QModelIndex selectedIndex = selected.at(0).indexes().at(0);
+
+    _view->setScene(_scenes.at(selectedIndex.row()));
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
+    _playBar->setPlayData(model()->data(model()->index(selectedIndex.row(), 2)).toInt(),
+                          model()->data(model()->index(selectedIndex.row(), 3)).toInt());
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)

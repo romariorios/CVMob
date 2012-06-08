@@ -22,7 +22,8 @@ HEADERS += model/OpenCV/Angle.h \
     view/cvmobmainwindow.h \
     view/videoview.h \
     model/cvmobvideomodel.hpp \
-    model/distancesproxymodel.hpp
+    model/distancesproxymodel.hpp \
+    view/playbar.hpp
 SOURCES += model/exporter/ExportText.cpp \
     model/exporter/IExportStrategy.cpp \
     model/PhisicsCalc.cpp \
@@ -36,13 +37,15 @@ SOURCES += model/exporter/ExportText.cpp \
     view/cvmobmainwindow.cpp \
     view/videoview.cpp \
     model/cvmobvideomodel.cpp \
-    model/distancesproxymodel.cpp
+    model/distancesproxymodel.cpp \
+    view/playbar.cpp
 
 FORMS    += \
     view/reportdialog.ui \
     view/DialogCalibration.ui \
     view/aboutDialog.ui \
-    view/cvmobmainwindow.ui
+    view/cvmobmainwindow.ui \
+    view/playbar.ui
 
 TRANSLATIONS += pt_BR_cvmob.ts
 
