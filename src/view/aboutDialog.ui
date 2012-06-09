@@ -56,7 +56,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../../cvmob_resource.qrc">:/images/src/logo.png</pixmap>
+        <pixmap resource="../cvmob_resource.qrc">:/images/logo.png</pixmap>
        </property>
       </widget>
      </item>
@@ -112,6 +112,12 @@ p, li { white-space: pre-wrap; }
    </item>
    <item>
     <widget class="QLabel" name="label_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>&lt;b&gt;Contributors:&lt;/b&gt;</string>
      </property>
@@ -119,6 +125,12 @@ p, li { white-space: pre-wrap; }
    </item>
    <item>
     <widget class="QLabel" name="label_4">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>Adriana da Oliveira, Ana Luiz do Vale, Bruno Alves dos Santos, Bruno Cecílio Credido, Chrissie Ferreira de Carvalho, Cintia Mota Cardeal, Gaëlle M. A. Spielmann Moura, Ian Vinha, Idalino Souza de Almeida, Joana Cameiro Fraga Lima, José Garcia Vivas Miranda, Lorena Peixoto, Lucas Grabriel Souza França, Luiz Romário Santana Rios, Marcelo do Vale Cunha, Marcos Cavalcanti de Sousa, Nadja Maciel, Norberto Peña</string>
      </property>
@@ -130,7 +142,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../../cvmob_resource.qrc"/>
+  <include location="../cvmob_resource.qrc"/>
  </resources>
  <connections/>
 </ui>
