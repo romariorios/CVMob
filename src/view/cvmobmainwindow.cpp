@@ -8,8 +8,6 @@
 #include <QtGui/QFileDialog>
 #include <view/videoview.h>
 
-#include "graphs/Plot.h"
-
 #include <QDebug>
 
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
