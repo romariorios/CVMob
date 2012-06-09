@@ -24,7 +24,7 @@ SOURCES += \
     view/playbar.cpp
 
 FORMS    += \
-    view/aboutDialog.ui \
+    view/aboutdialog.ui \
     view/cvmobmainwindow.ui \
     view/playbar.ui
 
