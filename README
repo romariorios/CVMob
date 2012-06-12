@@ -1,10 +1,42 @@
 CVMob - Movement analysis tool
+Copyright (C) 2012  The CVMob contributors
 
-How to compile?
- - qmake && make
+Build instructions:
+CVMob requires OpenCV 2.0 and Qt 4.8 minimum in order to get built and
+run. If they're in path, you just need to enter in the src directory
+and run:
 
-It currently compiles and runs on Linux, but video playback does not work. To use a translation, just copy the .qm
-file into the CVMob running directory. If you wish to translate CVMob to your language, please contact me.
+    cmake . && make
 
-TODO:
- - A lot
+If you want to specify a different directory for both OpenCV and Qt,
+you'll have to do:
+
+    cmake . -DOpenCV_DIR=/path/to/OpenCV \
+            -DQT_QMAKE_EXECUTABLE=/path/to/Qt/qmake
+
+You can also set a custom prefix path, if both OpenCV and Qt are in it:
+
+    cmake . -DCMAKE_PREFIX_PATH=/path/to/qt-and-opencv
+
+Then, you can run:
+
+    make
+
+The cvmob executable will be inside src and you just need to run it
+like any other executable file. Enjoy!
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+To see the complete list of contributors, see the CONTRIBUTORS file
