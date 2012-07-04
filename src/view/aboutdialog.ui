@@ -132,7 +132,7 @@ p, li { white-space: pre-wrap; }
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Adriana da Oliveira, Ana Luiz do Vale, Bruno Alves dos Santos, Bruno Cecílio Credido, Chrissie Ferreira de Carvalho, Cintia Mota Cardeal, Gaëlle M. A. Spielmann Moura, Ian Vinha, Idalino Souza de Almeida, Joana Cameiro Fraga Lima, José Garcia Vivas Miranda, Lorena Peixoto Nogueira Rodriguez Martinez, Lucas Gabriel Souza França, Luiz Romário Santana Rios, Marcelo do Vale Cunha, Marcos Cavalcanti de Sousa, Nadja Maciel, Norberto Peña</string>
+      <string>Adriana da Oliveira, Ana Luiz do Vale, Bruno Alves dos Santos, Bruno Cecílio Credidio, Chrissie Ferreira de Carvalho, Cintia Mota Cardeal, Gaëlle M. A. Spielmann Moura, Ian Vinha, Idalino Souza de Almeida, Joana Cameiro Fraga Lima, José Garcia Vivas Miranda, Lorena Peixoto Nogueira Rodriguez Martinez, Lucas Gabriel Souza França, Luiz Romário Santana Rios, Marcelo do Vale Cunha, Marcos Cavalcanti de Sousa, Nadja Maciel, Norberto Peña</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
