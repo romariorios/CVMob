@@ -100,6 +100,36 @@ class CvmobVideoModel : public QAbstractItemModel
                                                    const QModelIndex &parent = QModelIndex());
 
 public:
+    enum VideoColumn {
+        FileNameColumn = 0,
+        CurrentFrameColumn,
+        FrameCountColumn,
+        FrameDurationColumn,
+        FrameSizeColumn,
+        DistancesColumn,
+        LinearTrajectoriesColumn,
+        AngularTrajectoriesColumn,
+        VideoColumnCount
+    };
+
+    enum LinearTrajectoryInstantColumn {
+        LFrameColumn = 0,
+        PositionColumn,
+        LSpeedColumn,
+        LAccelerationColumn,
+        LinearTrajectoryInstantColumnCount
+    };
+
+    enum AngularTrajectoryInstantColumn {
+        AFrameColumn = 0,
+        ASpeedColumn,
+        AAccelerationColumn,
+        CentralEdgeColumn,
+        PeripheralEdge1Column,
+        PeripheralEdge2Column,
+        AngularTrajectoryInstantColumnCount
+    };
+
     explicit CvmobVideoModel(QObject *parent = 0);
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
