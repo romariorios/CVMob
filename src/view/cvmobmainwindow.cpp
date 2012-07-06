@@ -53,23 +53,42 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
 
     _videoModel->insertRow(0);
-    _videoModel->insertColumns(0, 5);
-    _videoModel->setData(_videoModel->index(0, 0), "test.avi", CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(0, 1), 0, CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(0, 2), 600, CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(0, 3), 100, CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(0, 4), QSizeF(640, 480), CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->insertRow(0, _videoModel->index(0, 0));
-    _videoModel->setData(_videoModel->index(0, 0, _videoModel->index(0, 0)), QLineF(0, 0, 100, 100),
+    _videoModel->insertColumns(0, CvmobVideoModel::VideoColumnCount);
+    _videoModel->setData(_videoModel->index(0, CvmobVideoModel::FileNameColumn),
+                         "test.avi", CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(0, CvmobVideoModel::CurrentFrameColumn),
+                         0, CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(0, CvmobVideoModel::FrameCountColumn),
+                         600, CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(0, CvmobVideoModel::FrameDurationColumn),
+                         100, CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(0, CvmobVideoModel::FrameSizeColumn),
+                         QSizeF(640, 480), CvmobVideoModel::VideoSceneEditRole);
+
+    QModelIndex distancesIndex = _videoModel->index(0, CvmobVideoModel::DistancesColumn);
+    QModelIndex lineIndex = _videoModel->index(0, 0, distancesIndex);
+
+    _videoModel->insertRow(0, distancesIndex);
+    _videoModel->setData(lineIndex, QLineF(0, 0, 100, 100),
                          CvmobVideoModel::VideoSceneEditRole);
+
     _videoModel->insertRow(1);
-    _videoModel->setData(_videoModel->index(1, 0), "test2.avi", CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(1, 1), 0, CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(1, 2), 600, CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(1, 3), 100, CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(1, 4), QSizeF(400, 300), CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->insertRow(0, _videoModel->index(1, 0));
-    _videoModel->setData(_videoModel->index(0, 0, _videoModel->index(1, 0)), QLineF(60, 400, 200, 80),
+    _videoModel->setData(_videoModel->index(1, CvmobVideoModel::FileNameColumn),
+                         "test2.avi", CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(1, CvmobVideoModel::CurrentFrameColumn),
+                         0, CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(1, CvmobVideoModel::FrameCountColumn),
+                         600, CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(1, CvmobVideoModel::FrameDurationColumn),
+                         100, CvmobVideoModel::VideoSceneEditRole);
+    _videoModel->setData(_videoModel->index(1, CvmobVideoModel::FrameSizeColumn),
+                         QSizeF(400, 300), CvmobVideoModel::VideoSceneEditRole);
+
+    distancesIndex = _videoModel->index(1, CvmobVideoModel::DistancesColumn);
+    lineIndex = _videoModel->index(0, 0, distancesIndex);
+
+    _videoModel->insertRow(0, distancesIndex);
+    _videoModel->setData(lineIndex, QLineF(60, 400, 200, 80),
                          CvmobVideoModel::VideoSceneEditRole);
 }
 
