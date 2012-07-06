@@ -42,6 +42,8 @@ QModelIndex CvmobVideoModel::index(int row, int column, const QModelIndex &paren
     switch (parentInternalPointerType) {
     case VideoData:
         switch (parentColumn) {
+        case FramesColumn:
+            return createIndex(row, column, new InternalData(FrameData, row, parentInternalPointer));
         case DistancesColumn:
             return createIndex(row, column, new InternalData(DistanceData, row, parentInternalPointer));
         case LinearTrajectoriesColumn:
@@ -81,6 +83,9 @@ QModelIndex CvmobVideoModel::parent(const QModelIndex &child) const
     int parentColumn;
 
     switch (data->type) {
+    case FrameData:
+        parentColumn = FramesColumn;
+        break;
     case DistanceData:
         parentColumn = DistancesColumn;
         break;
@@ -133,7 +138,7 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
         default:
             return QVariant();
         }
-    } else if (internalPointer->type == DistanceData) {
+    } else {
         if (!internalPointer->parent) {
             return QVariant();
         }
@@ -144,11 +149,20 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
 
-        switch (index.column()) {
-        case 0:
-            return currentVideo.distances.at(index.row());
-        default:
-            return QVariant();
+        if (internalPointer->type == FrameData) {
+            switch (index.column()) {
+            case 0:
+                return QVariant::fromValue(currentVideo.frames.at(index.row()));
+            default:
+                return QVariant();
+            }
+        } else if (internalPointer->type == DistanceData) {
+            switch (index.column()) {
+            case 0:
+                return currentVideo.distances.at(index.row());
+            default:
+                return QVariant();
+            }
         }
     } else {
         InternalData *parentPointer = internalPointer->parent;
@@ -233,6 +247,7 @@ int CvmobVideoModel::columnCount(const QModelIndex &parent) const
     switch (static_cast<InternalData *>(parent.internalPointer())->type) {
     case VideoData:
         switch (parent.column()) {
+        case FramesColumn:
         case DistancesColumn:
         case LinearTrajectoriesColumn:
         case AngularTrajectoriesColumn:
@@ -262,6 +277,8 @@ int CvmobVideoModel::rowCount(const QModelIndex &parent) const
 
     if (internalPointer->type == VideoData) {
         switch (parent.column()) {
+        case FramesColumn:
+            return parentVideo.frames.size();
         case DistancesColumn:
             return parentVideo.distances.size();
         case LinearTrajectoriesColumn:
@@ -321,17 +338,25 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
             currentVideo.frameSize = value.toSizeF();
             break;
         }
-    } else if (internalPointer->type == DistanceData) {
+    } else {
         if (!internalPointer->parent) {
             return false;
         }
 
         Video &currentVideo = (*_cvmobVideoData)[internalPointer->parent->row];
 
-        switch (index.column()) {
-        case 0:
-            currentVideo.distances[index.row()] = value.toLineF();
-            break;
+        if (internalPointer->type = FrameData) {
+            switch (index.column()) {
+            case 0:
+                currentVideo.frames[index.row()] = value.value<QImage>();
+                break;
+            }
+        } else if (internalPointer->type == DistanceData) {
+            switch (index.column()) {
+            case 0:
+                currentVideo.distances[index.row()] = value.toLineF();
+                break;
+            }
         }
     } else {
         InternalData *parentPointer = internalPointer->parent;
@@ -428,6 +453,8 @@ bool CvmobVideoModel::insertRows(int row, int count, const QModelIndex &parent)
 
     if (parentPointer->type == VideoData) {
         switch (parent.column()) {
+        case FramesColumn:
+            return checkAndInsertRowsIn<QImage>(currentVideo.frames, row, count, parent);
         case DistancesColumn:
             return checkAndInsertRowsIn<QLineF>(currentVideo.distances, row, count, parent);
         case LinearTrajectoriesColumn:
@@ -499,6 +526,8 @@ bool CvmobVideoModel::removeRows(int row, int count, const QModelIndex &parent)
 
     if (parentPointer->type == VideoData) {
         switch (parent.column()) {
+        case FramesColumn:
+            return checkAndRemoveRowsFrom<QImage>(currentVideo.frames, row, count, parent);
         case DistancesColumn:
             return checkAndRemoveRowsFrom<QLineF>(currentVideo.distances, row, count, parent);
         case LinearTrajectoriesColumn:

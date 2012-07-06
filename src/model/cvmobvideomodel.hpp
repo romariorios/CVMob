@@ -22,6 +22,7 @@
 
 #include <QAbstractItemModel>
 
+#include <QImage>
 #include <QList>
 #include <QLineF>
 #include <QPointF>
@@ -60,6 +61,7 @@ class CvmobVideoModel : public QAbstractItemModel
         int currentFrame, frameCount, frameDuration;
         QSizeF frameSize;
 
+        QList<QImage> frames;
         QList<QLineF> distances;
         QList<LinearTrajectory> linearTrajectories;
         QList<AngularTrajectory> angularTrajectories;
@@ -69,6 +71,7 @@ class CvmobVideoModel : public QAbstractItemModel
     {
         VideoData,
         DistanceData,
+        FrameData,
         LinearTrajectoryData,
         AngularTrajectoryData,
         LinearTrajectoryInstantData,
@@ -106,6 +109,7 @@ public:
         FrameCountColumn,
         FrameDurationColumn,
         FrameSizeColumn,
+        FramesColumn,
         DistancesColumn,
         LinearTrajectoriesColumn,
         AngularTrajectoriesColumn,
