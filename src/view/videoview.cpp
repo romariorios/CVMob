@@ -100,14 +100,14 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
 
     _view->setScene(_scenes.at(selectedIndex.row()));
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
-    _playBar->setPlayData(model()
-                          ->data(model()
-                                 ->index(selectedIndex.row(),
-                                         CvmobVideoModel::FrameCountColumn)).toInt(),
-                          model()
-                          ->data(model()
-                                 ->index(selectedIndex.row(),
-                                         CvmobVideoModel::FrameDurationColumn)).toInt());
+
+    _playBar->setPlayData(model()->columnCount(
+                              model()->index(
+                                  selectedIndex.row(),
+                                  CvmobVideoModel::FramesColumn)),
+                          model()->data(
+                              model()->index(selectedIndex.row(),
+                                             CvmobVideoModel::FrameDurationColumn)).toInt());
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)

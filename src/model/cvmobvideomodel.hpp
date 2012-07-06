@@ -58,7 +58,7 @@ class CvmobVideoModel : public QAbstractItemModel
     struct Video
     {
         QString fileName;
-        int currentFrame, frameCount, frameDuration;
+        int currentFrame, frameDuration;
         QSizeF frameSize;
 
         QList<QImage> frames;
@@ -106,7 +106,6 @@ public:
     enum VideoColumn {
         FileNameColumn = 0,
         CurrentFrameColumn,
-        FrameCountColumn,
         FrameDurationColumn,
         FrameSizeColumn,
         FramesColumn,

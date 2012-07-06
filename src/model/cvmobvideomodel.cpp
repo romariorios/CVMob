@@ -129,8 +129,6 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
             return currentVideo.fileName;
         case CurrentFrameColumn:
             return currentVideo.currentFrame;
-        case FrameCountColumn:
-            return currentVideo.frameCount;
         case FrameDurationColumn:
             return currentVideo.frameDuration;
         case FrameSizeColumn:
@@ -247,8 +245,6 @@ QVariant CvmobVideoModel::headerData(int section, Qt::Orientation orientation, i
             return tr("File name");
         case CurrentFrameColumn:
             return tr("Current frame");
-        case FrameCountColumn:
-            return tr("Frame count");
         case FrameDurationColumn:
             return tr("Frame duration");
         case FrameSizeColumn:
@@ -352,9 +348,6 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
             break;
         case CurrentFrameColumn:
             currentVideo.currentFrame = value.toInt();
-            break;
-        case FrameCountColumn:
-            currentVideo.frameCount = value.toInt();
             break;
         case FrameDurationColumn:
             currentVideo.frameDuration = value.toInt();

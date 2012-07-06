@@ -58,8 +58,6 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
                          "test.avi", CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(0, CvmobVideoModel::CurrentFrameColumn),
                          0, CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(0, CvmobVideoModel::FrameCountColumn),
-                         600, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(0, CvmobVideoModel::FrameDurationColumn),
                          100, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(0, CvmobVideoModel::FrameSizeColumn),
@@ -77,8 +75,6 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
                          "test2.avi", CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(1, CvmobVideoModel::CurrentFrameColumn),
                          0, CvmobVideoModel::VideoSceneEditRole);
-    _videoModel->setData(_videoModel->index(1, CvmobVideoModel::FrameCountColumn),
-                         600, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(1, CvmobVideoModel::FrameDurationColumn),
                          100, CvmobVideoModel::VideoSceneEditRole);
     _videoModel->setData(_videoModel->index(1, CvmobVideoModel::FrameSizeColumn),
