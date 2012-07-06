@@ -139,17 +139,18 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     } else {
-        if (!internalPointer->parent) {
+        if (!internalPointer->parent ||
+            internalPointer->parent->row >= _cvmobVideoData->size()) {
             return QVariant();
         }
 
         Video currentVideo = _cvmobVideoData->at(internalPointer->parent->row);
 
-        if (index.row() >= currentVideo.distances.size()) {
-            return QVariant();
-        }
-
         if (internalPointer->type == FrameData) {
+            if (index.row() >= currentVideo.frames.size()) {
+                return QVariant();
+            }
+
             switch (index.column()) {
             case 0:
                 return QVariant::fromValue(currentVideo.frames.at(index.row()));
@@ -157,6 +158,10 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
                 return QVariant();
             }
         } else if (internalPointer->type == DistanceData) {
+            if (index.row() >= currentVideo.distances.size()) {
+                return QVariant();
+            }
+
             switch (index.column()) {
             case 0:
                 return currentVideo.distances.at(index.row());
@@ -164,7 +169,7 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
                 return QVariant();
             }
         }
-    } else {
+
         InternalData *parentPointer = internalPointer->parent;
 
         if (!parentPointer &&
@@ -172,10 +177,17 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
 
-        Video currentVideo = _cvmobVideoData->at(parentPointer->parent->row);
-
         if (internalPointer->type == LinearTrajectoryInstantData) {
+            if (parentPointer->row >= currentVideo.linearTrajectories.size()) {
+                return QVariant();
+            }
+
             LinearTrajectory currentTrajectory = currentVideo.linearTrajectories.at(parentPointer->row);
+
+            if (index.row() >= currentTrajectory.instants.size()) {
+                return QVariant();
+            }
+
             LinearTrajectoryInstant currentInstant = currentTrajectory.instants.at(index.row());
 
             switch (index.column()) {
@@ -189,7 +201,16 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
                 return currentInstant.acceleration;
             }
         } else if (internalPointer->type == AngularTrajectoryInstantData) {
+            if (parentPointer->row >= currentVideo.angularTrajectories.size()) {
+                return QVariant();
+            }
+
             AngularTrajectory currentTrajectory = currentVideo.angularTrajectories.at(parentPointer->row);
+
+            if (index.row() >= currentTrajectory.instants.size()) {
+                return QVariant();
+            }
+
             AngularTrajectoryInstant currentInstant = currentTrajectory.instants.at(index.row());
 
             switch (index.column()) {
@@ -319,6 +340,10 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
     InternalData *internalPointer = static_cast<InternalData *>(index.internalPointer());
 
     if (internalPointer->type == VideoData) {
+        if (index.row() >= _cvmobVideoData->size()) {
+            return false;
+        }
+
         Video &currentVideo = (*_cvmobVideoData)[index.row()];
 
         switch (index.column()) {
@@ -339,79 +364,104 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
             break;
         }
     } else {
-        if (!internalPointer->parent) {
+        if (!internalPointer->parent ||
+            internalPointer->parent->row >= _cvmobVideoData->size()) {
             return false;
         }
 
         Video &currentVideo = (*_cvmobVideoData)[internalPointer->parent->row];
 
-        if (internalPointer->type = FrameData) {
+        if (internalPointer->type == FrameData) {
+            if (index.row() >= currentVideo.frames.size()) {
+                return false;
+            }
+
             switch (index.column()) {
             case 0:
                 currentVideo.frames[index.row()] = value.value<QImage>();
                 break;
             }
         } else if (internalPointer->type == DistanceData) {
+            if (index.row() >= currentVideo.distances.size()) {
+                return false;
+            }
+
             switch (index.column()) {
             case 0:
                 currentVideo.distances[index.row()] = value.toLineF();
                 break;
             }
-        }
-    } else {
-        InternalData *parentPointer = internalPointer->parent;
-
-        if (!parentPointer &&
-            !parentPointer->parent) {
-            return false;
-        }
-
-        Video &currentVideo = (*_cvmobVideoData)[parentPointer->parent->row];
-
-        if (internalPointer->type == LinearTrajectoryInstantData) {
-            LinearTrajectory &currentTrajectory = currentVideo.linearTrajectories[parentPointer->row];
-            LinearTrajectoryInstant &currentInstant = currentTrajectory.instants[index.row()];
-
-            switch (index.column()) {
-            case LFrameColumn:
-                currentInstant.frame = value.toInt();
-                break;
-            case PositionColumn:
-                currentInstant.position = value.toPointF();
-                break;
-            case LSpeedColumn:
-                currentInstant.speed = value.toPointF();
-                break;
-            case LAccelerationColumn:
-                currentInstant.acceleration = value.toPointF();
-                break;
-            }
-        } else if (internalPointer->type == AngularTrajectoryInstantData) {
-            AngularTrajectory &currentTrajectory = currentVideo.angularTrajectories[parentPointer->row];
-            AngularTrajectoryInstant &currentInstant = currentTrajectory.instants[index.row()];
-
-            switch (index.column()) {
-            case AFrameColumn:
-                currentInstant.frame = value.toInt();
-                break;
-            case ASpeedColumn:
-                currentInstant.speed = value.toInt();
-                break;
-            case AAccelerationColumn:
-                currentInstant.acceleration = value.toInt();
-                break;
-            case CentralEdgeColumn:
-                currentInstant.centralEdge = value.toPointF();
-                break;
-            case PeripheralEdge1Column:
-                currentInstant.peripheralEdges.first = value.toPointF();
-                break;
-            case PeripheralEdge2Column:
-                currentInstant.peripheralEdges.second = value.toPointF();
-                break;
-            }
         } else {
-            return false;
+            InternalData *parentPointer = internalPointer->parent;
+
+            if (!parentPointer &&
+                !parentPointer->parent) {
+                return false;
+            }
+
+            if (internalPointer->type == LinearTrajectoryInstantData) {
+                if (parentPointer->row >= currentVideo.linearTrajectories.size()) {
+                    return false;
+                }
+
+                LinearTrajectory &currentTrajectory = currentVideo.linearTrajectories[parentPointer->row];
+
+                if (index.row() >= currentTrajectory.instants.size()) {
+                    return false;
+                }
+
+                LinearTrajectoryInstant &currentInstant = currentTrajectory.instants[index.row()];
+
+                switch (index.column()) {
+                case LFrameColumn:
+                    currentInstant.frame = value.toInt();
+                    break;
+                case PositionColumn:
+                    currentInstant.position = value.toPointF();
+                    break;
+                case LSpeedColumn:
+                    currentInstant.speed = value.toPointF();
+                    break;
+                case LAccelerationColumn:
+                    currentInstant.acceleration = value.toPointF();
+                    break;
+                }
+            } else if (internalPointer->type == AngularTrajectoryInstantData) {
+                if (parentPointer->row >= currentVideo.angularTrajectories.size()) {
+                    return false;
+                }
+
+                AngularTrajectory &currentTrajectory = currentVideo.angularTrajectories[parentPointer->row];
+
+                if (index.row() >= currentTrajectory.instants.size()) {
+                    return false;
+                }
+
+                AngularTrajectoryInstant &currentInstant = currentTrajectory.instants[index.row()];
+
+                switch (index.column()) {
+                case AFrameColumn:
+                    currentInstant.frame = value.toInt();
+                    break;
+                case ASpeedColumn:
+                    currentInstant.speed = value.toInt();
+                    break;
+                case AAccelerationColumn:
+                    currentInstant.acceleration = value.toInt();
+                    break;
+                case CentralEdgeColumn:
+                    currentInstant.centralEdge = value.toPointF();
+                    break;
+                case PeripheralEdge1Column:
+                    currentInstant.peripheralEdges.first = value.toPointF();
+                    break;
+                case PeripheralEdge2Column:
+                    currentInstant.peripheralEdges.second = value.toPointF();
+                    break;
+                }
+            } else {
+                return false;
+            }
         }
     }
 
