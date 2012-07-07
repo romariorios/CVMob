@@ -91,10 +91,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
         }
     } else if (!parent.parent().isValid()) { // Level 1
         if (parent.column() == CvmobVideoModel::DistancesColumn) {
-            QGraphicsLineItem *line = static_cast<QGraphicsLineItem *>(_videos
-                                                                       .at(parent.row())
-                                                                       .scene->items()
-                                                                       .at(topLeft.row()));
+            QGraphicsLineItem *line = _videos.at(parent.row()).distances.at(topLeft.row());
             line->setLine(topLeft.data(CvmobVideoModel::VideoSceneRole).toLineF());
         }
     }
@@ -194,7 +191,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         if (parent.column() == CvmobVideoModel::DistancesColumn) {
             for (int i = start; i <= end; ++i) {
                 Video &v = _videos[parent.row()];
-                QGraphicsLineItem *l = new QGraphicsLineItem(0, 0, 0, 0, v.bgRect, v.scene);
+                v.distances << new QGraphicsLineItem(0, 0, 0, 0, v.bgRect, v.scene);
             }
         }
     }

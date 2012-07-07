@@ -26,6 +26,7 @@
 
 class PlayBar;
 class QGraphicsView;
+class QGraphicsLineItem;
 class QGraphicsRectItem;
 class QGraphicsScene;
 
@@ -56,6 +57,7 @@ private:
     {
         QGraphicsScene *scene;
         QGraphicsRectItem *bgRect;
+        QList<QGraphicsLineItem *> distances;
 
         Video(QGraphicsScene *e_s, QGraphicsRectItem *e_bgr) :
             scene(e_s),
