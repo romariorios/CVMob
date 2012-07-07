@@ -22,6 +22,7 @@
 #include <model/cvmobvideomodel.hpp>
 #include <QtGui/QGraphicsItem>
 #include <QtGui/QGraphicsLineItem>
+#include <QtGui/QGraphicsRectItem>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QImage>
@@ -36,7 +37,7 @@
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
     _view(new QGraphicsView),
-    _noVideoScene(new QGraphicsScene(_view)),
+    _noVideoVideo(Video(new QGraphicsScene(_view), 0)),
     _playBar(new PlayBar(this))
 {
     new QVBoxLayout(viewport());
@@ -49,13 +50,15 @@ VideoView::VideoView(QWidget *parent) :
     viewport()->layout()->addWidget(_playBar);
 
     QImage bgImage(":/images/translucent-logo.png");
-    _noVideoScene->setBackgroundBrush(bgImage);
-    _noVideoScene->setSceneRect(QRectF(QPointF(0, 0), bgImage.size()));
-    QGraphicsItem *noVideoText = _noVideoScene->addText(tr("No video"));
-    noVideoText->moveBy(100, 50);
-
-    _view->setScene(_noVideoScene);
+    _view->setScene(_noVideoVideo.scene);
+    _noVideoVideo.bgRect = new QGraphicsRectItem(0, _noVideoVideo.scene);
+    _noVideoVideo.bgRect->setRect(QRectF(QPointF(0, 0), bgImage.size()));
+    _noVideoVideo.bgRect->setBrush(bgImage);
+    _noVideoVideo.bgRect->setPen(Qt::NoPen);
+    _noVideoVideo.scene->setSceneRect(QRectF(QPointF(0, 0), bgImage.size()));
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
+    QGraphicsItem *noVideoText = _noVideoVideo.scene->addText(tr("No video"));
+    noVideoText->moveBy(100, 50);
 }
 
 VideoView::~VideoView()
@@ -79,15 +82,18 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
 
     if (!parent.isValid()) { // Level 0
         if (topLeft.column() == CvmobVideoModel::FrameSizeColumn) {
-            _scenes.at(topLeft.row())->setSceneRect(QRectF(QPointF(0, 0),
-                                                           topLeft.data(CvmobVideoModel::VideoSceneRole)
-                                                           .toSizeF()));
+            Video v = _videos.at(topLeft.row());
+            QRectF r = QRectF(QPointF(0, 0),
+                              topLeft.data(CvmobVideoModel::VideoSceneRole)
+                              .toSizeF());
+            v.bgRect->setRect(r);
+            v.scene->setSceneRect(r);
         }
     } else if (!parent.parent().isValid()) { // Level 1
         if (parent.column() == CvmobVideoModel::DistancesColumn) {
-            QGraphicsLineItem *line = static_cast<QGraphicsLineItem *>(_scenes
+            QGraphicsLineItem *line = static_cast<QGraphicsLineItem *>(_videos
                                                                        .at(parent.row())
-                                                                       ->items()
+                                                                       .scene->items()
                                                                        .at(topLeft.row()));
             line->setLine(topLeft.data(CvmobVideoModel::VideoSceneRole).toLineF());
         }
@@ -98,7 +104,7 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
 {
     QModelIndex selectedIndex = selected.at(0).indexes().at(0);
 
-    _view->setScene(_scenes.at(selectedIndex.row()));
+    _view->setScene(_videos.at(selectedIndex.row()).scene);
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
 
     _playBar->setPlayData(model()->columnCount(
@@ -179,12 +185,16 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
     if (!parent.isValid()) { // Level 0
         for (int i = start; i <= end; ++i) {
-            _scenes.insert(i, new QGraphicsScene(_view));
+            _videos.insert(i, Video(new QGraphicsScene(_view), 0));
+            Video &v = _videos.last();
+            v.bgRect = new QGraphicsRectItem(0, v.scene);
+            v.bgRect->setPen(Qt::NoPen);
         }
     } else if (!parent.parent().isValid()) { // Level 1
         if (parent.column() == CvmobVideoModel::DistancesColumn) {
             for (int i = start; i <= end; ++i) {
-                _scenes[parent.row()]->addLine(0, 0, 0, 0);
+                Video &v = _videos[parent.row()];
+                QGraphicsLineItem *l = new QGraphicsLineItem(0, 0, 0, 0, v.bgRect, v.scene);
             }
         }
     }

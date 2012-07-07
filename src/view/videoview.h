@@ -52,9 +52,20 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 private:
+    struct Video
+    {
+        QGraphicsScene *scene;
+        QGraphicsRectItem *bgRect;
+
+        Video(QGraphicsScene *e_s, QGraphicsRectItem *e_bgr) :
+            scene(e_s),
+            bgRect(e_bgr)
+        {}
+    };
+
     QGraphicsView *_view;
-    QList<QGraphicsScene *> _scenes;
-    QGraphicsScene *_noVideoScene;
+    QList<Video> _videos;
+    Video _noVideoVideo;
     PlayBar *_playBar;
 
 protected slots:
