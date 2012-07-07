@@ -114,7 +114,8 @@ void DistancesProxyModel::selectionChanged(const QItemSelection &selected,
         selected.at(0).indexes().size() != 1) {
         _parentIndex = QModelIndex();
     } else {
-        _parentIndex = selected.at(0).indexes().at(0);
+        _parentIndex = sourceModel()->index(selected.at(0).indexes().at(0).row(),
+                                            CvmobVideoModel::DistancesColumn);
     }
 
     endResetModel();
