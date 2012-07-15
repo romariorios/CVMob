@@ -68,6 +68,7 @@ private:
     QGraphicsView *_view;
     QList<Video> _videos;
     Video _noVideoVideo;
+    int _currentVideoRow;
     PlayBar *_playBar;
 
 protected slots:
@@ -75,6 +76,9 @@ protected slots:
                                                                        // to bottomRight.
     void selectionChanged(const QItemSelection &selected, const QItemSelection &);
     void rowsInserted(const QModelIndex &parent, int start, int end);
+
+private slots:
+    void changeFrame(int frame);
 };
 
 #endif // VIDEOVIEW_H

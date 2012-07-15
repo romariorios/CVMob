@@ -59,6 +59,8 @@ VideoView::VideoView(QWidget *parent) :
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
     QGraphicsItem *noVideoText = _noVideoVideo.scene->addText(tr("No video"));
     noVideoText->moveBy(100, 50);
+
+    connect(_playBar, SIGNAL(frameChanged(int)), SLOT(changeFrame(int)));
 }
 
 VideoView::~VideoView()
@@ -81,13 +83,25 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
     const QModelIndex parent = topLeft.parent();
 
     if (!parent.isValid()) { // Level 0
+        Video v = _videos.at(topLeft.row());
+
         if (topLeft.column() == CvmobVideoModel::FrameSizeColumn) {
-            Video v = _videos.at(topLeft.row());
             QRectF r = QRectF(QPointF(0, 0),
                               topLeft.data(CvmobVideoModel::VideoSceneRole)
                               .toSizeF());
             v.bgRect->setRect(r);
             v.scene->setSceneRect(r);
+        } else if (topLeft.column() == CvmobVideoModel::CurrentFrameColumn) {
+            v.bgRect->setBrush(model()
+                               ->index(topLeft
+                                       .data(CvmobVideoModel::VideoSceneRole)
+                                       .toInt(),
+                                       0,
+                                       model()
+                                       ->index(topLeft
+                                               .row(),
+                                               CvmobVideoModel::FramesColumn))
+                               .data(CvmobVideoModel::VideoSceneRole).value<QImage>());
         }
     } else if (!parent.parent().isValid()) { // Level 1
         if (parent.column() == CvmobVideoModel::DistancesColumn) {
@@ -100,16 +114,17 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
 void VideoView::selectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
     QModelIndex selectedIndex = selected.at(0).indexes().at(0);
+    _currentVideoRow = selectedIndex.row();
 
-    _view->setScene(_videos.at(selectedIndex.row()).scene);
+    _view->setScene(_videos.at(_currentVideoRow).scene);
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
 
-    _playBar->setPlayData(model()->columnCount(
+    _playBar->setPlayData(model()->rowCount(
                               model()->index(
-                                  selectedIndex.row(),
+                                  _currentVideoRow,
                                   CvmobVideoModel::FramesColumn)),
                           model()->data(
-                              model()->index(selectedIndex.row(),
+                              model()->index(_currentVideoRow,
                                              CvmobVideoModel::FrameDurationColumn)).toInt());
 }
 
@@ -195,4 +210,16 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
             }
         }
     }
+}
+
+void VideoView::changeFrame(int frame)
+{
+    QModelIndex currentFrameIndex = model()
+            ->index(_currentVideoRow, CvmobVideoModel::CurrentFrameColumn);
+
+    if (frame == currentFrameIndex.data(CvmobVideoModel::VideoSceneRole).toInt()) {
+        return;
+    }
+
+    model()->setData(currentFrameIndex, frame);
 }
