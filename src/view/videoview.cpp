@@ -19,7 +19,7 @@
 
 #include "videoview.h"
 
-#include <model/cvmobvideomodel.hpp>
+#include <model/videomodel.hpp>
 #include <QtGui/QGraphicsItem>
 #include <QtGui/QGraphicsLineItem>
 #include <QtGui/QGraphicsRectItem>
@@ -85,28 +85,28 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
     if (!parent.isValid()) { // Level 0
         Video v = _videos.at(topLeft.row());
 
-        if (topLeft.column() == CvmobVideoModel::FrameSizeColumn) {
+        if (topLeft.column() == VideoModel::FrameSizeColumn) {
             QRectF r = QRectF(QPointF(0, 0),
-                              topLeft.data(CvmobVideoModel::VideoSceneRole)
+                              topLeft.data(VideoModel::VideoSceneRole)
                               .toSizeF());
             v.bgRect->setRect(r);
             v.scene->setSceneRect(r);
-        } else if (topLeft.column() == CvmobVideoModel::CurrentFrameColumn) {
+        } else if (topLeft.column() == VideoModel::CurrentFrameColumn) {
             v.bgRect->setBrush(model()
                                ->index(topLeft
-                                       .data(CvmobVideoModel::VideoSceneRole)
+                                       .data(VideoModel::VideoSceneRole)
                                        .toInt(),
                                        0,
                                        model()
                                        ->index(topLeft
                                                .row(),
-                                               CvmobVideoModel::FramesColumn))
-                               .data(CvmobVideoModel::VideoSceneRole).value<QImage>());
+                                               VideoModel::FramesColumn))
+                               .data(VideoModel::VideoSceneRole).value<QImage>());
         }
     } else if (!parent.parent().isValid()) { // Level 1
-        if (parent.column() == CvmobVideoModel::DistancesColumn) {
+        if (parent.column() == VideoModel::DistancesColumn) {
             QGraphicsLineItem *line = _videos.at(parent.row()).distances.at(topLeft.row());
-            line->setLine(topLeft.data(CvmobVideoModel::VideoSceneRole).toLineF());
+            line->setLine(topLeft.data(VideoModel::VideoSceneRole).toLineF());
         }
     }
 }
@@ -122,10 +122,10 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
     _playBar->setPlayData(model()->rowCount(
                               model()->index(
                                   _currentVideoRow,
-                                  CvmobVideoModel::FramesColumn)),
+                                  VideoModel::FramesColumn)),
                           model()->data(
                               model()->index(_currentVideoRow,
-                                             CvmobVideoModel::FrameDurationColumn)).toInt());
+                                             VideoModel::FrameDurationColumn)).toInt());
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -138,7 +138,7 @@ QModelIndex VideoView::indexAt(const QPoint &point) const
 {
     foreach (QGraphicsItem *item, _view->scene()->items(point, Qt::ContainsItemShape, Qt::AscendingOrder)) {
         for (int i = 0; i < model()->rowCount(); ++i) {
-            QModelIndex index = model()->index(i, CvmobVideoModel::DistancesColumn);
+            QModelIndex index = model()->index(i, VideoModel::DistancesColumn);
             if (index.data().toPointF() == item->boundingRect().topLeft()) {
                 return index;
             }
@@ -203,7 +203,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
             v.bgRect->setPen(Qt::NoPen);
         }
     } else if (!parent.parent().isValid()) { // Level 1
-        if (parent.column() == CvmobVideoModel::DistancesColumn) {
+        if (parent.column() == VideoModel::DistancesColumn) {
             for (int i = start; i <= end; ++i) {
                 Video &v = _videos[parent.row()];
                 v.distances << new QGraphicsLineItem(0, 0, 0, 0, v.bgRect, v.scene);
@@ -215,9 +215,9 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
 void VideoView::changeFrame(int frame)
 {
     QModelIndex currentFrameIndex = model()
-            ->index(_currentVideoRow, CvmobVideoModel::CurrentFrameColumn);
+            ->index(_currentVideoRow, VideoModel::CurrentFrameColumn);
 
-    if (frame == currentFrameIndex.data(CvmobVideoModel::VideoSceneRole).toInt()) {
+    if (frame == currentFrameIndex.data(VideoModel::VideoSceneRole).toInt()) {
         return;
     }
 

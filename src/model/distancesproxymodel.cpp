@@ -19,7 +19,7 @@
 
 #include "distancesproxymodel.hpp"
 
-#include <model/cvmobvideomodel.hpp>
+#include <model/videomodel.hpp>
 #include <QItemSelectionModel>
 
 #include <QDebug>
@@ -39,7 +39,7 @@ QVariant DistancesProxyModel::data(const QModelIndex &proxyIndex, int role) cons
     }
 
     const QLineF line = sourceModel()
-            ->data(sourceModel()->index(proxyIndex.row(), 0, _parentIndex), CvmobVideoModel::VideoSceneRole)
+            ->data(sourceModel()->index(proxyIndex.row(), 0, _parentIndex), VideoModel::VideoSceneRole)
             .toLineF();
 
     switch (proxyIndex.column()) {
@@ -115,7 +115,7 @@ void DistancesProxyModel::selectionChanged(const QItemSelection &selected,
         _parentIndex = QModelIndex();
     } else {
         _parentIndex = sourceModel()->index(selected.at(0).indexes().at(0).row(),
-                                            CvmobVideoModel::DistancesColumn);
+                                            VideoModel::DistancesColumn);
     }
 
     endResetModel();

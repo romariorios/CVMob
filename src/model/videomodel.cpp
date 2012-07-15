@@ -17,19 +17,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "cvmobvideomodel.hpp"
+#include "videomodel.hpp"
 
 #include <cmath>
 
 #include <QDebug>
 
-CvmobVideoModel::CvmobVideoModel(QObject *parent) :
+VideoModel::VideoModel(QObject *parent) :
     QAbstractItemModel(parent),
-    _cvmobVideoData(new QList<CvmobVideoModel::Video>)
+    _cvmobVideoData(new QList<VideoModel::Video>)
 {
 }
 
-QModelIndex CvmobVideoModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex VideoModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
         return createIndex(row, column, new InternalData(VideoData, row));
@@ -68,7 +68,7 @@ QModelIndex CvmobVideoModel::index(int row, int column, const QModelIndex &paren
     return QModelIndex();
 }
 
-QModelIndex CvmobVideoModel::parent(const QModelIndex &child) const
+QModelIndex VideoModel::parent(const QModelIndex &child) const
 {
     if (!child.isValid()) {
         return QModelIndex();
@@ -106,7 +106,7 @@ QModelIndex CvmobVideoModel::parent(const QModelIndex &child) const
     return createIndex(data->parent->row, parentColumn, data->parent);
 }
 
-QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
+QVariant VideoModel::data(const QModelIndex &index, int role) const
 {
     if ((role != VideoSceneRole &&
         role != VideoSceneEditRole &&
@@ -231,7 +231,7 @@ QVariant CvmobVideoModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant CvmobVideoModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant VideoModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != VideoSceneRole ||
         role != VideoSceneEditRole ||
@@ -255,7 +255,7 @@ QVariant CvmobVideoModel::headerData(int section, Qt::Orientation orientation, i
     return QVariant();
 }
 
-int CvmobVideoModel::columnCount(const QModelIndex &parent) const
+int VideoModel::columnCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
         return VideoColumnCount;
@@ -283,7 +283,7 @@ int CvmobVideoModel::columnCount(const QModelIndex &parent) const
     return 0;
 }
 
-int CvmobVideoModel::rowCount(const QModelIndex &parent) const
+int VideoModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
         return _cvmobVideoData->size();
@@ -320,12 +320,12 @@ int CvmobVideoModel::rowCount(const QModelIndex &parent) const
     return 0;
 }
 
-Qt::ItemFlags CvmobVideoModel::flags(const QModelIndex &index) const
+Qt::ItemFlags VideoModel::flags(const QModelIndex &index) const
 {
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
-bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (role != VideoSceneEditRole ||
         !index.isValid() ||
@@ -462,7 +462,7 @@ bool CvmobVideoModel::setData(const QModelIndex &index, const QVariant &value, i
     return true;
 }
 
-template <class T> bool CvmobVideoModel::checkAndInsertRowsIn(QList<T> &l,
+template <class T> bool VideoModel::checkAndInsertRowsIn(QList<T> &l,
                                                               int row,
                                                               int count,
                                                               const QModelIndex &parent)
@@ -485,7 +485,7 @@ template <class T> bool CvmobVideoModel::checkAndInsertRowsIn(QList<T> &l,
     return true;
 }
 
-bool CvmobVideoModel::insertRows(int row, int count, const QModelIndex &parent)
+bool VideoModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     if (!parent.isValid()) {
         return checkAndInsertRowsIn<Video>(*_cvmobVideoData, row, count);
@@ -535,7 +535,7 @@ bool CvmobVideoModel::insertRows(int row, int count, const QModelIndex &parent)
     return false;
 }
 
-template <class T> bool CvmobVideoModel::checkAndRemoveRowsFrom(QList<T> &l,
+template <class T> bool VideoModel::checkAndRemoveRowsFrom(QList<T> &l,
                                                                 int row,
                                                                 int count,
                                                                 const QModelIndex &parent)
@@ -558,7 +558,7 @@ template <class T> bool CvmobVideoModel::checkAndRemoveRowsFrom(QList<T> &l,
     return true;
 }
 
-bool CvmobVideoModel::removeRows(int row, int count, const QModelIndex &parent)
+bool VideoModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     if (!parent.isValid()) {
         return checkAndRemoveRowsFrom<Video>(*_cvmobVideoData, row, count);
