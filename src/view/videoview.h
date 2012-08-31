@@ -30,7 +30,6 @@ class QGraphicsLineItem;
 class QGraphicsRectItem;
 class QGraphicsScene;
 
-// FIXME: Qt doesn't support multiple inheritance
 class VideoView : public QAbstractItemView
 {
     Q_OBJECT
