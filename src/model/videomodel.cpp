@@ -23,6 +23,21 @@
 
 #include <QDebug>
 
+// http://stackoverflow.com/questions/5026965/how-to-convert-an-opencv-cvmat-to-qimage
+QImage Mat2QImage(const cv::Mat3b &src) {
+    QImage dest(src.cols, src.rows, QImage::Format_ARGB32);
+    
+    for (int y = 0; y < src.rows; ++y) {
+        const cv::Vec3b *srcrow = src[y];
+        QRgb *destrow = (QRgb*)dest.scanLine(y);
+        for (int x = 0; x < src.cols; ++x) {
+            destrow[x] = qRgba(srcrow[x][2], srcrow[x][1], srcrow[x][0], 255);
+        }
+    }
+    
+    return dest;
+}
+
 VideoModel::VideoModel(QObject *parent) :
     QAbstractItemModel(parent),
     _cvmobVideoData(new QList<VideoModel::Video>)
@@ -145,13 +160,16 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
         Video currentVideo = _cvmobVideoData->at(internalPointer->parent->row);
 
         if (internalPointer->type == FrameData) {
-            if (index.row() >= currentVideo.frames.size()) {
+            cv::Mat rawImg;
+            
+            currentVideo.videoStream.set(CV_CAP_PROP_POS_FRAMES, index.row());
+            if (!currentVideo.videoStream.read(rawImg)) {
                 return QVariant();
             }
 
             switch (index.column()) {
             case 0:
-                return QVariant::fromValue(currentVideo.frames.at(index.row()));
+                return QVariant::fromValue(Mat2QImage(rawImg));
             default:
                 return QVariant();
             }
@@ -295,7 +313,7 @@ int VideoModel::rowCount(const QModelIndex &parent) const
     if (internalPointer->type == VideoData) {
         switch (parent.column()) {
         case FramesColumn:
-            return parentVideo.frames.size();
+            return parentVideo.frameCount;
         case DistancesColumn:
             return parentVideo.distances.size();
         case LinearTrajectoriesColumn:
@@ -365,15 +383,7 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
         Video &currentVideo = (*_cvmobVideoData)[internalPointer->parent->row];
 
         if (internalPointer->type == FrameData) {
-            if (index.row() >= currentVideo.frames.size()) {
-                return false;
-            }
-
-            switch (index.column()) {
-            case 0:
-                currentVideo.frames[index.row()] = value.value<QImage>();
-                break;
-            }
+            return false; // Setting a frame is not possible
         } else if (internalPointer->type == DistanceData) {
             if (index.row() >= currentVideo.distances.size()) {
                 return false;
@@ -497,7 +507,7 @@ bool VideoModel::insertRows(int row, int count, const QModelIndex &parent)
     if (parentPointer->type == VideoData) {
         switch (parent.column()) {
         case FramesColumn:
-            return checkAndInsertRowsIn<QImage>(currentVideo.frames, row, count, parent);
+            return false; // Inserting frames is not possible
         case DistancesColumn:
             return checkAndInsertRowsIn<QLineF>(currentVideo.distances, row, count, parent);
         case LinearTrajectoriesColumn:
@@ -570,7 +580,7 @@ bool VideoModel::removeRows(int row, int count, const QModelIndex &parent)
     if (parentPointer->type == VideoData) {
         switch (parent.column()) {
         case FramesColumn:
-            return checkAndRemoveRowsFrom<QImage>(currentVideo.frames, row, count, parent);
+            return false; // Removing frames is not possible
         case DistancesColumn:
             return checkAndRemoveRowsFrom<QLineF>(currentVideo.distances, row, count, parent);
         case LinearTrajectoriesColumn:
@@ -606,4 +616,38 @@ bool VideoModel::removeRows(int row, int count, const QModelIndex &parent)
     }
 
     return false;
+}
+
+bool VideoModel::openVideo(const QString& path)
+{
+    insertRow(rowCount());
+    Video &newVideo = _cvmobVideoData->last();
+    cv::VideoCapture &videoStream = newVideo.videoStream;
+    
+    if (!videoStream.open(path.toUtf8().constData())) {
+        return false;
+    }
+    
+    QModelIndex fileNameIndex = index(rowCount() - 1, FileNameColumn);
+    setData(fileNameIndex, path, VideoSceneEditRole);
+    
+    QModelIndex currentFrameIndex = index(fileNameIndex.row(), CurrentFrameColumn);
+    setData(currentFrameIndex, 0, VideoSceneEditRole);
+    
+    QModelIndex frameDurationIndex = index(fileNameIndex.row(), FrameDurationColumn);
+    setData(frameDurationIndex, 1 / videoStream.get(CV_CAP_PROP_FPS), VideoSceneEditRole);
+    
+    QModelIndex frameSizeIndex = index(fileNameIndex.row(), FrameSizeColumn);
+    setData(
+        frameSizeIndex,
+        QSizeF(
+            videoStream.get(CV_CAP_PROP_FRAME_WIDTH),
+            videoStream.get(CV_CAP_PROP_FRAME_HEIGHT)
+        ), 
+        VideoSceneEditRole
+    );
+    
+    newVideo.frameCount = videoStream.get(CV_CAP_PROP_FRAME_COUNT);
+    
+    return true;
 }

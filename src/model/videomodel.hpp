@@ -28,6 +28,8 @@
 #include <QPointF>
 #include <QSizeF>
 
+#include <opencv/highgui.h>
+
 class VideoModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -76,6 +78,7 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    bool openVideo(const QString &path);
 
     enum GraphicsViewRole
     {
@@ -111,10 +114,10 @@ private:
     struct Video
     {
         QString fileName;
-        int currentFrame, frameDuration;
+        int currentFrame, frameDuration, frameCount;
         QSizeF frameSize;
+        cv::VideoCapture videoStream;
 
-        QList<QImage> frames;
         QList<QLineF> distances;
         QList<LinearTrajectory> linearTrajectories;
         QList<AngularTrajectory> angularTrajectories;
