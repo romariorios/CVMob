@@ -625,6 +625,7 @@ bool VideoModel::openVideo(const QString& path)
     cv::VideoCapture &videoStream = newVideo.videoStream;
     
     if (!videoStream.open(path.toUtf8().constData())) {
+        removeRow(rowCount() - 1);
         return false;
     }
     
