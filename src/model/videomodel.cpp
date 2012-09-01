@@ -636,7 +636,9 @@ bool VideoModel::openVideo(const QString& path)
     setData(currentFrameIndex, 0, VideoSceneEditRole);
     
     QModelIndex frameDurationIndex = index(fileNameIndex.row(), FrameDurationColumn);
-    setData(frameDurationIndex, 1 / videoStream.get(CV_CAP_PROP_FPS), VideoSceneEditRole);
+    setData(frameDurationIndex,
+            1000 * (1 / videoStream.get(CV_CAP_PROP_FPS)),
+            VideoSceneEditRole);
     
     QModelIndex frameSizeIndex = index(fileNameIndex.row(), FrameSizeColumn);
     setData(
