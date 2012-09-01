@@ -221,5 +221,5 @@ void VideoView::changeFrame(int frame)
         return;
     }
 
-    model()->setData(currentFrameIndex, frame);
+    model()->setData(currentFrameIndex, frame, VideoModel::VideoSceneEditRole);
 }
