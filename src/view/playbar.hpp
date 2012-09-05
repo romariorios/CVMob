@@ -47,6 +47,7 @@ signals:
     void frameChanged(int frame);
     
 private:
+    int _frameCount;
     int _frameDuration;
     int _currentTimer;
     Ui::PlayBar *_ui;

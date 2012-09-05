@@ -22,6 +22,7 @@
 
 PlayBar::PlayBar(QWidget *parent) :
     QWidget(parent),
+    _frameCount(0),
     _frameDuration(0),
     _currentTimer(0),
     _ui(new Ui::PlayBar)
@@ -42,13 +43,14 @@ PlayBar::~PlayBar()
 }
 
 
-void PlayBar::setPlayData(int frames, int frameDuration)
+void PlayBar::setPlayData(int frameCount, int frameDuration)
 {
-    _ui->progressSlide->setMaximum(frames);
+    _ui->progressSlide->setMaximum(frameCount);
     _ui->progressSlide->setValue(0);
-    _ui->progressSlide->setEnabled(frames);
-    _ui->actionPlay->setEnabled(frames);
+    _ui->progressSlide->setEnabled(frameCount);
+    _ui->actionPlay->setEnabled(frameCount);
     _frameDuration = frameDuration;
+    _frameCount = frameCount;
     setPlaying(false);
 }
 
@@ -77,7 +79,7 @@ void PlayBar::setPlaying(bool playing)
 
 void PlayBar::checkCurrentFrame(int frame)
 {
-    if (frame >= _ui->progressSlide->maximum() - 1) {
+    if (!(frame < _frameCount)) {
         setPlaying(false);
         _ui->progressSlide->setValue(0);
     }
