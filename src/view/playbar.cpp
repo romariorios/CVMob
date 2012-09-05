@@ -22,17 +22,16 @@
 
 PlayBar::PlayBar(QWidget *parent) :
     QWidget(parent),
-    _playState(NoVideo),
     _frameDuration(0),
     _currentTimer(0),
     _ui(new Ui::PlayBar)
 {
     _ui->setupUi(this);
-    _ui->playPauseButton->setDefaultAction(_ui->actionPlay_Pause);
+    _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
 
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SLOT(checkCurrentFrame(int)));
-    connect(_ui->actionPlay_Pause, SIGNAL(triggered()), SLOT(playPause()));
+    connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
 
     setPlayData(0, 0);
 }
@@ -48,20 +47,9 @@ void PlayBar::setPlayData(int frames, int frameDuration)
     _ui->progressSlide->setMaximum(frames);
     _ui->progressSlide->setValue(0);
     _ui->progressSlide->setEnabled(frames);
-    _ui->actionPlay_Pause->setEnabled(frames);
+    _ui->actionPlay->setEnabled(frames);
     _frameDuration = frameDuration;
-    setPlayState(frames? Paused : NoVideo);
-}
-
-void PlayBar::setPlayState(PlayBar::PlayState state)
-{
-    if (state == Paused || NoVideo) {
-        killTimer(_currentTimer);
-    } else if (state == Playing) {
-        _currentTimer = startTimer(_frameDuration);
-    }
-
-    _playState = state;
+    setPlaying(false);
 }
 
 void PlayBar::timerEvent(QTimerEvent *)
@@ -69,24 +57,28 @@ void PlayBar::timerEvent(QTimerEvent *)
     _ui->progressSlide->setValue(_ui->progressSlide->value() + 1);
 }
 
-void PlayBar::playPause()
+void PlayBar::setPlaying(bool playing)
 {
-    switch (_playState) {
-    case Paused:
-        setPlayState(Playing);
-        break;
-    case Playing:
-        setPlayState(Paused);
-        break;
-    default:
-        break;
+    if (playing) {
+        _currentTimer = startTimer(_frameDuration);
+    } else {
+        killTimer(_currentTimer);
     }
+    
+    _ui->actionPlay->setText(playing? tr("Pause") : tr("Play"));
+    _ui->actionPlay->setToolTip(playing? tr("Pause playback") : tr("Start playback"));
+    _ui->actionPlay->setIcon(QIcon(playing? ":/images/icons/media-playback-pause" :
+                                            ":/images/icons/media-playback-start"));
+    
+    disconnect(_ui->actionPlay, SIGNAL(toggled(bool)), this, SLOT(setPlaying(bool)));
+    _ui->actionPlay->setChecked(playing);
+    connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
 }
 
 void PlayBar::checkCurrentFrame(int frame)
 {
     if (frame >= _ui->progressSlide->maximum() - 1) {
-        setPlayState(Paused);
+        setPlaying(false);
         _ui->progressSlide->setValue(0);
     }
 }

@@ -29,9 +29,18 @@
     </widget>
    </item>
   </layout>
-  <action name="actionPlay_Pause">
+  <action name="actionPlay">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="media-playback-start"/>
+   </property>
    <property name="text">
-    <string>Play/Pause</string>
+    <string>Play</string>
+   </property>
+   <property name="toolTip">
+    <string>Start playback</string>
    </property>
    <property name="shortcut">
     <string>Space</string>

@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/images">
+        <file>icons/media-playback-pause.png</file>
+        <file>icons/media-playback-start.png</file>
         <file>logo.png</file>
         <file>translucent-logo.png</file>
     </qresource>
