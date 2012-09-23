@@ -19,6 +19,9 @@
      <property name="text">
       <string>...</string>
      </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
@@ -28,13 +31,27 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QToolButton" name="drawButton">
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::InstantPopup</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
   <action name="actionPlay">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="media-playback-start"/>
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/media-playback-start.png</normaloff>:/images/icons/media-playback-start.png</iconset>
    </property>
    <property name="text">
     <string>Play</string>
@@ -46,7 +63,39 @@
     <string>Space</string>
    </property>
   </action>
+  <action name="actionMeasure_distance">
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/draw-distance.png</normaloff>:/images/icons/draw-distance.png</iconset>
+   </property>
+   <property name="text">
+    <string>Measure distance</string>
+   </property>
+   <property name="toolTip">
+    <string>Measure the distance between two points</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionCalculate_trajectory">
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/trajectory.png</normaloff>:/images/icons/trajectory.png</iconset>
+   </property>
+   <property name="text">
+    <string>Calculate trajectory</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate the trajectory of the selected point in the video</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../cvmob_resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

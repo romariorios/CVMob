@@ -78,7 +78,10 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    
     bool openVideo(const QString &path);
+    void createDistance(const QPointF& p1, const QPointF& p2, const QModelIndex& videoIndex);
+    void createDistance(const QPointF& p1, const QPointF& p2, int videoRow);
 
     enum GraphicsViewRole
     {

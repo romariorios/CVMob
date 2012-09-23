@@ -20,6 +20,8 @@
 #include "playbar.hpp"
 #include "ui_playbar.h"
 
+#include <QMenu>
+
 PlayBar::PlayBar(QWidget *parent) :
     QWidget(parent),
     _frameCount(0),
@@ -29,10 +31,18 @@ PlayBar::PlayBar(QWidget *parent) :
 {
     _ui->setupUi(this);
     _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
+    
+    QMenu *drawMenu = new QMenu(_ui->drawButton);
+    drawMenu->addAction(_ui->actionMeasure_distance);
+    drawMenu->addAction(_ui->actionCalculate_trajectory);
+    _ui->drawButton->setMenu(drawMenu);
+    _ui->drawButton->setDefaultAction(_ui->actionMeasure_distance);
 
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SLOT(checkCurrentFrame(int)));
     connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
+    connect(_ui->actionMeasure_distance, SIGNAL(triggered()), SIGNAL(newDistanceRequested()));
+    connect(_ui->actionCalculate_trajectory, SIGNAL(triggered()), SIGNAL(newTrajectoryRequested()));
 
     setPlayData(0, 0);
 }
@@ -47,8 +57,7 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
 {
     _ui->progressSlide->setMaximum(frameCount);
     _ui->progressSlide->setValue(0);
-    _ui->progressSlide->setEnabled(frameCount);
-    _ui->actionPlay->setEnabled(frameCount);
+    setEnabled(frameCount);
     _frameDuration = frameDuration;
     _frameCount = frameCount;
     setPlaying(false);

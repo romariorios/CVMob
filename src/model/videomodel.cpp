@@ -297,7 +297,7 @@ int VideoModel::rowCount(const QModelIndex &parent) const
     }
 
     InternalData *internalPointer = static_cast<InternalData *>(parent.internalPointer());
-    Video parentVideo = _cvmobVideoData->at(internalPointer->row);
+    const Video &parentVideo = _cvmobVideoData->at(internalPointer->row);
 
     if (internalPointer->type == VideoData) {
         switch (parent.column()) {
@@ -642,4 +642,18 @@ bool VideoModel::openVideo(const QString& path)
     newVideo.frameCount = videoStream.get(CV_CAP_PROP_FRAME_COUNT);
     
     return true;
+}
+
+void VideoModel::createDistance(const QPointF& p1,
+                                const QPointF& p2,
+                                const QModelIndex &distancesIndex)
+{
+    int ind = rowCount(distancesIndex);
+    insertRow(ind, distancesIndex);
+    setData(index(ind, 0, distancesIndex), QLineF(p1, p2), VideoSceneEditRole);
+}
+
+void VideoModel::createDistance(const QPointF& p1, const QPointF& p2, int videoRow)
+{
+    createDistance(p1, p2, index(videoRow, DistancesColumn));
 }

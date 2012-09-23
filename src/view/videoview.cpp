@@ -33,6 +33,8 @@
 #include <QtGui/QLabel>
 
 #include <QDebug>
+#include <cstdlib>
+#include <ctime>
 
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
@@ -61,6 +63,7 @@ VideoView::VideoView(QWidget *parent) :
     noVideoText->moveBy(100, 50);
 
     connect(_playBar, SIGNAL(frameChanged(int)), SLOT(changeFrame(int)));
+    connect(_playBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
 }
 
 VideoView::~VideoView()
@@ -222,4 +225,15 @@ void VideoView::changeFrame(int frame)
     }
 
     model()->setData(currentFrameIndex, frame, VideoModel::VideoSceneEditRole);
+}
+
+void VideoView::beginDistanceCreation()
+{
+    srand(time(0));
+    static_cast<VideoModel *>(model())->createDistance(
+        QPointF(rand() % (int) _videos.at(_currentVideoRow).bgRect->rect().width(),
+                rand() % (int) _videos.at(_currentVideoRow).bgRect->rect().height()),
+        QPointF(rand() % (int) _videos.at(_currentVideoRow).bgRect->rect().width(),
+                rand() % (int) _videos.at(_currentVideoRow).bgRect->rect().height()),
+        _currentVideoRow);
 }

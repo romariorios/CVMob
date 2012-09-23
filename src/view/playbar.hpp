@@ -45,6 +45,8 @@ protected:
 
 signals:
     void frameChanged(int frame);
+    void newDistanceRequested();
+    void newTrajectoryRequested();
     
 private:
     int _frameCount;

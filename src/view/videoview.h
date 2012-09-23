@@ -78,6 +78,7 @@ protected slots:
 
 private slots:
     void changeFrame(int frame);
+    void beginDistanceCreation();
 };
 
 #endif // VIDEOVIEW_H
