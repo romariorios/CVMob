@@ -644,13 +644,23 @@ bool VideoModel::openVideo(const QString& path)
     return true;
 }
 
+void VideoModel::createDistance(const QLineF &l, const QModelIndex &distancesIndex)
+{
+    int ind = rowCount(distancesIndex);
+    insertRow(ind, distancesIndex);
+    setData(index(ind, 0, distancesIndex), l, VideoSceneEditRole);
+}
+
+void VideoModel::createDistance(const QLineF &l, int videoRow)
+{
+    createDistance(l, index(videoRow, DistancesColumn));
+}
+
 void VideoModel::createDistance(const QPointF& p1,
                                 const QPointF& p2,
                                 const QModelIndex &distancesIndex)
 {
-    int ind = rowCount(distancesIndex);
-    insertRow(ind, distancesIndex);
-    setData(index(ind, 0, distancesIndex), QLineF(p1, p2), VideoSceneEditRole);
+    createDistance(QLineF(p1, p2), distancesIndex);
 }
 
 void VideoModel::createDistance(const QPointF& p1, const QPointF& p2, int videoRow)
