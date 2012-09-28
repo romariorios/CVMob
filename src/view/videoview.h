@@ -25,10 +25,10 @@
 #include <QtCore/QList>
 
 class PlayBar;
-class QGraphicsView;
 class QGraphicsLineItem;
 class QGraphicsRectItem;
 class QGraphicsScene;
+class VideoGraphicsView;
 
 class VideoView : public QAbstractItemView
 {
@@ -64,7 +64,7 @@ private:
         {}
     };
 
-    QGraphicsView *_view;
+    VideoGraphicsView *_view;
     QList<Video> _videos;
     Video _noVideoVideo;
     int _currentVideoRow;

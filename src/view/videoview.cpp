@@ -24,11 +24,11 @@
 #include <QtGui/QGraphicsLineItem>
 #include <QtGui/QGraphicsRectItem>
 #include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsView>
 #include <QtGui/QImage>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QVBoxLayout>
 #include <view/playbar.hpp>
+#include <view/videographicsview.hpp>
 
 #include <QtGui/QLabel>
 
@@ -38,7 +38,7 @@
 
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
-    _view(new QGraphicsView),
+    _view(new VideoGraphicsView),
     _noVideoVideo(Video(new QGraphicsScene(_view), 0)),
     _playBar(new PlayBar(this))
 {

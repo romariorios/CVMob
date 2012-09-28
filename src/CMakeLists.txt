@@ -9,6 +9,7 @@ set(CVMob_sources
     main.cpp
     view/aboutdialog.cpp
     view/cvmobmainwindow.cpp
+    view/videographicsview.cpp
     view/videoview.cpp
     model/videomodel.cpp
     model/distancesproxymodel.cpp
@@ -18,6 +19,7 @@ set(CVMob_sources
 set(CVMob_headers
     view/aboutdialog.h
     view/cvmobmainwindow.h
+    view/videographicsview.hpp
     view/videoview.h
     model/videomodel.hpp
     model/distancesproxymodel.hpp
