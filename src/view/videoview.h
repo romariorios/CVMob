@@ -79,6 +79,10 @@ protected slots:
 private slots:
     void changeFrame(int frame);
     void beginDistanceCreation();
+
+    void distanceFirstPoint(const QPointF &p);
+    void distanceUpdateSecondPoint(const QPointF &p);
+    void distanceEndCreation(const QPointF &p);
 };
 
 #endif // VIDEOVIEW_H

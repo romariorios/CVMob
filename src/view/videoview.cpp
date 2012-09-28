@@ -229,11 +229,37 @@ void VideoView::changeFrame(int frame)
 
 void VideoView::beginDistanceCreation()
 {
-    srand(time(0));
-    static_cast<VideoModel *>(model())->createDistance(
-        QPointF(rand() % (int) _videos.at(_currentVideoRow).bgRect->rect().width(),
-                rand() % (int) _videos.at(_currentVideoRow).bgRect->rect().height()),
-        QPointF(rand() % (int) _videos.at(_currentVideoRow).bgRect->rect().width(),
-                rand() % (int) _videos.at(_currentVideoRow).bgRect->rect().height()),
-        _currentVideoRow);
+    connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(distanceFirstPoint(QPointF)));
+}
+
+void VideoView::distanceFirstPoint(const QPointF &p)
+{
+    disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(distanceFirstPoint(QPointF)));
+
+    Video &currentVideo = _videos[_currentVideoRow];
+
+    QGraphicsLineItem *guideLine =
+            new QGraphicsLineItem(QLineF(p, p), currentVideo.bgRect, currentVideo.scene);
+    guideLine->setPen(QColor(0, 0, 255));
+    _videos[_currentVideoRow].distances << guideLine;
+
+    connect(_view, SIGNAL(mouseDragged(QPointF)), SLOT(distanceUpdateSecondPoint(QPointF)));
+    connect(_view, SIGNAL(mouseReleased(QPointF)), SLOT(distanceEndCreation(QPointF)));
+}
+
+void VideoView::distanceUpdateSecondPoint(const QPointF &p)
+{
+    QGraphicsLineItem *guideLine = _videos[_currentVideoRow].distances.last();
+    guideLine->setLine(QLineF(guideLine->line().p1(), p));
+}
+
+void VideoView::distanceEndCreation(const QPointF &p)
+{
+    QGraphicsLineItem *guideLine = _videos[_currentVideoRow].distances.takeLast();
+
+    static_cast<VideoModel *>(model())->createDistance(guideLine->line(), _currentVideoRow);
+    delete guideLine;
+
+    disconnect(_view, SIGNAL(mouseDragged(QPointF)), this, SLOT(distanceUpdateSecondPoint(QPointF)));
+    disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(distanceEndCreation(QPointF)));
 }
