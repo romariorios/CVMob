@@ -13,6 +13,7 @@ set(CVMob_sources
     view/videoview.cpp
     model/videomodel.cpp
     model/distancesproxymodel.cpp
+    model/lineartrajectorycalcjob.cpp
     view/playbar.cpp
 )
 
@@ -23,6 +24,7 @@ set(CVMob_headers
     view/videoview.h
     model/videomodel.hpp
     model/distancesproxymodel.hpp
+    model/lineartrajectorycalcjob.hpp
     view/playbar.hpp
 )
 
