@@ -30,6 +30,8 @@
 
 #include <opencv/highgui.h>
 
+class LinearTrajectoryCalcJob;
+
 class VideoModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -65,17 +67,22 @@ public:
         AngularTrajectoryInstantColumnCount
     };
 
+    enum CalculationFlags {
+        FromHereOnwards = 0x1,
+        FromHereBackwards = 0x2
+    };
+
     explicit VideoModel(QObject *parent = 0);
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &child) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = VideoSceneRole) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    bool setData(const QModelIndex &index, const QVariant &value, int role = VideoSceneEditRole);
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
     
@@ -84,6 +91,10 @@ public:
     void createDistance(const QLineF &l, int videoRow);
     void createDistance(const QPointF& p1, const QPointF& p2, const QModelIndex& videoIndex);
     void createDistance(const QPointF& p1, const QPointF& p2, int videoRow);
+    LinearTrajectoryCalcJob *calculatePointLinearTrajectory(const QPointF &p, int frame,
+                                                         int videoRow,
+                                                         const QSize &windowSize = QSize(21, 21),
+                                                         CalculationFlags flags = FromHereOnwards);
 
     enum GraphicsViewRole
     {

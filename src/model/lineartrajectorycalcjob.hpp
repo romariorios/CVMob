@@ -1,20 +1,52 @@
 #ifndef LINEARTRAJECTORYCALCJOB_HPP
 #define LINEARTRAJECTORYCALCJOB_HPP
 
-#include <QObject>
+#include <QThread>
 
+#include <QAbstractItemModel>
+#include <QMutex>
 #include <QPointF>
+#include <QSize>
 
-class LinearTrajectoryCalcJob : public QObject
+class Target : public QObject {
+    Q_OBJECT
+private:
+    Target(QObject *parent = 0);
+
+    QModelIndex parentIndex;
+    QMutex mutex;
+    QAbstractItemModel *model;
+
+private slots:
+    void storeInstant(int frame, const QPointF &p, const QPointF &s, const QPointF &a);
+
+    friend class LinearTrajectoryCalcJob;
+};
+
+class LinearTrajectoryCalcJob : public QThread
 {
     Q_OBJECT
 public:
-    explicit LinearTrajectoryCalcJob(const QPointF &startPoint, QObject *parent = 0);
-    
+    explicit LinearTrajectoryCalcJob(const QPointF &startPoint,
+                                     int videoRow,
+                                     const QSize &windowSize,
+                                     QAbstractItemModel *parent);
+    void setTarget(const QModelIndex &targetIndex);
+
+protected:
+    void run();
+
 signals:
-    
-public slots:
-    
+    void instantGenerated(int frame, const QPointF &p, const QPointF &s, const QPointF &a);
+    void rangeChanged(int minimum, int maximum);
+    void progressChanged(int progress);
+
+private:
+    QPointF _startPoint;
+    int _videoRow;
+    QSize _windowSize;
+    QAbstractItemModel *_model;
+    Target _target;
 };
 
 #endif // LINEARTRAJECTORYCALCJOB_HPP

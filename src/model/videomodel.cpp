@@ -21,6 +21,9 @@
 
 #include <cmath>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/video/video.hpp>
+
+#include <model/lineartrajectorycalcjob.hpp>
 
 #include <QDebug>
 
@@ -666,4 +669,26 @@ void VideoModel::createDistance(const QPointF& p1,
 void VideoModel::createDistance(const QPointF& p1, const QPointF& p2, int videoRow)
 {
     createDistance(p1, p2, index(videoRow, DistancesColumn));
+}
+
+LinearTrajectoryCalcJob *VideoModel::calculatePointLinearTrajectory(const QPointF &p, int frame,
+                                                                 int videoRow,
+                                                                 const QSize &windowSize,
+                                                                 CalculationFlags flags)
+{
+    QModelIndex linearTrajectoriesIndex = index(videoRow, LinearTrajectoriesColumn);
+
+    int linearTrajectoryRow = rowCount(linearTrajectoriesIndex);
+    insertRow(linearTrajectoryRow, linearTrajectoriesIndex);
+
+    QModelIndex currentLTrajectoryIndex = index(linearTrajectoryRow, 0, linearTrajectoriesIndex);
+
+    LinearTrajectoryCalcJob *job =
+            new LinearTrajectoryCalcJob(p,
+                                        videoRow,
+                                        windowSize,
+                                        this);
+    job->setTarget(currentLTrajectoryIndex);
+
+    return job;
 }
