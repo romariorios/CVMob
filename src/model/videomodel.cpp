@@ -20,6 +20,7 @@
 #include "videomodel.hpp"
 
 #include <cmath>
+#include <QMutexLocker>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/video.hpp>
 
@@ -149,10 +150,14 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
         if (internalPointer->type == FrameData) {
             cv::Mat rawImg;
             
+            QMutexLocker locker(&_streamLock);
+
             currentVideo.videoStream.set(CV_CAP_PROP_POS_FRAMES, index.row());
             if (!currentVideo.videoStream.read(rawImg)) {
                 return QVariant();
             }
+
+            locker.unlock();
             
             cvtColor(rawImg, rawImg, CV_BGR2RGB);
             const QImage frame(rawImg.data, rawImg.cols, rawImg.rows, QImage::Format_RGB888);

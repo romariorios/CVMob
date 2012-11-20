@@ -4,7 +4,6 @@
 #include <QThread>
 
 #include <QAbstractItemModel>
-#include <QMutex>
 #include <QPointF>
 #include <QSize>
 
@@ -14,7 +13,6 @@ private:
     Target(QObject *parent = 0);
 
     QModelIndex parentIndex;
-    QMutex mutex;
     QAbstractItemModel *model;
 
 private slots:
@@ -44,8 +42,10 @@ signals:
 private:
     QPointF _startPoint;
     int _videoRow;
+    int _framesCount;
     QSize _windowSize;
     QAbstractItemModel *_model;
+    QModelIndex _framesParentIndex;
     Target _target;
 };
 

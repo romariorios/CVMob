@@ -26,6 +26,7 @@
 #include <QList>
 #include <QLineF>
 #include <QPointF>
+#include <QMutex>
 #include <QSizeF>
 
 #include <opencv/highgui.h>
@@ -162,6 +163,7 @@ private:
     };
 
     QList<Video> *_cvmobVideoData;
+    mutable QMutex _streamLock;
 
     double calculateDistance(long row) const;
     template <class T> bool checkAndInsertRowsIn(QList<T> &l,

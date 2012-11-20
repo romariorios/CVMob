@@ -24,6 +24,8 @@ LinearTrajectoryCalcJob::LinearTrajectoryCalcJob(const QPointF &startPoint,
     connect(this, SIGNAL(instantGenerated(int,QPointF,QPointF,QPointF)),
             &_target, SLOT(storeInstant(int,QPointF,QPointF,QPointF)), Qt::QueuedConnection);
     _target.model = _model;
+    _framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
+    _framesCount = _model->rowCount(_framesParentIndex);
 }
 
 void LinearTrajectoryCalcJob::setTarget(const QModelIndex &targetIndex)
@@ -40,17 +42,20 @@ void LinearTrajectoryCalcJob::run()
     QModelIndex framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
 
     emit instantGenerated(0, _startPoint, QPointF(0, 0), QPointF(0, 0));
-    emit rangeChanged(0, _model->rowCount(framesParentIndex) - 1);
+    emit rangeChanged(0, _framesCount);
     emit progressChanged(0);
 
-    for (int i = 1; i < _model->rowCount(framesParentIndex); ++i) {
+    QPointF previousPoint = _startPoint;
+    QPointF previousSpeed(0, 0);
+
+    for (int i = 1; i < _framesCount; ++i) {
         QImage startFrame(_model->index(i - 1, 0, framesParentIndex).data(VideoModel::VideoSceneRole)
                           .value<QImage>().convertToFormat(QImage::Format_Indexed8));
         QImage endFrame(_model->index(i, 0, framesParentIndex).data(VideoModel::VideoSceneRole)
                         .value<QImage>().convertToFormat(QImage::Format_Indexed8));
         Mat cvStartFrame(startFrame.height(), startFrame.width(), CV_8UC1, startFrame.scanLine(0));
         Mat cvEndFrame(endFrame.height(), endFrame.width(), CV_8UC1, endFrame.scanLine(0));
-        Point2f cvStartPoint(_startPoint.x(), _startPoint.y());
+        Point2f cvStartPoint(previousPoint.x(), previousPoint.y());
         vector<Point2f> startPoints;
         vector<Point2f> endPoints;
         vector<uchar> status;
@@ -68,14 +73,6 @@ void LinearTrajectoryCalcJob::run()
                              0.5, 0);
 
         QPointF newPoint(endPoints[0].x, endPoints[0].y);
-        _target.mutex.lock();
-            const QModelIndex &parentIndex = _target.parentIndex;
-            const QAbstractItemModel *model = parentIndex.model();
-            QPointF previousPoint = model->index(i - 1, VideoModel::PositionColumn, parentIndex)
-                    .data(VideoModel::VideoSceneEditRole).toPointF();
-            QPointF previousSpeed = model->index(i - 1, VideoModel::LSpeedColumn, parentIndex)
-                    .data(VideoModel::VideoSceneEditRole).toPointF();
-        _target.mutex.unlock();
         QPointF newSpeed = newPoint - previousPoint;
         QPointF newAccel = newSpeed - previousSpeed;
 
@@ -90,8 +87,6 @@ Target::Target(QObject *parent) :
 
 void Target::storeInstant(int frame, const QPointF &p, const QPointF &s, const QPointF &a)
 {
-    QMutexLocker l(&mutex);
-
     if (!parentIndex.isValid()) {
         return;
     }
