@@ -23,8 +23,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/video.hpp>
 
-#include <model/lineartrajectorycalcjob.hpp>
-
 #include <QDebug>
 
 VideoModel::VideoModel(QObject *parent) :
@@ -671,7 +669,7 @@ void VideoModel::createDistance(const QPointF& p1, const QPointF& p2, int videoR
     createDistance(p1, p2, index(videoRow, DistancesColumn));
 }
 
-LinearTrajectoryCalcJob *VideoModel::calculatePointLinearTrajectory(const QPointF &p, int frame,
+LinearTrajectoryCalcJob *VideoModel::calculateLinearTrajectory(const QPointF &p, int frame,
                                                                  int videoRow,
                                                                  const QSize &windowSize,
                                                                  CalculationFlags flags)

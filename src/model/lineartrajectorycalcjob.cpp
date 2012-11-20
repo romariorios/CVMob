@@ -6,6 +6,8 @@
 
 #include <QSize>
 
+#include <QDebug>
+
 using namespace cv;
 using namespace std;
 
@@ -37,9 +39,9 @@ void LinearTrajectoryCalcJob::run()
 {
     QModelIndex framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
 
+    emit instantGenerated(0, _startPoint, QPointF(0, 0), QPointF(0, 0));
     emit rangeChanged(0, _model->rowCount(framesParentIndex) - 1);
     emit progressChanged(0);
-    emit instantGenerated(0, _startPoint, QPointF(0, 0), QPointF(0, 0));
 
     for (int i = 1; i < _model->rowCount(framesParentIndex); ++i) {
         QImage startFrame(_model->index(i - 1, 0, framesParentIndex).data(VideoModel::VideoSceneRole)
@@ -77,8 +79,8 @@ void LinearTrajectoryCalcJob::run()
         QPointF newSpeed = newPoint - previousPoint;
         QPointF newAccel = newSpeed - previousSpeed;
 
-        emit progressChanged(i);
         emit instantGenerated(i, newPoint, newSpeed, newAccel);
+        emit progressChanged(i);
     }
 }
 
@@ -102,8 +104,12 @@ void Target::storeInstant(int frame, const QPointF &p, const QPointF &s, const Q
         model->insertColumns(0, VideoModel::LinearTrajectoryInstantColumnCount, parentIndex);
     }
 
-    model->setData(model->index(currentRow, VideoModel::LFrameColumn, parentIndex), frame);
-    model->setData(model->index(currentRow, VideoModel::PositionColumn, parentIndex), p);
-    model->setData(model->index(currentRow, VideoModel::LSpeedColumn, parentIndex), s);
-    model->setData(model->index(currentRow, VideoModel::LAccelerationColumn, parentIndex), a);
+    model->setData(model->index(currentRow, VideoModel::LFrameColumn, parentIndex), frame,
+                   VideoModel::VideoSceneEditRole);
+    model->setData(model->index(currentRow, VideoModel::PositionColumn, parentIndex), p,
+                   VideoModel::VideoSceneEditRole);
+    model->setData(model->index(currentRow, VideoModel::LSpeedColumn, parentIndex), s,
+                   VideoModel::VideoSceneEditRole);
+    model->setData(model->index(currentRow, VideoModel::LAccelerationColumn, parentIndex), a,
+                   VideoModel::VideoSceneEditRole);
 }

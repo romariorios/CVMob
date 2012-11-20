@@ -29,8 +29,7 @@
 #include <QSizeF>
 
 #include <opencv/highgui.h>
-
-class LinearTrajectoryCalcJob;
+#include <model/lineartrajectorycalcjob.hpp>
 
 class VideoModel : public QAbstractItemModel
 {
@@ -91,10 +90,10 @@ public:
     void createDistance(const QLineF &l, int videoRow);
     void createDistance(const QPointF& p1, const QPointF& p2, const QModelIndex& videoIndex);
     void createDistance(const QPointF& p1, const QPointF& p2, int videoRow);
-    LinearTrajectoryCalcJob *calculatePointLinearTrajectory(const QPointF &p, int frame,
-                                                         int videoRow,
-                                                         const QSize &windowSize = QSize(21, 21),
-                                                         CalculationFlags flags = FromHereOnwards);
+    LinearTrajectoryCalcJob *calculateLinearTrajectory(const QPointF &p, int frame,
+                                                       int videoRow,
+                                                       const QSize &windowSize = QSize(21, 21),
+                                                       CalculationFlags flags = FromHereOnwards);
 
     enum GraphicsViewRole
     {
