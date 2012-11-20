@@ -19,8 +19,6 @@ protected:
 
 private:
     bool _pressed;
-
-    const QPointF mapToPositionInScene(QPointF p) const;
     
 signals:
     void mousePressed(const QPointF &p);
