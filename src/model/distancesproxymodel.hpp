@@ -20,11 +20,11 @@
 #ifndef DISTANCESPROXYMODEL_HPP
 #define DISTANCESPROXYMODEL_HPP
 
-#include <QIdentityProxyModel>
+#include <QAbstractProxyModel>
 
 class QItemSelectionModel;
 
-class DistancesProxyModel : public QIdentityProxyModel
+class DistancesProxyModel : public QAbstractProxyModel
 {
     Q_OBJECT
 public:
@@ -32,8 +32,14 @@ public:
 
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    QModelIndex mapFromSource(const QModelIndex &sourceIndex) const;
+    QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+    QModelIndex parent(const QModelIndex &child) const;
     int rowCount(const QModelIndex & = QModelIndex()) const;
     int columnCount(const QModelIndex & = QModelIndex()) const;
+
+    void setSourceModel(QAbstractItemModel *sourceModel);
     void setSelectionModel(QItemSelectionModel *selectionModel);
 
 private:
@@ -41,6 +47,7 @@ private:
 
 private slots:
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void forwardDataChange(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 };
 
 #endif // DISTANCESPROXYMODEL_HPP

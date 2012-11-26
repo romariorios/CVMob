@@ -25,7 +25,7 @@
 #include <QDebug>
 
 DistancesProxyModel::DistancesProxyModel(QObject *parent) :
-    QIdentityProxyModel(parent)
+    QAbstractProxyModel(parent)
 {
 }
 
@@ -38,9 +38,7 @@ QVariant DistancesProxyModel::data(const QModelIndex &proxyIndex, int role) cons
         return QVariant();
     }
 
-    const QLineF line = sourceModel()
-            ->data(sourceModel()->index(proxyIndex.row(), 0, _parentIndex), VideoModel::VideoSceneRole)
-            .toLineF();
+    const QLineF line = mapToSource(proxyIndex).data(VideoModel::VideoSceneRole).toLineF();
 
     switch (proxyIndex.column()) {
     case 0:
@@ -79,22 +77,55 @@ QVariant DistancesProxyModel::headerData(int section, Qt::Orientation orientatio
     }
 }
 
-int DistancesProxyModel::rowCount(const QModelIndex &) const
+QModelIndex DistancesProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
-    if (!_parentIndex.isValid()) {
-        return 0;
+    if (!_parentIndex.isValid() ||
+        !sourceIndex.parent().isValid() ||
+        !sourceIndex.parent().column() != VideoModel::DistancesColumn ||
+        !sourceIndex.parent().row() != _parentIndex.row()) {
+        return QModelIndex();
     }
 
-    return sourceModel()->rowCount(_parentIndex);
+    return index(sourceIndex.row(), 0);
+}
+
+QModelIndex DistancesProxyModel::mapToSource(const QModelIndex &proxyIndex) const
+{
+    if (!_parentIndex.isValid()) {
+        return QModelIndex();
+    }
+
+    return sourceModel()->index(proxyIndex.row(), 0, _parentIndex);
+}
+
+QModelIndex DistancesProxyModel::index(int row, int column, const QModelIndex &parent) const
+{
+    return createIndex(row, column);
+}
+
+QModelIndex DistancesProxyModel::parent(const QModelIndex &child) const
+{
+    Q_UNUSED(child)
+
+    return QModelIndex();
+}
+
+int DistancesProxyModel::rowCount(const QModelIndex &) const
+{
+    return _parentIndex.isValid()? sourceModel()->rowCount(_parentIndex) : 0;
 }
 
 int DistancesProxyModel::columnCount(const QModelIndex &) const
 {
-    if (!_parentIndex.isValid()) {
-        return 0;
-    }
-
     return 4;
+}
+
+void DistancesProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
+{
+    QAbstractProxyModel::setSourceModel(sourceModel);
+
+    connect(sourceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+            SLOT(forwardDataChange(QModelIndex,QModelIndex)));
 }
 
 void DistancesProxyModel::setSelectionModel(QItemSelectionModel *selectionModel)
@@ -119,4 +150,10 @@ void DistancesProxyModel::selectionChanged(const QItemSelection &selected,
     }
 
     endResetModel();
+}
+
+void DistancesProxyModel::forwardDataChange(const QModelIndex &topLeft,
+                                            const QModelIndex &bottomRight)
+{
+    emit dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight));
 }
