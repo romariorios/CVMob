@@ -14,4 +14,4 @@ signals:
     void progressChanged(int progress);
 };
 
-#endif BASEJOB_HPP
+#endif
