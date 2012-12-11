@@ -1,3 +1,6 @@
+#ifndef BASEJOB_HPP
+#define BASEJOB_HPP
+
 #include <QThread>
 
 class BaseJob : public QThread
@@ -10,3 +13,5 @@ signals:
     void progressRangeChanged(int minimum, int maximum);
     void progressChanged(int progress);
 };
+
+#endif BASEJOB_HPP
