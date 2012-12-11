@@ -16,6 +16,7 @@ set(CVMob_sources
     model/basejob.cpp
     model/lineartrajectorycalcjob.cpp
     view/playbar.cpp
+    view/videostatus.cpp
 )
 
 set(CVMob_headers
@@ -28,12 +29,14 @@ set(CVMob_headers
     model/basejob.hpp
     model/lineartrajectorycalcjob.hpp
     view/playbar.hpp
+    view/videostatus.hpp
 )
 
 set(CVMob_forms
     view/aboutdialog.ui
     view/cvmobmainwindow.ui
     view/playbar.ui
+    view/videostatus.ui
 )
 
 set(CVMob_translations

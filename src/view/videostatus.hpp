@@ -7,6 +7,8 @@ namespace Ui {
 class VideoStatus;
 }
 
+class BaseJob;
+
 class VideoStatus : public QWidget
 {
     Q_OBJECT
@@ -16,9 +18,13 @@ public:
     ~VideoStatus();
 
     void setMessage(const QString &message);
+    void setJob(const QString &message, BaseJob *job);
     
 private:
     Ui::VideoStatus *_ui;
+
+private slots:
+    void setFinishedMessage();
 };
 
 #endif // VIDEOSTATUS_HPP

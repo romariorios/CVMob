@@ -250,8 +250,7 @@ void VideoView::beginLTrajectoryCalculation()
 {
     LinearTrajectoryCalcJob *job = static_cast<VideoModel *>(model())->calculateLinearTrajectory
             (QPointF(130, 130), 0, _currentVideoRow);
-    connect(job, SIGNAL(progressChanged(int)),
-            SLOT(updateLTrajectoryCalculationProgress(int)));
+    _status->setJob(tr("Calculating trajectory..."), job);
     connect(job, SIGNAL(finished()), job, SLOT(deleteLater()));
     job->start();
 }
@@ -286,16 +285,4 @@ void VideoView::distanceEndCreation(const QPointF &p)
 
     disconnect(_view, SIGNAL(mouseDragged(QPointF)), this, SLOT(distanceUpdateSecondPoint(QPointF)));
     disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(distanceEndCreation(QPointF)));
-}
-
-void VideoView::updateLTrajectoryCalculationProgress(int progress)
-{
-    qDebug() << model()->index(_currentVideoRow, VideoModel::FileNameColumn).data(VideoModel::VideoSceneEditRole);
-    QModelIndex trajectoriesIndex =
-            model()->index(_currentVideoRow, VideoModel::LinearTrajectoriesColumn);
-    QModelIndex currentTrajectoryIndex =
-            model()->index(model()->rowCount(trajectoriesIndex) - 1, 0, trajectoriesIndex);
-    QModelIndex currentInstantIndex =
-            model()->index(progress, VideoModel::PositionColumn, currentTrajectoryIndex);
-    qDebug() << currentInstantIndex.data(VideoModel::VideoSceneEditRole);
 }

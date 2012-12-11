@@ -88,8 +88,6 @@ private slots:
     void distanceFirstPoint(const QPointF &p);
     void distanceUpdateSecondPoint(const QPointF &p);
     void distanceEndCreation(const QPointF &p);
-
-    void updateLTrajectoryCalculationProgress(int progress);
 };
 
 #endif // VIDEOVIEW_H
