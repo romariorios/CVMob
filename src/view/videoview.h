@@ -29,6 +29,7 @@ class QGraphicsLineItem;
 class QGraphicsRectItem;
 class QGraphicsScene;
 class VideoGraphicsView;
+class VideoStatus;
 
 class VideoView : public QAbstractItemView
 {
@@ -41,6 +42,8 @@ public:
     void scrollTo(const QModelIndex &index, ScrollHint hint);
     QModelIndex indexAt(const QPoint &point) const;
     QRect visualRect(const QModelIndex &index) const;
+
+    void showMessage(const QString &message, int duration = 5000);
 
 protected:
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers);
@@ -69,6 +72,7 @@ private:
     Video _noVideoVideo;
     int _currentVideoRow;
     PlayBar *_playBar;
+    VideoStatus *_status;
 
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &); // topLeft is always equal

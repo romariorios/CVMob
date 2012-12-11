@@ -29,8 +29,11 @@
 #include <QtGui/QVBoxLayout>
 #include <view/playbar.hpp>
 #include <view/videographicsview.hpp>
+#include <view/videostatus.hpp>
 
 #include <QtGui/QLabel>
+
+#include <QTimer>
 
 #include <QDebug>
 #include <cstdlib>
@@ -40,9 +43,12 @@ VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
     _view(new VideoGraphicsView),
     _noVideoVideo(Video(new QGraphicsScene(_view), 0)),
-    _playBar(new PlayBar(this))
+    _playBar(new PlayBar(this)),
+    _status(new VideoStatus(this))
 {
     new QVBoxLayout(viewport());
+    viewport()->layout()->addWidget(_status);
+    _status->hide();
     viewport()->layout()->addWidget(_view);
     viewport()->layout()->setMargin(0);
     viewport()->layout()->setSpacing(0);
@@ -70,6 +76,13 @@ VideoView::VideoView(QWidget *parent) :
 VideoView::~VideoView()
 {
     delete _view;
+}
+
+void VideoView::showMessage(const QString &message, int duration)
+{
+    _status->show();
+    _status->setMessage(message);
+    QTimer::singleShot(duration, _status, SLOT(hide()));
 }
 
 QRect VideoView::visualRect(const QModelIndex &index) const
