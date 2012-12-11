@@ -26,6 +26,8 @@ class LinearTrajectoryCalcJob : public BaseJob
     Q_OBJECT
 public:
     explicit LinearTrajectoryCalcJob(const QPointF &startPoint,
+                                     int startFrame,
+                                     int endFrame,
                                      int videoRow,
                                      const QSize &windowSize,
                                      QAbstractItemModel *parent);
@@ -40,7 +42,8 @@ signals:
 private:
     QPointF _startPoint;
     int _videoRow;
-    int _framesCount;
+    int _startFrame;
+    int _endFrame;
     QSize _windowSize;
     QAbstractItemModel *_model;
     QModelIndex _framesParentIndex;

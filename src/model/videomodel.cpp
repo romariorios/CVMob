@@ -700,6 +700,17 @@ LinearTrajectoryCalcJob *VideoModel::calculateLinearTrajectory(const QPointF &p,
                                                                  const QSize &windowSize,
                                                                  CalculationFlags flags)
 {
+    int startFrame = frame;
+    int endFrame = frame;
+
+    if (flags & FromHereOnwards) {
+        endFrame = rowCount(index(videoRow, FramesColumn)) - 1;
+    }
+
+    if (flags & FromHereBackwards) {
+        startFrame = 0;
+    }
+
     QModelIndex linearTrajectoriesIndex = index(videoRow, LinearTrajectoriesColumn);
 
     int linearTrajectoryRow = rowCount(linearTrajectoriesIndex);
@@ -709,6 +720,8 @@ LinearTrajectoryCalcJob *VideoModel::calculateLinearTrajectory(const QPointF &p,
 
     LinearTrajectoryCalcJob *job =
             new LinearTrajectoryCalcJob(p,
+                                        startFrame,
+                                        endFrame,
                                         videoRow,
                                         windowSize,
                                         this);

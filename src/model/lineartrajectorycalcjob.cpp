@@ -12,11 +12,15 @@ using namespace cv;
 using namespace std;
 
 LinearTrajectoryCalcJob::LinearTrajectoryCalcJob(const QPointF &startPoint,
+                                                 int startFrame,
+                                                 int endFrame,
                                                  int videoRow,
                                                  const QSize &windowSize,
                                                  QAbstractItemModel *parent) :
     BaseJob(parent),
     _startPoint(startPoint),
+    _startFrame(startFrame),
+    _endFrame(endFrame),
     _videoRow(videoRow),
     _windowSize(windowSize),
     _model(parent)
@@ -25,7 +29,6 @@ LinearTrajectoryCalcJob::LinearTrajectoryCalcJob(const QPointF &startPoint,
             &_target, SLOT(storeInstant(int,QPointF,QPointF,QPointF)), Qt::QueuedConnection);
     _target.model = _model;
     _framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
-    _framesCount = _model->rowCount(_framesParentIndex);
 }
 
 void LinearTrajectoryCalcJob::setTarget(const QModelIndex &targetIndex)
@@ -42,13 +45,13 @@ void LinearTrajectoryCalcJob::run()
     QModelIndex framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
 
     emit instantGenerated(0, _startPoint, QPointF(0, 0), QPointF(0, 0));
-    emit progressRangeChanged(0, _framesCount);
+    emit progressRangeChanged(0, _endFrame - _startFrame);
     emit progressChanged(0);
 
     QPointF previousPoint = _startPoint;
     QPointF previousSpeed(0, 0);
 
-    for (int i = 1; i < _framesCount; ++i) {
+    for (int i = _startFrame + 1; i <= _endFrame; ++i) {
         QImage startFrame(_model->index(i - 1, 0, framesParentIndex).data(VideoModel::VideoSceneRole)
                           .value<QImage>().convertToFormat(QImage::Format_Indexed8));
         QImage endFrame(_model->index(i, 0, framesParentIndex).data(VideoModel::VideoSceneRole)
@@ -77,7 +80,7 @@ void LinearTrajectoryCalcJob::run()
         QPointF newAccel = newSpeed - previousSpeed;
 
         emit instantGenerated(i, newPoint, newSpeed, newAccel);
-        emit progressChanged(i);
+        emit progressChanged(i - _startFrame + 1);
     }
 }
 
