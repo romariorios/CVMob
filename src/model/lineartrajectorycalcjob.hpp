@@ -1,7 +1,7 @@
 #ifndef LINEARTRAJECTORYCALCJOB_HPP
 #define LINEARTRAJECTORYCALCJOB_HPP
 
-#include <QThread>
+#include <model/basejob.hpp>
 
 #include <QAbstractItemModel>
 #include <QPointF>
@@ -21,7 +21,7 @@ private slots:
     friend class LinearTrajectoryCalcJob;
 };
 
-class LinearTrajectoryCalcJob : public QThread
+class LinearTrajectoryCalcJob : public BaseJob
 {
     Q_OBJECT
 public:
@@ -36,8 +36,6 @@ protected:
 
 signals:
     void instantGenerated(int frame, const QPointF &p, const QPointF &s, const QPointF &a);
-    void rangeChanged(int minimum, int maximum);
-    void progressChanged(int progress);
 
 private:
     QPointF _startPoint;

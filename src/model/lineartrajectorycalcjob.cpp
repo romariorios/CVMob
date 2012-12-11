@@ -15,7 +15,7 @@ LinearTrajectoryCalcJob::LinearTrajectoryCalcJob(const QPointF &startPoint,
                                                  int videoRow,
                                                  const QSize &windowSize,
                                                  QAbstractItemModel *parent) :
-    QThread(parent),
+    BaseJob(parent),
     _startPoint(startPoint),
     _videoRow(videoRow),
     _windowSize(windowSize),
@@ -42,7 +42,7 @@ void LinearTrajectoryCalcJob::run()
     QModelIndex framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
 
     emit instantGenerated(0, _startPoint, QPointF(0, 0), QPointF(0, 0));
-    emit rangeChanged(0, _framesCount);
+    emit progressRangeChanged(0, _framesCount);
     emit progressChanged(0);
 
     QPointF previousPoint = _startPoint;
