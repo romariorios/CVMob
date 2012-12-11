@@ -50,6 +50,8 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     setCentralWidget(_videoView);
 
+    _videoView->showMessage(tr("CVMob developer snapshot"));
+
     connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
 }
 
@@ -61,6 +63,7 @@ void CvMobMainWindow::openFile() {
     }
 
     _videoModel->openVideo(pathName);
+    _videoView->showMessage(tr("%1 opened").arg(pathName));
 }
 
 CvMobMainWindow::~CvMobMainWindow()
