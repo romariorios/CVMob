@@ -126,6 +126,8 @@ void DistancesProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 
     connect(sourceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
             SLOT(forwardDataChange(QModelIndex,QModelIndex)));
+    connect(sourceModel, SIGNAL(rowsInserted(QModelIndex, int, int)),
+            SLOT(forwardRowInsertion(QModelIndex,int,int)));
 }
 
 void DistancesProxyModel::setSelectionModel(QItemSelectionModel *selectionModel)
@@ -155,5 +157,15 @@ void DistancesProxyModel::selectionChanged(const QItemSelection &selected,
 void DistancesProxyModel::forwardDataChange(const QModelIndex &topLeft,
                                             const QModelIndex &bottomRight)
 {
+    beginResetModel();
     emit dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight));
+    endResetModel();
+}
+
+void DistancesProxyModel::forwardRowInsertion(const QModelIndex &parent, int start, int end)
+{
+    if (parent == _parentIndex) {
+        beginResetModel();
+        endResetModel();
+    }
 }
