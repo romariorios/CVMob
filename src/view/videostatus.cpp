@@ -20,6 +20,7 @@ VideoStatus::~VideoStatus()
 
 void VideoStatus::setMessage(const QString &message)
 {
+    show();
     _ui->message->setText(message);
 }
 

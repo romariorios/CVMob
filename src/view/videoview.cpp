@@ -82,7 +82,9 @@ void VideoView::showMessage(const QString &message, int duration)
 {
     _status->show();
     _status->setMessage(message);
-    QTimer::singleShot(duration, _status, SLOT(hide()));
+    if (duration) {
+        QTimer::singleShot(duration, _status, SLOT(hide()));
+    }
 }
 
 QRect VideoView::visualRect(const QModelIndex &index) const
@@ -244,6 +246,7 @@ void VideoView::changeFrame(int frame)
 void VideoView::beginDistanceCreation()
 {
     connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(distanceFirstPoint(QPointF)));
+    _status->setMessage(tr("Click and drag to measure a distance"));
 }
 
 void VideoView::beginLTrajectoryCalculation()
@@ -274,6 +277,7 @@ void VideoView::distanceUpdateSecondPoint(const QPointF &p)
 {
     QGraphicsLineItem *guideLine = _videos[_currentVideoRow].distances.last();
     guideLine->setLine(QLineF(guideLine->line().p1(), p));
+    _status->setMessage(QString("(%1, %2)").arg(p.x()).arg(p.y()));
 }
 
 void VideoView::distanceEndCreation(const QPointF &p)
@@ -282,6 +286,9 @@ void VideoView::distanceEndCreation(const QPointF &p)
 
     static_cast<VideoModel *>(model())->createDistance(guideLine->line(), _currentVideoRow);
     delete guideLine;
+
+    _status->setMessage(tr("Done"));
+    QTimer::singleShot(3000, _status, SLOT(hide()));
 
     disconnect(_view, SIGNAL(mouseDragged(QPointF)), this, SLOT(distanceUpdateSecondPoint(QPointF)));
     disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(distanceEndCreation(QPointF)));
