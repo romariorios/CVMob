@@ -42,12 +42,14 @@ QVariant DistancesProxyModel::data(const QModelIndex &proxyIndex, int role) cons
 
     switch (proxyIndex.column()) {
     case 0:
-        return line.x1();
+        return line.length();
     case 1:
-        return line.y1();
+        return line.x1();
     case 2:
-        return line.x2();
+        return line.y1();
     case 3:
+        return line.x2();
+    case 4:
         return line.y2();
     default:
         break;
@@ -65,13 +67,15 @@ QVariant DistancesProxyModel::headerData(int section, Qt::Orientation orientatio
 
     switch (section) {
     case 0:
-        return tr("x1");
+        return tr("Distance");
     case 1:
-        return tr("x2");
+        return tr("Point 1: x");
     case 2:
-        return tr("y1");
+        return tr("y", "Point 1: y");
     case 3:
-        return tr("y2");
+        return tr("Point 2: x");
+    case 4:
+        return tr("y", "Point 2: y");
     default:
         return QVariant();
     }
@@ -117,7 +121,7 @@ int DistancesProxyModel::rowCount(const QModelIndex &) const
 
 int DistancesProxyModel::columnCount(const QModelIndex &) const
 {
-    return 4;
+    return 5;
 }
 
 void DistancesProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
