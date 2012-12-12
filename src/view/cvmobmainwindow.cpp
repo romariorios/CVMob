@@ -47,6 +47,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     distancesModel->setSourceModel(_videoModel);
     distancesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->distancesView->setModel(distancesModel);
+    _ui->distancesView->header()->setResizeMode(QHeaderView::Stretch);
 
     setCentralWidget(_videoView);
 
