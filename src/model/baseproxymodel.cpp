@@ -9,6 +9,18 @@ BaseProxyModel::BaseProxyModel(QObject *parent) :
 {
 }
 
+QModelIndex BaseProxyModel::index(int row, int column, const QModelIndex &parent) const
+{
+    return createIndex(row, column);
+}
+
+QModelIndex BaseProxyModel::parent(const QModelIndex &child) const
+{
+    Q_UNUSED(child)
+
+    return QModelIndex();
+}
+
 void BaseProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     QAbstractProxyModel::setSourceModel(sourceModel);

@@ -103,18 +103,6 @@ QModelIndex DistancesProxyModel::mapToSource(const QModelIndex &proxyIndex) cons
     return sourceModel()->index(proxyIndex.row(), 0, _parentIndex);
 }
 
-QModelIndex DistancesProxyModel::index(int row, int column, const QModelIndex &parent) const
-{
-    return createIndex(row, column);
-}
-
-QModelIndex DistancesProxyModel::parent(const QModelIndex &child) const
-{
-    Q_UNUSED(child)
-
-    return QModelIndex();
-}
-
 int DistancesProxyModel::rowCount(const QModelIndex &) const
 {
     return _parentIndex.isValid()? sourceModel()->rowCount(_parentIndex) : 0;
