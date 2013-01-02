@@ -57,7 +57,8 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 }
 
 void CvMobMainWindow::openFile() {
-    QString pathName = QFileDialog::getOpenFileName(this, tr("Open video"), ".", tr("Videoclips (*.avi)"));
+    QString pathName = QFileDialog::getOpenFileName(this, tr("Open video"), ".",
+                                                    tr("All supported video formats (*.avi *.ogv *.wmv)"));
 
     if (pathName.isNull()) {
         return;
