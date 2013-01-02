@@ -63,8 +63,11 @@ void CvMobMainWindow::openFile() {
         return;
     }
 
-    _videoModel->openVideo(pathName);
-    _videoView->showMessage(tr("%1 opened").arg(pathName));
+    if (_videoModel->openVideo(pathName)) {
+        _videoView->showMessage(tr("%1 opened").arg(pathName));
+    } else {
+        _videoView->showMessage(tr("Could not open %1").arg(pathName));
+    }
 }
 
 CvMobMainWindow::~CvMobMainWindow()
