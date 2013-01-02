@@ -15,8 +15,8 @@ public:
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &child) const;
-    int rowCount(const QModelIndex & = QModelIndex()) const;
-    int columnCount(const QModelIndex & = QModelIndex()) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
 };
 
 #endif // LINEARTRAJECTORIESPROXYMODEL_HPP
