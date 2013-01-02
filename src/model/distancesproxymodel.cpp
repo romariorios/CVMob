@@ -25,8 +25,9 @@
 #include <QDebug>
 
 DistancesProxyModel::DistancesProxyModel(QObject *parent) :
-    QAbstractProxyModel(parent)
+    BaseProxyModel(parent)
 {
+    setColumn(VideoModel::DistancesColumn);
 }
 
 QVariant DistancesProxyModel::data(const QModelIndex &proxyIndex, int role) const
@@ -122,54 +123,4 @@ int DistancesProxyModel::rowCount(const QModelIndex &) const
 int DistancesProxyModel::columnCount(const QModelIndex &) const
 {
     return 5;
-}
-
-void DistancesProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
-{
-    QAbstractProxyModel::setSourceModel(sourceModel);
-
-    connect(sourceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-            SLOT(forwardDataChange(QModelIndex,QModelIndex)));
-    connect(sourceModel, SIGNAL(rowsInserted(QModelIndex, int, int)),
-            SLOT(forwardRowInsertion(QModelIndex,int,int)));
-}
-
-void DistancesProxyModel::setSelectionModel(QItemSelectionModel *selectionModel)
-{
-    connect(selectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-            SLOT(selectionChanged(QItemSelection,QItemSelection)));
-}
-
-void DistancesProxyModel::selectionChanged(const QItemSelection &selected,
-                                           const QItemSelection &deselected)
-{
-    Q_UNUSED(deselected)
-
-    beginResetModel();
-
-    if (selected.size() != 1 ||
-        selected.at(0).indexes().size() != 1) {
-        _parentIndex = QModelIndex();
-    } else {
-        _parentIndex = sourceModel()->index(selected.at(0).indexes().at(0).row(),
-                                            VideoModel::DistancesColumn);
-    }
-
-    endResetModel();
-}
-
-void DistancesProxyModel::forwardDataChange(const QModelIndex &topLeft,
-                                            const QModelIndex &bottomRight)
-{
-    beginResetModel();
-    emit dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight));
-    endResetModel();
-}
-
-void DistancesProxyModel::forwardRowInsertion(const QModelIndex &parent, int start, int end)
-{
-    if (parent == _parentIndex) {
-        beginResetModel();
-        endResetModel();
-    }
 }

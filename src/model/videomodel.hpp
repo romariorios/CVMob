@@ -38,6 +38,7 @@ class VideoModel : public QAbstractItemModel
 
 public:
     enum VideoColumn {
+        InvalidColumn = -1,
         FileNameColumn = 0,
         CurrentFrameColumn,
         FrameDurationColumn,

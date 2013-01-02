@@ -20,11 +20,11 @@
 #ifndef DISTANCESPROXYMODEL_HPP
 #define DISTANCESPROXYMODEL_HPP
 
-#include <QAbstractProxyModel>
+#include <model/baseproxymodel.hpp>
 
 class QItemSelectionModel;
 
-class DistancesProxyModel : public QAbstractProxyModel
+class DistancesProxyModel : public BaseProxyModel
 {
     Q_OBJECT
 public:
@@ -38,17 +38,6 @@ public:
     QModelIndex parent(const QModelIndex &child) const;
     int rowCount(const QModelIndex & = QModelIndex()) const;
     int columnCount(const QModelIndex & = QModelIndex()) const;
-
-    void setSourceModel(QAbstractItemModel *sourceModel);
-    void setSelectionModel(QItemSelectionModel *selectionModel);
-
-private:
-    QModelIndex _parentIndex;
-
-private slots:
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void forwardDataChange(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-    void forwardRowInsertion(const QModelIndex &parent, int start, int end);
 };
 
 #endif // DISTANCESPROXYMODEL_HPP
