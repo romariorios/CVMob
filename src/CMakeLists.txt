@@ -1,5 +1,7 @@
 project(CVMob)
 
+cmake_minimum_required(VERSION 2.6)
+
 find_package(Qt4 4.8 REQUIRED)
 include(${QT_USE_FILE})
 
@@ -52,7 +54,12 @@ set(CVMob_resources cvmob_resource.qrc)
 QT4_WRAP_CPP(CVMob_headers_moc ${CVMob_headers})
 QT4_WRAP_UI(CVMob_forms_headers ${CVMob_forms})
 QT4_ADD_RESOURCES(CVMob_resources_rcc ${CVMob_resources})
-QT4_CREATE_TRANSLATION(CVMob_translations_qm ${CVMob_translations})
+if (CVMOB_UPDATE_TRANSLATIONS)
+  message("WARNING: make clean WILL WIPE OUT THE .ts TRANSLATION FILES IF EXECUTED")
+  QT4_CREATE_TRANSLATION(CVMob_translations_qm ${CMAKE_CURRENT_SOURCE_DIR} ${CVMob_translations})
+else ()
+  QT4_ADD_TRANSLATION(CVMob_translations_qm ${CVMob_translations})
+endif ()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
