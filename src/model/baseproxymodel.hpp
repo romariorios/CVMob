@@ -13,7 +13,7 @@ class BaseProxyModel : public QAbstractProxyModel
 public:
     explicit BaseProxyModel(QObject *parent = 0);
 
-    QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &child) const;
     void setSourceModel(QAbstractItemModel *sourceModel);
     void setSelectionModel(QItemSelectionModel *selectionModel);
