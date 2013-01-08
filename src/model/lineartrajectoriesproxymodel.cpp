@@ -9,12 +9,13 @@ LinearTrajectoriesProxyModel::LinearTrajectoriesProxyModel(QObject *parent) :
 QVariant LinearTrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int role) const
 {
     if (role != Qt::DisplayRole ||
-        !proxyIndex.isValid()) {
+        !proxyIndex.isValid() ||
+        !_parentIndex.isValid()) {
         return QVariant();
     }
 
     if (!proxyIndex.parent().isValid()) {
-        return tr("Trajectory %1").arg(proxyIndex.row());
+        return proxyIndex.column() == 0? tr("Trajectory %1").arg(proxyIndex.row()) : QVariant();
     }
 
     QVariant data = mapToSource(proxyIndex).data(VideoModel::VideoSceneEditRole);
@@ -23,7 +24,7 @@ QVariant LinearTrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int r
     case VideoModel::LFrameColumn:
         return data;
     case VideoModel::PositionColumn:
-        return tr("(%1, %2)").arg(data.toPointF().x(), data.toPointF().y());
+        return tr("(%1, %2)").arg(data.toPointF().x()).arg(data.toPointF().y());
     case VideoModel::LSpeedColumn:
     case VideoModel::LAccelerationColumn:
         return QLineF(QPointF(0, 0), data.toPointF()).length();
@@ -34,6 +35,11 @@ QVariant LinearTrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int r
 
 QVariant LinearTrajectoriesProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+    if (role != Qt::DisplayRole ||
+        orientation != Qt::Horizontal) {
+        return QVariant();
+    }
+
     switch (section) {
     case VideoModel::LFrameColumn:
         return tr("Frame");
@@ -57,6 +63,8 @@ QModelIndex LinearTrajectoriesProxyModel::mapFromSource(const QModelIndex &sourc
     if (sourceIndex.parent().parent() == _parentIndex) {
         return index(sourceIndex.row(), sourceIndex.column(), index(sourceIndex.parent().row(), 0));
     }
+
+    return QModelIndex();
 }
 
 QModelIndex LinearTrajectoriesProxyModel::mapToSource(const QModelIndex &proxyIndex) const
@@ -94,6 +102,10 @@ QModelIndex LinearTrajectoriesProxyModel::parent(const QModelIndex &child) const
 
 int LinearTrajectoriesProxyModel::rowCount(const QModelIndex &parent) const
 {
+    if (!_parentIndex.isValid()) {
+        return 0;
+    }
+
     if (!parent.isValid()) {
         return sourceModel()->rowCount(_parentIndex);
     }
@@ -103,9 +115,5 @@ int LinearTrajectoriesProxyModel::rowCount(const QModelIndex &parent) const
 
 int LinearTrajectoriesProxyModel::columnCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid()) {
-        return 1;
-    }
-
     return VideoModel::LinearTrajectoryInstantColumnCount;
 }
