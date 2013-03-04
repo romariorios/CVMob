@@ -2,10 +2,13 @@ project(CVMob)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(Qt4 4.8 REQUIRED)
-include(${QT_USE_FILE})
-
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5LinguistTools REQUIRED)
 find_package(OpenCV 2 REQUIRED)
+
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+add_definitions(${Qt5Widgets_DEFINITIONS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(CVMob_sources
     main.cpp
@@ -51,14 +54,14 @@ set(CVMob_translations
 
 set(CVMob_resources cvmob_resource.qrc)
 
-QT4_WRAP_CPP(CVMob_headers_moc ${CVMob_headers})
-QT4_WRAP_UI(CVMob_forms_headers ${CVMob_forms})
-QT4_ADD_RESOURCES(CVMob_resources_rcc ${CVMob_resources})
+QT5_WRAP_CPP(CVMob_headers_moc ${CVMob_headers})
+QT5_WRAP_UI(CVMob_forms_headers ${CVMob_forms})
+QT5_ADD_RESOURCES(CVMob_resources_rcc ${CVMob_resources})
 if (CVMOB_UPDATE_TRANSLATIONS)
   message("WARNING: make clean WILL WIPE OUT THE .ts TRANSLATION FILES IF EXECUTED")
-  QT4_CREATE_TRANSLATION(CVMob_translations_qm ${CMAKE_CURRENT_SOURCE_DIR} ${CVMob_translations})
+  QT5_CREATE_TRANSLATION(CVMob_translations_qm ${CMAKE_CURRENT_SOURCE_DIR} ${CVMob_translations})
 else ()
-  QT4_ADD_TRANSLATION(CVMob_translations_qm ${CVMob_translations})
+  QT5_ADD_TRANSLATION(CVMob_translations_qm ${CVMob_translations})
 endif ()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
@@ -71,4 +74,4 @@ add_executable(cvmob
     ${CVMob_translations_qm}
 )
 
-target_link_libraries(cvmob ${QT_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(cvmob ${Qt5Widgets_LIBRARIES} ${OpenCV_LIBS})

@@ -20,9 +20,9 @@
 #ifndef VIDEOVIEW_H
 #define VIDEOVIEW_H
 
-#include <QtGui/QAbstractItemView>
+#include <QAbstractItemView>
 
-#include <QtCore/QList>
+#include <QList>
 
 class PlayBar;
 class QGraphicsLineItem;

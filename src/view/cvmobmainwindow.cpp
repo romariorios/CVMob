@@ -23,9 +23,9 @@
 #include <model/videomodel.hpp>
 #include <model/distancesproxymodel.hpp>
 #include <model/lineartrajectoriesproxymodel.hpp>
-#include <QtCore/QPointF>
-#include <QtGui/QStandardItemModel>
-#include <QtGui/QFileDialog>
+#include <QPointF>
+#include <QStandardItemModel>
+#include <QFileDialog>
 #include <view/videoview.h>
 
 #include <QDebug>
@@ -48,7 +48,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     distancesModel->setSourceModel(_videoModel);
     distancesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->distancesView->setModel(distancesModel);
-    _ui->distancesView->header()->setResizeMode(QHeaderView::Stretch);
+    _ui->distancesView->header()->setSectionResizeMode(QHeaderView::Stretch);
 
     LinearTrajectoriesProxyModel *linearTrajectoriesModel =
             new LinearTrajectoriesProxyModel(this);

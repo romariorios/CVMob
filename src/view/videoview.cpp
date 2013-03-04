@@ -20,18 +20,18 @@
 #include "videoview.h"
 
 #include <model/videomodel.hpp>
-#include <QtGui/QGraphicsItem>
-#include <QtGui/QGraphicsLineItem>
-#include <QtGui/QGraphicsRectItem>
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QImage>
-#include <QtGui/QResizeEvent>
-#include <QtGui/QVBoxLayout>
+#include <QGraphicsItem>
+#include <QGraphicsLineItem>
+#include <QGraphicsRectItem>
+#include <QGraphicsScene>
+#include <QImage>
+#include <QResizeEvent>
+#include <QVBoxLayout>
 #include <view/playbar.hpp>
 #include <view/videographicsview.hpp>
 #include <view/videostatus.hpp>
 
-#include <QtGui/QLabel>
+#include <QLabel>
 
 #include <QTimer>
 
@@ -59,10 +59,11 @@ VideoView::VideoView(QWidget *parent) :
 
     QImage bgImage(":/images/translucent-logo.png");
     _view->setScene(_noVideoVideo.scene);
-    _noVideoVideo.bgRect = new QGraphicsRectItem(0, _noVideoVideo.scene);
+    _noVideoVideo.bgRect = new QGraphicsRectItem(0);
     _noVideoVideo.bgRect->setRect(QRectF(QPointF(0, 0), bgImage.size()));
     _noVideoVideo.bgRect->setBrush(bgImage);
     _noVideoVideo.bgRect->setPen(Qt::NoPen);
+    _noVideoVideo.scene->addItem(_noVideoVideo.bgRect);
     _noVideoVideo.scene->setSceneRect(QRectF(QPointF(0, 0), bgImage.size()));
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
     QGraphicsItem *noVideoText = _noVideoVideo.scene->addText(tr("No video"));
@@ -218,14 +219,15 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         for (int i = start; i <= end; ++i) {
             _videos.insert(i, Video(new QGraphicsScene(_view), 0));
             Video &v = _videos.last();
-            v.bgRect = new QGraphicsRectItem(0, v.scene);
+            v.bgRect = new QGraphicsRectItem(0);
+            v.scene->addItem(v.bgRect);
             v.bgRect->setPen(Qt::NoPen);
         }
     } else if (!parent.parent().isValid()) { // Level 1
         if (parent.column() == VideoModel::DistancesColumn) {
             for (int i = start; i <= end; ++i) {
                 Video &v = _videos[parent.row()];
-                v.distances << new QGraphicsLineItem(0, 0, 0, 0, v.bgRect, v.scene);
+                v.distances << new QGraphicsLineItem(0, 0, 0, 0, v.bgRect);
             }
         }
     }
@@ -263,7 +265,7 @@ void VideoView::distanceFirstPoint(const QPointF &p)
     Video &currentVideo = _videos[_currentVideoRow];
 
     QGraphicsLineItem *guideLine =
-            new QGraphicsLineItem(QLineF(p, p), currentVideo.bgRect, currentVideo.scene);
+            new QGraphicsLineItem(QLineF(p, p), currentVideo.bgRect);
     guideLine->setPen(QColor(0, 0, 255));
     _videos[_currentVideoRow].distances << guideLine;
 
