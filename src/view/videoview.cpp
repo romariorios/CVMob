@@ -98,7 +98,7 @@ QRect VideoView::visualRect(const QModelIndex &index) const
                  index.model()->index(index.row(), 1).data().toPoint());
 }
 
-void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &)
+void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, const QVector<int> &)
 {
     const QModelIndex parent = topLeft.parent();
 
@@ -219,7 +219,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         for (int i = start; i <= end; ++i) {
             _videos.insert(i, Video(new QGraphicsScene(_view), 0));
             Video &v = _videos.last();
-            v.bgRect = new QGraphicsRectItem(0);
+            v.bgRect = new QGraphicsRectItem();
             v.scene->addItem(v.bgRect);
             v.bgRect->setPen(Qt::NoPen);
         }

@@ -75,8 +75,8 @@ private:
     VideoStatus *_status;
 
 protected slots:
-    void dataChanged(const QModelIndex &topLeft, const QModelIndex &); // topLeft is always equal
-                                                                       // to bottomRight.
+    void dataChanged(const QModelIndex &topLeft, const QModelIndex &, // topLeft == bottomRight
+                     const QVector<int> & = QVector<int>());          // roles is always empty
     void selectionChanged(const QItemSelection &selected, const QItemSelection &);
     void rowsInserted(const QModelIndex &parent, int start, int end);
 
