@@ -81,7 +81,6 @@ protected slots:
     void rowsInserted(const QModelIndex &parent, int start, int end);
 
 private slots:
-    void changeFrame(int frame);
     void beginDistanceCreation();
 
     void distanceFirstPoint(const QPointF &p);

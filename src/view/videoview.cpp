@@ -69,8 +69,19 @@ VideoView::VideoView(QWidget *parent) :
     QGraphicsItem *noVideoText = _noVideoVideo.scene->addText(tr("No video"));
     noVideoText->moveBy(100, 50);
 
-    connect(_playBar, SIGNAL(frameChanged(int)), SLOT(changeFrame(int)));
     connect(_playBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
+
+    connect(_playBar, &PlayBar::frameChanged, [=](int frame)
+    {
+        QModelIndex currentFrameIndex = model()
+                ->index(_currentVideoRow, VideoModel::CurrentFrameColumn);
+
+        if (frame == currentFrameIndex.data(VideoModel::VideoSceneRole).toInt()) {
+            return;
+        }
+
+        model()->setData(currentFrameIndex, frame, VideoModel::VideoSceneEditRole);
+    });
 
     connect(_playBar, &PlayBar::newTrajectoryRequested, [=]()
     {
@@ -247,18 +258,6 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
             }
         }
     }
-}
-
-void VideoView::changeFrame(int frame)
-{
-    QModelIndex currentFrameIndex = model()
-            ->index(_currentVideoRow, VideoModel::CurrentFrameColumn);
-
-    if (frame == currentFrameIndex.data(VideoModel::VideoSceneRole).toInt()) {
-        return;
-    }
-
-    model()->setData(currentFrameIndex, frame, VideoModel::VideoSceneEditRole);
 }
 
 void VideoView::beginDistanceCreation()
