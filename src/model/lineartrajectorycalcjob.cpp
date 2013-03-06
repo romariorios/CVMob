@@ -44,8 +44,8 @@ LinearTrajectoryCalcJob::LinearTrajectoryCalcJob(const QPointF &startPoint,
     _windowSize(windowSize),
     _model(parent)
 {
-    connect(this, SIGNAL(instantGenerated(int,QPointF,QPointF,QPointF)),
-            &_target, SLOT(storeInstant(int,QPointF,QPointF,QPointF)), Qt::QueuedConnection);
+    connect(this, &LinearTrajectoryCalcJob::instantGenerated,
+            &_target, &Target::storeInstant, Qt::QueuedConnection);
     _target.model = _model;
     _framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
 }
