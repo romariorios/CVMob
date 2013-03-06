@@ -44,11 +44,6 @@ protected:
 
 private:
     int _column;
-
-private slots:
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void forwardDataChange(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-    void forwardRowInsertion(const QModelIndex &parent, int start, int end);
 };
 
 #endif // BASEPROXYMODEL_HPP

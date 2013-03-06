@@ -54,12 +54,10 @@ void VideoStatus::setJob(const QString &message, BaseJob *job)
             _ui->progressBar, SLOT(setValue(int)));
     connect(job, SIGNAL(finished()),
             _ui->progressBar, SLOT(hide()));
-    connect(job, SIGNAL(finished()),
-            SLOT(setFinishedMessage()));
-}
 
-void VideoStatus::setFinishedMessage()
-{
-    _ui->message->setText(tr("Done"));
-    QTimer::singleShot(5000, this, SLOT(hide()));
+    connect(job, &BaseJob::finished, [=]()
+    {
+        _ui->message->setText(tr("Done"));
+        QTimer::singleShot(5000, this, SLOT(hide()));
+    });
 }

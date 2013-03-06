@@ -22,6 +22,8 @@
 
 #include <QMenu>
 
+#include <QPushButton>
+
 PlayBar::PlayBar(QWidget *parent) :
     QWidget(parent),
     _frameCount(0),
@@ -39,10 +41,17 @@ PlayBar::PlayBar(QWidget *parent) :
     _ui->drawButton->setDefaultAction(_ui->actionMeasure_distance);
 
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
-    connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SLOT(checkCurrentFrame(int)));
     connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
     connect(_ui->actionMeasure_distance, SIGNAL(triggered()), SIGNAL(newDistanceRequested()));
     connect(_ui->actionCalculate_trajectory, SIGNAL(triggered()), SIGNAL(newTrajectoryRequested()));
+
+    connect(_ui->progressSlide, &QSlider::valueChanged, [&](int frame)
+    {
+        if (!(frame < _frameCount)) {
+            setPlaying(false);
+            _ui->progressSlide->setValue(0);
+        }
+    });
 
     setPlayData(0, 0);
 }
@@ -84,12 +93,4 @@ void PlayBar::setPlaying(bool playing)
     disconnect(_ui->actionPlay, SIGNAL(toggled(bool)), this, SLOT(setPlaying(bool)));
     _ui->actionPlay->setChecked(playing);
     connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
-}
-
-void PlayBar::checkCurrentFrame(int frame)
-{
-    if (!(frame < _frameCount)) {
-        setPlaying(false);
-        _ui->progressSlide->setValue(0);
-    }
 }

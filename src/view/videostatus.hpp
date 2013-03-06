@@ -41,9 +41,6 @@ public:
     
 private:
     Ui::VideoStatus *_ui;
-
-private slots:
-    void setFinishedMessage();
 };
 
 #endif // VIDEOSTATUS_HPP

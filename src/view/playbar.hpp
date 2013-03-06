@@ -53,9 +53,6 @@ private:
     int _frameDuration;
     int _currentTimer;
     Ui::PlayBar *_ui;
-
-private slots:
-    void checkCurrentFrame(int frame);
 };
 
 #endif // PLAYERBAR_HPP

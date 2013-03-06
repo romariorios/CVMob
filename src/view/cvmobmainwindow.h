@@ -41,8 +41,6 @@ class CvMobMainWindow : public QMainWindow
     VideoModel *_videoModel;
     VideoView *_videoView;
 
-private slots:
-
 protected slots:
 	void openFile();
 
