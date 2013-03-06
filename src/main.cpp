@@ -28,7 +28,7 @@
  **
  ****************************************************************************/
 
-#include "view/cvmobmainwindow.h"
+#include "view/cvmobmainwindow.hpp"
 #include <QtGui>
 #include <QApplication>
 

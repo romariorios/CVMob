@@ -17,7 +17,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "videoview.h"
+#include "videoview.hpp"
 
 #include <model/videomodel.hpp>
 #include <QGraphicsItem>

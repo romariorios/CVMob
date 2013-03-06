@@ -17,7 +17,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "cvmobmainwindow.h"
+#include "cvmobmainwindow.hpp"
 #include "ui_cvmobmainwindow.h"
 
 #include <model/videomodel.hpp>
@@ -26,7 +26,7 @@
 #include <QPointF>
 #include <QStandardItemModel>
 #include <QFileDialog>
-#include <view/videoview.h>
+#include <view/videoview.hpp>
 
 #include <QDebug>
 

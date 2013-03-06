@@ -27,10 +27,10 @@ set(CVMob_sources
 )
 
 set(CVMob_headers
-    view/aboutdialog.h
-    view/cvmobmainwindow.h
+    view/aboutdialog.hpp
+    view/cvmobmainwindow.hpp
     view/videographicsview.hpp
-    view/videoview.h
+    view/videoview.hpp
     model/videomodel.hpp
     model/baseproxymodel.hpp
     model/distancesproxymodel.hpp
