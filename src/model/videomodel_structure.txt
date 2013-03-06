@@ -1,0 +1,26 @@
+The VideoModel class is slightly inspired in a relational database model. There's a column
+hierarchy and each column either has a value, or it has one or more child columns.
+
+Root
+0| FileNameColumn (QString)
+1| CurrentFrameColumn (int): Current frame the video is in
+2| FrameDurationColumn (int): The duration of each frame in msec
+3| FrameSizeColumn (QSizeF)
+4| FramesColumn: The frames of this video
+4~>0| (QImage): A frame
+5| DistancesColumn
+5~>0| (QLineF): A line between two points
+6| LinearTrajectoriesColumn
+6~>0| : The instants of a linear trajectory
+6~>0~>0| LFrameColumn (int)
+6~>0~>1| PositionColumn (QPointF)
+6~>0~>2| LSpeedColumn (QPointF)
+6~>0~>3| LAccelerationColumn (QPointF)
+7| AngularTrajectoriesColumn
+7~>0| : The instants of an angular trajectory
+7~>0~>0| AFrameColumn (int)
+7~>0~>1| ASpeedColumn (int)
+7~>0~>2| AAccelerationColumn (int)
+7~>0~>3| CentralEdgeColumn (QPointF)
+7~>0~>4| PeripheralEdge1Column (QPointF)
+7~>0~>5| PeripheralEdge2Column (QPointF)
