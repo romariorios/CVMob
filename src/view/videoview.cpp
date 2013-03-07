@@ -134,18 +134,23 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
             v.bgRect->setRect(r);
             v.scene->setSceneRect(r);
         } else if (topLeft.column() == VideoModel::CurrentFrameColumn) {
+            int frame = topLeft.data(VideoModel::VideoSceneRole).toInt();
+
             v.bgRect->setBrush(model()
-                               ->index(topLeft
-                                       .data(VideoModel::VideoSceneRole)
-                                       .toInt(),
-                                       0,
-                                       model()
-                                       ->index(topLeft
-                                               .row(),
-                                               VideoModel::FramesColumn))
-                               .data(VideoModel::VideoSceneRole).value<QImage>());
+                               ->index(frame, 0, model()
+                                                 ->index(topLeft.row(),
+                                                         VideoModel::FramesColumn))
+                               .data(VideoModel::VideoSceneRole)
+                               .value<QImage>());
             for (auto traj : v.linearTrajectories) {
-                traj.at(topLeft.row())->setBrush(Qt::red);
+                if (frame >= traj.size()) {
+                    qDebug() << QString("Frame %1 out of range").arg(frame).toUtf8().constData();
+                    continue;
+                }
+
+                auto instant = traj[frame];
+                instant->setBrush(Qt::red);
+                instant->setZValue(instant->zValue() + 0.1);
             }
         }
     } else if (!parent.parent().isValid()) { // Level 1
@@ -157,7 +162,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
         if (parent.parent().column() == VideoModel::LinearTrajectoriesColumn &&
             topLeft.column() == VideoModel::PositionColumn) {
             auto point = topLeft.data(VideoModel::VideoSceneRole).toPointF();
-            QPointF dif(2.5, 2.5);
+            QPointF dif(1, 1);
             QRectF instantRect(point - dif, point + dif);
             auto trajectory = _videos.at(parent.parent().row()).linearTrajectories.at(parent.row());
             auto instant = trajectory.at(topLeft.row());
@@ -282,8 +287,8 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
             switch (parent.parent().column()) {
             case VideoModel::LinearTrajectoriesColumn:
                 auto instant = new QGraphicsRectItem(v.bgRect);
-                instant->setRect(0, 0, 5, 5);
-                instant->setBrush(Qt::black);
+                instant->setBrush(Qt::transparent);
+                instant->setPen(Qt::NoPen);
                 v.linearTrajectories[parent.row()] << instant;
                 break;
             }
