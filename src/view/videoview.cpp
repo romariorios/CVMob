@@ -160,6 +160,10 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
 
 void VideoView::selectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
+    if (selected.isEmpty()) {
+        return;
+    }
+
     QModelIndex selectedIndex = selected.at(0).indexes().at(0);
     _currentVideoRow = selectedIndex.row();
 
