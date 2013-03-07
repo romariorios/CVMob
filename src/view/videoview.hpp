@@ -60,6 +60,7 @@ private:
         QGraphicsScene *scene;
         QGraphicsRectItem *bgRect;
         QList<QGraphicsLineItem *> distances;
+        QList<QList<QGraphicsRectItem *> > linearTrajectories;
 
         Video(QGraphicsScene *e_s, QGraphicsRectItem *e_bgr) :
             scene(e_s),

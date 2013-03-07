@@ -144,11 +144,24 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
                                                .row(),
                                                VideoModel::FramesColumn))
                                .data(VideoModel::VideoSceneRole).value<QImage>());
+            for (auto traj : v.linearTrajectories) {
+                traj.at(topLeft.row())->setBrush(Qt::red);
+            }
         }
     } else if (!parent.parent().isValid()) { // Level 1
         if (parent.column() == VideoModel::DistancesColumn) {
             QGraphicsLineItem *line = _videos.at(parent.row()).distances.at(topLeft.row());
             line->setLine(topLeft.data(VideoModel::VideoSceneRole).toLineF());
+        }
+    } else if (!parent.parent().parent().isValid()) { // Level 2
+        if (parent.parent().column() == VideoModel::LinearTrajectoriesColumn &&
+            topLeft.column() == VideoModel::PositionColumn) {
+            auto point = topLeft.data(VideoModel::VideoSceneRole).toPointF();
+            QPointF dif(2.5, 2.5);
+            QRectF instantRect(point - dif, point + dif);
+            auto trajectory = _videos.at(parent.parent().row()).linearTrajectories.at(parent.row());
+            auto instant = trajectory.at(topLeft.row());
+            instant->setRect(instantRect);
         }
     }
 }
@@ -250,10 +263,29 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
             v.bgRect->setPen(Qt::NoPen);
         }
     } else if (!parent.parent().isValid()) { // Level 1
-        if (parent.column() == VideoModel::DistancesColumn) {
-            for (int i = start; i <= end; ++i) {
-                Video &v = _videos[parent.row()];
-                v.distances << new QGraphicsLineItem(0, 0, 0, 0, v.bgRect);
+        Video &v = _videos[parent.row()];
+        for (int i = start; i <= end; ++i) {
+            switch (parent.column()) {
+            case VideoModel::DistancesColumn:
+                v.distances << new QGraphicsLineItem(v.bgRect);
+                break;
+            case VideoModel::LinearTrajectoriesColumn:
+                v.linearTrajectories << QList<QGraphicsRectItem *>();
+                break;
+            default:
+                break;
+            }
+        }
+    } else if (!parent.parent().parent().isValid()) { // Level 2
+        Video &v = _videos[parent.parent().row()];
+        for (int i = start; i <= end; ++i) {
+            switch (parent.parent().column()) {
+            case VideoModel::LinearTrajectoriesColumn:
+                auto instant = new QGraphicsRectItem(v.bgRect);
+                instant->setRect(0, 0, 5, 5);
+                instant->setBrush(Qt::black);
+                v.linearTrajectories[parent.row()] << instant;
+                break;
             }
         }
     }
