@@ -148,9 +148,13 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
                     continue;
                 }
 
-                auto instant = traj[frame];
-                instant->setBrush(Qt::red);
-                instant->setZValue(instant->zValue() + 0.1);
+                traj[frame]->setBrush(Qt::red);
+
+                if (frame == 0) {
+                    continue;
+                }
+
+                traj[frame - 1]->setBrush(Qt::transparent);
             }
         }
     } else if (!parent.parent().isValid()) { // Level 1
