@@ -22,6 +22,13 @@
 
 #include <QWidget>
 
+#include <QList>
+
+namespace Status {
+class Base;
+class Job;
+}
+
 namespace Ui {
 class VideoStatus;
 }
@@ -36,11 +43,57 @@ public:
     explicit VideoStatus(QWidget *parent = 0);
     ~VideoStatus();
 
-    void setMessage(const QString &message);
-    void setJob(const QString &message, BaseJob *job);
+    void clearQueue();
+
+    friend class Status::Base;
+    friend class Status::Job;
     
 private:
     Ui::VideoStatus *_ui;
+    QList<Status::Base *> _statusQueue;
 };
+
+namespace Status
+{
+
+class Base : public QObject
+{
+public:
+    ~Base();
+
+protected:
+    VideoStatus *_parent;
+
+    Base(VideoStatus *parent, QString message);
+
+private:
+    QString _message;
+};
+
+class Message : public Base
+{
+public:
+    Message(VideoStatus *parent, QString message, int period = 5000);
+};
+
+class Persistent : public Base
+{
+public:
+    Persistent(VideoStatus *parent, QString message);
+    ~Persistent();
+};
+
+class Job : public Base
+{
+    Q_OBJECT
+
+public:
+    Job(VideoStatus *parent, QString message, BaseJob *job);
+
+private slots:
+    void callItDone();
+};
+
+}
 
 #endif // VIDEOSTATUS_HPP

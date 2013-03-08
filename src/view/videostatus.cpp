@@ -37,27 +37,65 @@ VideoStatus::~VideoStatus()
     delete _ui;
 }
 
-void VideoStatus::setMessage(const QString &message)
+void VideoStatus::clearQueue()
 {
-    show();
-    _ui->message->setText(message);
+    while (!_statusQueue.isEmpty()) {
+        delete _statusQueue.at(0);
+    }
 }
 
-void VideoStatus::setJob(const QString &message, BaseJob *job)
+// StatusItems
+Status::Base::Base(VideoStatus *parent, QString message) :
+    _parent(parent),
+    _message(message)
 {
-    show();
-    _ui->message->setText(message);
-    _ui->progressBar->show();
-    connect(job, SIGNAL(progressRangeChanged(int,int)),
-            _ui->progressBar, SLOT(setRange(int,int)));
-    connect(job, SIGNAL(progressChanged(int)),
-            _ui->progressBar, SLOT(setValue(int)));
-    connect(job, SIGNAL(finished()),
-            _ui->progressBar, SLOT(hide()));
+    _parent->_statusQueue << this;
+    if (_parent->_statusQueue.size() == 1) {
+        _parent->show();
+        _parent->_ui->message->setText(_parent->_statusQueue[0]->_message);
+    }
+}
 
-    connect(job, &BaseJob::finished, [=]()
-    {
-        _ui->message->setText(tr("Done"));
-        QTimer::singleShot(5000, this, SLOT(hide()));
-    });
+Status::Base::~Base()
+{
+    int index = _parent->_statusQueue.indexOf(this);
+    _parent->_statusQueue.removeAt(index);
+
+    if (_parent->_statusQueue.isEmpty()) {
+        _parent->hide();
+    } else {
+        _parent->_ui->message->setText(_parent->_statusQueue[0]->_message);
+    }
+}
+
+Status::Message::Message(VideoStatus *parent, QString message, int period) :
+    Base(parent, message)
+{
+    QTimer::singleShot(period, this, SLOT(deleteLater()));
+}
+
+Status::Persistent::Persistent(VideoStatus *parent, QString message) :
+    Base(parent, message)
+{}
+
+Status::Persistent::~Persistent()
+{}
+
+Status::Job::Job(VideoStatus *parent, QString message, BaseJob *job) :
+    Base(parent, message)
+{
+    parent->_ui->progressBar->show();
+    connect(job, SIGNAL(progressRangeChanged(int,int)),
+            parent->_ui->progressBar, SLOT(setRange(int,int)));
+    connect(job, SIGNAL(progressChanged(int)),
+            parent->_ui->progressBar, SLOT(setValue(int)));
+
+    connect(job, SIGNAL(finished()), SLOT(callItDone()));
+    connect(job, SIGNAL(finished()), SLOT(deleteLater()));
+    connect(job, SIGNAL(finished()), parent->_ui->progressBar, SLOT(hide()));
+}
+
+void Status::Job::callItDone()
+{
+    new Status::Message(_parent, tr("Done"), 3000);
 }
