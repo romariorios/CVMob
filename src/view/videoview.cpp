@@ -83,6 +83,14 @@ VideoView::VideoView(QWidget *parent) :
         model()->setData(currentFrameIndex, frame, VideoModel::VideoSceneEditRole);
     });
 
+    connect(_playBar, &PlayBar::playingChanged, [=](bool playing)
+    {
+        if (!playing) {
+            QImage bgImage = _videos[_currentVideoRow].bgRect->brush().textureImage().copy();
+            _videos[_currentVideoRow].bgRect->setBrush(bgImage);
+        }
+    });
+
     connect(_playBar, &PlayBar::newTrajectoryRequested, [=]()
     {
         _status->setMessage(tr("Click a point to track"));
@@ -306,6 +314,8 @@ void VideoView::calculateLTrajectory(const QPointF &p)
     LinearTrajectoryCalcJob *job = static_cast<VideoModel *>(model())->calculateLinearTrajectory
             (p, frame, _currentVideoRow);
     _status->setJob(tr("Calculating trajectory..."), job);
+
     connect(job, SIGNAL(finished()), job, SLOT(deleteLater()));
+
     job->start();
 }
