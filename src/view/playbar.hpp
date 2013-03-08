@@ -44,6 +44,9 @@ protected:
     void timerEvent(QTimerEvent *);
 
 signals:
+    void playingChanged(bool playing);
+    void playDataChanged(int frames, int frameDuration);
+
     void frameChanged(int frame);
     void newDistanceRequested();
     void newTrajectoryRequested();

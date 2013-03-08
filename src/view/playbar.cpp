@@ -70,6 +70,8 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
     _frameDuration = frameDuration;
     _frameCount = frameCount;
     setPlaying(false);
+
+    emit playDataChanged(frameCount, frameDuration);
 }
 
 void PlayBar::timerEvent(QTimerEvent *)
@@ -93,4 +95,6 @@ void PlayBar::setPlaying(bool playing)
     disconnect(_ui->actionPlay, SIGNAL(toggled(bool)), this, SLOT(setPlaying(bool)));
     _ui->actionPlay->setChecked(playing);
     connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
+
+    emit playingChanged(playing);
 }
