@@ -100,6 +100,8 @@ void LinearTrajectoryCalcJob::run()
 
         emit instantGenerated(i, newPoint, newSpeed, newAccel);
         emit progressChanged(i - _startFrame + 1);
+
+        previousPoint = newPoint;
     }
 }
 
