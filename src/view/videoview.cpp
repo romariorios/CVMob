@@ -95,7 +95,7 @@ VideoView::VideoView(QWidget *parent) :
     {
         auto status = new Status::Persistent(_status, tr("Click a point to track"));
 
-        connect(_view, SIGNAL(mouseReleased(QPointF)), SLOT(calculateLTrajectory(QPointF)));
+        connect(_view, SIGNAL(mouseReleased(QPointF)), SLOT(calculateTrajectory(QPointF)));
         connect(_view, SIGNAL(mouseReleased(QPointF)), status, SLOT(deleteLater()));
     });
 }
@@ -142,7 +142,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
                                                          VideoModel::FramesColumn))
                                .data(VideoModel::VideoSceneRole)
                                .value<QImage>());
-            for (auto traj : v.linearTrajectories) {
+            for (auto traj : v.trajectories) {
                 if (frame >= traj.size()) {
                     qDebug() << QString("Frame %1 out of range").arg(frame).toUtf8().constData();
                     continue;
@@ -163,12 +163,12 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
             line->setLine(topLeft.data(VideoModel::VideoSceneRole).toLineF());
         }
     } else if (!parent.parent().parent().isValid()) { // Level 2
-        if (parent.parent().column() == VideoModel::LinearTrajectoriesColumn &&
+        if (parent.parent().column() == VideoModel::TrajectoriesColumn &&
             topLeft.column() == VideoModel::PositionColumn) {
             auto point = topLeft.data(VideoModel::VideoSceneRole).toPointF();
             QPointF dif(1, 1);
             QRectF instantRect(point - dif, point + dif);
-            auto trajectory = _videos.at(parent.parent().row()).linearTrajectories.at(parent.row());
+            auto trajectory = _videos.at(parent.parent().row()).trajectories.at(parent.row());
             auto instant = trajectory.at(topLeft.row());
             instant->setRect(instantRect);
         }
@@ -278,8 +278,8 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
             case VideoModel::DistancesColumn:
                 v.distances << new QGraphicsLineItem(v.bgRect);
                 break;
-            case VideoModel::LinearTrajectoriesColumn:
-                v.linearTrajectories << QList<QGraphicsRectItem *>();
+            case VideoModel::TrajectoriesColumn:
+                v.trajectories << QList<QGraphicsRectItem *>();
                 break;
             default:
                 break;
@@ -289,11 +289,11 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         Video &v = _videos[parent.parent().row()];
         for (int i = start; i <= end; ++i) {
             switch (parent.parent().column()) {
-            case VideoModel::LinearTrajectoriesColumn:
+            case VideoModel::TrajectoriesColumn:
                 auto instant = new QGraphicsRectItem(v.bgRect);
                 instant->setBrush(Qt::transparent);
                 instant->setPen(Qt::NoPen);
-                v.linearTrajectories[parent.row()] << instant;
+                v.trajectories[parent.row()] << instant;
                 break;
             }
         }
@@ -345,14 +345,14 @@ void VideoView::distanceEndCreation(const QPointF &p)
     disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(distanceEndCreation(QPointF)));
 }
 
-void VideoView::calculateLTrajectory(const QPointF &p)
+void VideoView::calculateTrajectory(const QPointF &p)
 {
-    disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(calculateLTrajectory(QPointF)));
+    disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(calculateTrajectory(QPointF)));
 
     int frame = model()->index(_currentVideoRow, VideoModel::CurrentFrameColumn)
             .data(VideoModel::VideoSceneRole).toInt();
 
-    LinearTrajectoryCalcJob *job = static_cast<VideoModel *>(model())->calculateLinearTrajectory
+    TrajectoryCalcJob *job = static_cast<VideoModel *>(model())->calculateTrajectory
             (p, frame, _currentVideoRow);
     new Status::Job(_status, tr("Calculating trajectory..."), job);
 

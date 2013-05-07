@@ -30,7 +30,7 @@
 #include <QSizeF>
 
 #include <opencv/highgui.h>
-#include <model/lineartrajectorycalcjob.hpp>
+#include <model/trajectorycalcjob.hpp>
 
 class VideoModel : public QAbstractItemModel
 {
@@ -45,27 +45,27 @@ public:
         FrameSizeColumn,
         FramesColumn,
         DistancesColumn,
-        LinearTrajectoriesColumn,
-        AngularTrajectoriesColumn,
+        TrajectoriesColumn,
+        AnglesColumn,
         VideoColumnCount
     };
 
-    enum LinearTrajectoryInstantColumn {
+    enum TrajectoryInstantColumn {
         LFrameColumn = 0,
         PositionColumn,
         LSpeedColumn,
         LAccelerationColumn,
-        LinearTrajectoryInstantColumnCount
+        TrajectoryInstantColumnCount
     };
 
-    enum AngularTrajectoryInstantColumn {
+    enum AngleInstantColumn {
         AFrameColumn = 0,
         ASpeedColumn,
         AAccelerationColumn,
         CentralEdgeColumn,
         PeripheralEdge1Column,
         PeripheralEdge2Column,
-        AngularTrajectoryInstantColumnCount
+        AngleInstantColumnCount
     };
 
     enum CalculationFlags {
@@ -92,7 +92,7 @@ public:
     void createDistance(const QLineF &l, int videoRow);
     void createDistance(const QPointF& p1, const QPointF& p2, const QModelIndex& videoIndex);
     void createDistance(const QPointF& p1, const QPointF& p2, int videoRow);
-    LinearTrajectoryCalcJob *calculateLinearTrajectory(const QPointF &p, int frame,
+    TrajectoryCalcJob *calculateTrajectory(const QPointF &p, int frame,
                                                        int videoRow,
                                                        const QSize &windowSize = QSize(21, 21),
                                                        CalculationFlags flags = FromHereOnwards);
@@ -105,27 +105,27 @@ public:
     };
 
 private:
-    struct LinearTrajectoryInstant
+    struct TrajectoryInstant
     {
         int frame;
         QPointF position, speed, acceleration;
     };
 
-    struct LinearTrajectory
+    struct Trajectory
     {
-        QList<LinearTrajectoryInstant> instants;
+        QList<TrajectoryInstant> instants;
     };
 
-    struct AngularTrajectoryInstant
+    struct AngleInstant
     {
         int frame, speed, acceleration;
         QPointF centralEdge;
         QPair<QPointF, QPointF> peripheralEdges;
     };
 
-    struct AngularTrajectory
+    struct Angle
     {
-        QList<AngularTrajectoryInstant> instants;
+        QList<AngleInstant> instants;
     };
 
     struct Video
@@ -136,8 +136,8 @@ private:
         cv::VideoCapture videoStream;
 
         QList<QLineF> distances;
-        QList<LinearTrajectory> linearTrajectories;
-        QList<AngularTrajectory> angularTrajectories;
+        QList<Trajectory> trajectories;
+        QList<Angle> angles;
     };
 
     enum InternalDataType
@@ -145,10 +145,10 @@ private:
         VideoData,
         DistanceData,
         FrameData,
-        LinearTrajectoryData,
-        AngularTrajectoryData,
-        LinearTrajectoryInstantData,
-        AngularTrajectoryInstantData
+        TrajectoryData,
+        AngleData,
+        TrajectoryInstantData,
+        AngleInstantData
     };
 
     struct InternalData

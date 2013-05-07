@@ -17,8 +17,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef LINEARTRAJECTORYCALCJOB_HPP
-#define LINEARTRAJECTORYCALCJOB_HPP
+#ifndef TRAJECTORYCALCJOB_HPP
+#define TRAJECTORYCALCJOB_HPP
 
 #include <model/basejob.hpp>
 
@@ -37,14 +37,14 @@ private:
 private slots:
     void storeInstant(int frame, const QPointF &p, const QPointF &s, const QPointF &a);
 
-    friend class LinearTrajectoryCalcJob;
+    friend class TrajectoryCalcJob;
 };
 
-class LinearTrajectoryCalcJob : public BaseJob
+class TrajectoryCalcJob : public BaseJob
 {
     Q_OBJECT
 public:
-    explicit LinearTrajectoryCalcJob(const QPointF &startPoint,
+    explicit TrajectoryCalcJob(const QPointF &startPoint,
                                      int startFrame,
                                      int endFrame,
                                      int videoRow,
@@ -69,4 +69,4 @@ private:
     Target _target;
 };
 
-#endif // LINEARTRAJECTORYCALCJOB_HPP
+#endif // TRAJECTORYCALCJOB_HPP

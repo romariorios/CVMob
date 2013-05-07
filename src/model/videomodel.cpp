@@ -49,20 +49,20 @@ QModelIndex VideoModel::index(int row, int column, const QModelIndex &parent) co
             return createIndex(row, column, new InternalData(FrameData, row, parentInternalPointer));
         case DistancesColumn:
             return createIndex(row, column, new InternalData(DistanceData, row, parentInternalPointer));
-        case LinearTrajectoriesColumn:
-            return createIndex(row, column, new InternalData(LinearTrajectoryData, row, parentInternalPointer));
-        case AngularTrajectoriesColumn:
-            return createIndex(row, column, new InternalData(AngularTrajectoryData, row, parentInternalPointer));
+        case TrajectoriesColumn:
+            return createIndex(row, column, new InternalData(TrajectoryData, row, parentInternalPointer));
+        case AnglesColumn:
+            return createIndex(row, column, new InternalData(AngleData, row, parentInternalPointer));
         default:
             break;
         }
-    case LinearTrajectoryData:
+    case TrajectoryData:
         if (parentColumn == 0) {
-            return createIndex(row, column, new InternalData(LinearTrajectoryInstantData, row, parentInternalPointer));
+            return createIndex(row, column, new InternalData(TrajectoryInstantData, row, parentInternalPointer));
         }
-    case AngularTrajectoryData:
+    case AngleData:
         if (parentColumn == 0) {
-            return createIndex(row, column, new InternalData(AngularTrajectoryInstantData, row, parentInternalPointer));
+            return createIndex(row, column, new InternalData(AngleInstantData, row, parentInternalPointer));
         }
     default:
         break;
@@ -92,14 +92,14 @@ QModelIndex VideoModel::parent(const QModelIndex &child) const
     case DistanceData:
         parentColumn = DistancesColumn;
         break;
-    case LinearTrajectoryData:
-        parentColumn = LinearTrajectoriesColumn;
+    case TrajectoryData:
+        parentColumn = TrajectoriesColumn;
         break;
-    case AngularTrajectoryData:
-        parentColumn = AngularTrajectoriesColumn;
+    case AngleData:
+        parentColumn = AnglesColumn;
         break;
-    case LinearTrajectoryInstantData:
-    case AngularTrajectoryInstantData:
+    case TrajectoryInstantData:
+    case AngleInstantData:
         parentColumn = 0;
         break;
     default:
@@ -183,7 +183,7 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
         default:
             return QVariant();
         }
-    } else if (internalPointer->type == LinearTrajectoryInstantData) {
+    } else if (internalPointer->type == TrajectoryInstantData) {
         InternalData *parentPointer = internalPointer->parent;
 
         if (parentPointer->parent->row >= _cvmobVideoData->size()) {
@@ -192,17 +192,17 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
 
         Video currentVideo = _cvmobVideoData->at(parentPointer->parent->row);
 
-        if (parentPointer->row >= currentVideo.linearTrajectories.size()) {
+        if (parentPointer->row >= currentVideo.trajectories.size()) {
             return QVariant();
         }
 
-        LinearTrajectory currentTrajectory = currentVideo.linearTrajectories.at(parentPointer->row);
+        Trajectory currentTrajectory = currentVideo.trajectories.at(parentPointer->row);
 
         if (index.row() >= currentTrajectory.instants.size()) {
             return QVariant();
         }
 
-        LinearTrajectoryInstant currentInstant = currentTrajectory.instants.at(index.row());
+        TrajectoryInstant currentInstant = currentTrajectory.instants.at(index.row());
 
         switch (index.column()) {
         case LFrameColumn:
@@ -214,7 +214,7 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
         case LAccelerationColumn:
             return currentInstant.acceleration;
         }
-    } else if (internalPointer->type == AngularTrajectoryInstantData) {
+    } else if (internalPointer->type == AngleInstantData) {
         InternalData *parentPointer = internalPointer->parent;
 
         if (parentPointer->parent->row >= _cvmobVideoData->size()) {
@@ -223,17 +223,17 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
 
         Video currentVideo = _cvmobVideoData->at(parentPointer->parent->row);
 
-        if (parentPointer->row >= currentVideo.angularTrajectories.size()) {
+        if (parentPointer->row >= currentVideo.angles.size()) {
             return QVariant();
         }
 
-        AngularTrajectory currentTrajectory = currentVideo.angularTrajectories.at(parentPointer->row);
+        Angle currentTrajectory = currentVideo.angles.at(parentPointer->row);
 
         if (index.row() >= currentTrajectory.instants.size()) {
             return QVariant();
         }
 
-        AngularTrajectoryInstant currentInstant = currentTrajectory.instants.at(index.row());
+        AngleInstant currentInstant = currentTrajectory.instants.at(index.row());
 
         switch (index.column()) {
         case AFrameColumn:
@@ -289,16 +289,16 @@ int VideoModel::columnCount(const QModelIndex &parent) const
         switch (parent.column()) {
         case FramesColumn:
         case DistancesColumn:
-        case LinearTrajectoriesColumn:
-        case AngularTrajectoriesColumn:
+        case TrajectoriesColumn:
+        case AnglesColumn:
             return 1;
         default:
             break;
         }
-    case LinearTrajectoryData:
-        return LinearTrajectoryInstantColumnCount;
-    case AngularTrajectoryData:
-        return AngularTrajectoryInstantColumnCount;
+    case TrajectoryData:
+        return TrajectoryInstantColumnCount;
+    case AngleData:
+        return AngleInstantColumnCount;
     default:
         break;
     }
@@ -325,10 +325,10 @@ int VideoModel::rowCount(const QModelIndex &parent) const
             return currentVideo.frameCount;
         case DistancesColumn:
             return currentVideo.distances.size();
-        case LinearTrajectoriesColumn:
-            return currentVideo.linearTrajectories.size();
-        case AngularTrajectoriesColumn:
-            return currentVideo.angularTrajectories.size();
+        case TrajectoriesColumn:
+            return currentVideo.trajectories.size();
+        case AnglesColumn:
+            return currentVideo.angles.size();
         }
     } else if (parentPointer->parent) {
         InternalData *grandpaPointer = parentPointer->parent;
@@ -337,12 +337,12 @@ int VideoModel::rowCount(const QModelIndex &parent) const
         }
         const Video &currentVideo = _cvmobVideoData->at(grandpaPointer->row);
 
-        if (parentPointer->type == LinearTrajectoryData) {
-            LinearTrajectory currentTrajectory = currentVideo.linearTrajectories.at(parentPointer->row);
+        if (parentPointer->type == TrajectoryData) {
+            Trajectory currentTrajectory = currentVideo.trajectories.at(parentPointer->row);
 
             return currentTrajectory.instants.size();
-        } else if (parentPointer->type == AngularTrajectoryData) {
-            AngularTrajectory currentTrajectory = currentVideo.angularTrajectories.at(parentPointer->row);
+        } else if (parentPointer->type == AngleData) {
+            Angle currentTrajectory = currentVideo.angles.at(parentPointer->row);
 
             return currentTrajectory.instants.size();
         }
@@ -415,18 +415,18 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
 
         Video &currentVideo = (*_cvmobVideoData)[parentPointer->parent->row];
 
-        if (internalPointer->type == LinearTrajectoryInstantData) {
-            if (parentPointer->row >= currentVideo.linearTrajectories.size()) {
+        if (internalPointer->type == TrajectoryInstantData) {
+            if (parentPointer->row >= currentVideo.trajectories.size()) {
                 return false;
             }
 
-            LinearTrajectory &currentTrajectory = currentVideo.linearTrajectories[parentPointer->row];
+            Trajectory &currentTrajectory = currentVideo.trajectories[parentPointer->row];
 
             if (index.row() >= currentTrajectory.instants.size()) {
                 return false;
             }
 
-            LinearTrajectoryInstant &currentInstant = currentTrajectory.instants[index.row()];
+            TrajectoryInstant &currentInstant = currentTrajectory.instants[index.row()];
 
             switch (index.column()) {
             case LFrameColumn:
@@ -442,18 +442,18 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 currentInstant.acceleration = value.toPointF();
                 break;
             }
-        } else if (internalPointer->type == AngularTrajectoryInstantData) {
-            if (parentPointer->row >= currentVideo.angularTrajectories.size()) {
+        } else if (internalPointer->type == AngleInstantData) {
+            if (parentPointer->row >= currentVideo.angles.size()) {
                 return false;
             }
 
-            AngularTrajectory &currentTrajectory = currentVideo.angularTrajectories[parentPointer->row];
+            Angle &currentTrajectory = currentVideo.angles[parentPointer->row];
 
             if (index.row() >= currentTrajectory.instants.size()) {
                 return false;
             }
 
-            AngularTrajectoryInstant &currentInstant = currentTrajectory.instants[index.row()];
+            AngleInstant &currentInstant = currentTrajectory.instants[index.row()];
 
             switch (index.column()) {
             case AFrameColumn:
@@ -523,10 +523,10 @@ bool VideoModel::insertRows(int row, int count, const QModelIndex &parent)
             return false; // Inserting frames is not possible
         case DistancesColumn:
             return checkAndInsertRowsIn<QLineF>(currentVideo.distances, row, count, parent);
-        case LinearTrajectoriesColumn:
-            return checkAndInsertRowsIn<LinearTrajectory>(currentVideo.linearTrajectories, row, count, parent);
-        case AngularTrajectoriesColumn:
-            return checkAndInsertRowsIn<AngularTrajectory>(currentVideo.angularTrajectories, row, count, parent);
+        case TrajectoriesColumn:
+            return checkAndInsertRowsIn<Trajectory>(currentVideo.trajectories, row, count, parent);
+        case AnglesColumn:
+            return checkAndInsertRowsIn<Angle>(currentVideo.angles, row, count, parent);
         default:
             return false;
         }
@@ -541,15 +541,15 @@ bool VideoModel::insertRows(int row, int count, const QModelIndex &parent)
             return false;
         }
 
-        if (parentPointer->type == LinearTrajectoryData) {
-            return checkAndInsertRowsIn<LinearTrajectoryInstant>(
-                        currentVideo.linearTrajectories[parentPointer->row].instants,
+        if (parentPointer->type == TrajectoryData) {
+            return checkAndInsertRowsIn<TrajectoryInstant>(
+                        currentVideo.trajectories[parentPointer->row].instants,
                         row,
                         count,
                         parent);
-        } else if (parentPointer->type == AngularTrajectoryData) {
-            return checkAndInsertRowsIn<AngularTrajectoryInstant>(
-                        currentVideo.angularTrajectories[parentPointer->row].instants,
+        } else if (parentPointer->type == AngleData) {
+            return checkAndInsertRowsIn<AngleInstant>(
+                        currentVideo.angles[parentPointer->row].instants,
                         row,
                         count,
                         parent);
@@ -598,10 +598,10 @@ bool VideoModel::removeRows(int row, int count, const QModelIndex &parent)
             return false; // Removing frames is not possible
         case DistancesColumn:
             return checkAndRemoveRowsFrom<QLineF>(currentVideo.distances, row, count, parent);
-        case LinearTrajectoriesColumn:
-            return checkAndRemoveRowsFrom<LinearTrajectory>(currentVideo.linearTrajectories, row, count, parent);
-        case AngularTrajectoriesColumn:
-            return checkAndRemoveRowsFrom<AngularTrajectory>(currentVideo.angularTrajectories, row, count, parent);
+        case TrajectoriesColumn:
+            return checkAndRemoveRowsFrom<Trajectory>(currentVideo.trajectories, row, count, parent);
+        case AnglesColumn:
+            return checkAndRemoveRowsFrom<Angle>(currentVideo.angles, row, count, parent);
         default:
             return false;
         }
@@ -616,15 +616,15 @@ bool VideoModel::removeRows(int row, int count, const QModelIndex &parent)
             return false;
         }
 
-        if (parentPointer->type == LinearTrajectoryData) {
-            return checkAndRemoveRowsFrom<LinearTrajectoryInstant>(
-                        currentVideo.linearTrajectories[parentPointer->row].instants,
+        if (parentPointer->type == TrajectoryData) {
+            return checkAndRemoveRowsFrom<TrajectoryInstant>(
+                        currentVideo.trajectories[parentPointer->row].instants,
                         row,
                         count,
                         parent);
-        } else if (parentPointer->type == AngularTrajectoryData) {
-            return checkAndRemoveRowsFrom<AngularTrajectoryInstant>(
-                        currentVideo.angularTrajectories[parentPointer->row].instants,
+        } else if (parentPointer->type == AngleData) {
+            return checkAndRemoveRowsFrom<AngleInstant>(
+                        currentVideo.angles[parentPointer->row].instants,
                         row,
                         count,
                         parent);
@@ -695,7 +695,7 @@ void VideoModel::createDistance(const QPointF& p1, const QPointF& p2, int videoR
     createDistance(p1, p2, index(videoRow, DistancesColumn));
 }
 
-LinearTrajectoryCalcJob *VideoModel::calculateLinearTrajectory(const QPointF &p, int frame,
+TrajectoryCalcJob *VideoModel::calculateTrajectory(const QPointF &p, int frame,
                                                                  int videoRow,
                                                                  const QSize &windowSize,
                                                                  CalculationFlags flags)
@@ -711,21 +711,21 @@ LinearTrajectoryCalcJob *VideoModel::calculateLinearTrajectory(const QPointF &p,
         startFrame = 0;
     }
 
-    QModelIndex linearTrajectoriesIndex = index(videoRow, LinearTrajectoriesColumn);
+    QModelIndex trajectoriesIndex = index(videoRow, TrajectoriesColumn);
 
-    int linearTrajectoryRow = rowCount(linearTrajectoriesIndex);
-    insertRow(linearTrajectoryRow, linearTrajectoriesIndex);
+    int trajectoryRow = rowCount(trajectoriesIndex);
+    insertRow(trajectoryRow, trajectoriesIndex);
 
-    QModelIndex currentLTrajectoryIndex = index(linearTrajectoryRow, 0, linearTrajectoriesIndex);
+    QModelIndex currentTrajectoryIndex = index(trajectoryRow, 0, trajectoriesIndex);
 
-    LinearTrajectoryCalcJob *job =
-            new LinearTrajectoryCalcJob(p,
+    TrajectoryCalcJob *job =
+            new TrajectoryCalcJob(p,
                                         startFrame,
                                         endFrame,
                                         videoRow,
                                         windowSize,
                                         this);
-    job->setTarget(currentLTrajectoryIndex);
+    job->setTarget(currentTrajectoryIndex);
 
     return job;
 }

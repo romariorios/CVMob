@@ -17,16 +17,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef LINEARTRAJECTORIESPROXYMODEL_HPP
-#define LINEARTRAJECTORIESPROXYMODEL_HPP
+#ifndef TRAJECTORIESPROXYMODEL_HPP
+#define TRAJECTORIESPROXYMODEL_HPP
 
 #include <model/baseproxymodel.hpp>
 
-class LinearTrajectoriesProxyModel : public BaseProxyModel
+class TrajectoriesProxyModel : public BaseProxyModel
 {
     Q_OBJECT
 public:
-    explicit LinearTrajectoriesProxyModel(QObject *parent = 0);
+    explicit TrajectoriesProxyModel(QObject *parent = 0);
     
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
@@ -38,4 +38,4 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 };
 
-#endif // LINEARTRAJECTORIESPROXYMODEL_HPP
+#endif // TRAJECTORIESPROXYMODEL_HPP

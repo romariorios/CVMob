@@ -17,7 +17,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "lineartrajectorycalcjob.hpp"
+#include "trajectorycalcjob.hpp"
 
 #include <model/videomodel.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -30,7 +30,7 @@
 using namespace cv;
 using namespace std;
 
-LinearTrajectoryCalcJob::LinearTrajectoryCalcJob(const QPointF &startPoint,
+TrajectoryCalcJob::TrajectoryCalcJob(const QPointF &startPoint,
                                                  int startFrame,
                                                  int endFrame,
                                                  int videoRow,
@@ -44,13 +44,13 @@ LinearTrajectoryCalcJob::LinearTrajectoryCalcJob(const QPointF &startPoint,
     _windowSize(windowSize),
     _model(parent)
 {
-    connect(this, &LinearTrajectoryCalcJob::instantGenerated,
+    connect(this, &TrajectoryCalcJob::instantGenerated,
             &_target, &Target::storeInstant, Qt::QueuedConnection);
     _target.model = _model;
     _framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
 }
 
-void LinearTrajectoryCalcJob::setTarget(const QModelIndex &targetIndex)
+void TrajectoryCalcJob::setTarget(const QModelIndex &targetIndex)
 {
     if (isRunning() || isFinished()) {
         return;
@@ -59,7 +59,7 @@ void LinearTrajectoryCalcJob::setTarget(const QModelIndex &targetIndex)
     _target.parentIndex = targetIndex;
 }
 
-void LinearTrajectoryCalcJob::run()
+void TrajectoryCalcJob::run()
 {
     QModelIndex framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
 
@@ -120,7 +120,7 @@ void Target::storeInstant(int frame, const QPointF &p, const QPointF &s, const Q
     model->insertRow(currentRow, parentIndex);
 
     if (currentRow == 0) {
-        model->insertColumns(0, VideoModel::LinearTrajectoryInstantColumnCount, parentIndex);
+        model->insertColumns(0, VideoModel::TrajectoryInstantColumnCount, parentIndex);
     }
 
     model->setData(model->index(currentRow, VideoModel::LFrameColumn, parentIndex), frame,

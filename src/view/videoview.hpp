@@ -60,7 +60,7 @@ private:
         QGraphicsScene *scene;
         QGraphicsRectItem *bgRect;
         QList<QGraphicsLineItem *> distances;
-        QList<QList<QGraphicsRectItem *> > linearTrajectories;
+        QList<QList<QGraphicsRectItem *> > trajectories;
 
         Video(QGraphicsScene *e_s, QGraphicsRectItem *e_bgr) :
             scene(e_s),
@@ -88,7 +88,7 @@ private slots:
     void distanceUpdateSecondPoint(const QPointF &p);
     void distanceEndCreation(const QPointF &p);
 
-    void calculateLTrajectory(const QPointF &p);
+    void calculateTrajectory(const QPointF &p);
 };
 
 #endif // VIDEOVIEW_H

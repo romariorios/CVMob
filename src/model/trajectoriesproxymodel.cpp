@@ -17,15 +17,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "lineartrajectoriesproxymodel.hpp"
+#include "trajectoriesproxymodel.hpp"
 
-LinearTrajectoriesProxyModel::LinearTrajectoriesProxyModel(QObject *parent) :
+TrajectoriesProxyModel::TrajectoriesProxyModel(QObject *parent) :
     BaseProxyModel(parent)
 {
-    setColumn(VideoModel::LinearTrajectoriesColumn);
+    setColumn(VideoModel::TrajectoriesColumn);
 }
 
-QVariant LinearTrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int role) const
+QVariant TrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int role) const
 {
     if (role != Qt::DisplayRole ||
         !proxyIndex.isValid() ||
@@ -52,7 +52,7 @@ QVariant LinearTrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int r
     }
 }
 
-QVariant LinearTrajectoriesProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant TrajectoriesProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole ||
         orientation != Qt::Horizontal) {
@@ -73,7 +73,7 @@ QVariant LinearTrajectoriesProxyModel::headerData(int section, Qt::Orientation o
     }
 }
 
-QModelIndex LinearTrajectoriesProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
+QModelIndex TrajectoriesProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
     if (sourceIndex.parent() == _parentIndex) {
         return index(sourceIndex.row(), 0);
@@ -86,7 +86,7 @@ QModelIndex LinearTrajectoriesProxyModel::mapFromSource(const QModelIndex &sourc
     return QModelIndex();
 }
 
-QModelIndex LinearTrajectoriesProxyModel::mapToSource(const QModelIndex &proxyIndex) const
+QModelIndex TrajectoriesProxyModel::mapToSource(const QModelIndex &proxyIndex) const
 {
     if (!_parentIndex.isValid() ||
         !proxyIndex.isValid()) {
@@ -101,7 +101,7 @@ QModelIndex LinearTrajectoriesProxyModel::mapToSource(const QModelIndex &proxyIn
     return sourceModel()->index(proxyIndex.row(), proxyIndex.column(), parent);
 }
 
-QModelIndex LinearTrajectoriesProxyModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex TrajectoriesProxyModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (parent.isValid()) {
         return createIndex(row, column, parent.row());
@@ -110,7 +110,7 @@ QModelIndex LinearTrajectoriesProxyModel::index(int row, int column, const QMode
     return createIndex(row, column, -1);
 }
 
-QModelIndex LinearTrajectoriesProxyModel::parent(const QModelIndex &child) const
+QModelIndex TrajectoriesProxyModel::parent(const QModelIndex &child) const
 {
     if (child.internalId() == -1) {
         return QModelIndex();
@@ -119,7 +119,7 @@ QModelIndex LinearTrajectoriesProxyModel::parent(const QModelIndex &child) const
     return index(child.internalId(), 0);
 }
 
-int LinearTrajectoriesProxyModel::rowCount(const QModelIndex &parent) const
+int TrajectoriesProxyModel::rowCount(const QModelIndex &parent) const
 {
     if (!_parentIndex.isValid()) {
         return 0;
@@ -132,7 +132,7 @@ int LinearTrajectoriesProxyModel::rowCount(const QModelIndex &parent) const
     return sourceModel()->rowCount(mapToSource(parent));
 }
 
-int LinearTrajectoriesProxyModel::columnCount(const QModelIndex &parent) const
+int TrajectoriesProxyModel::columnCount(const QModelIndex &parent) const
 {
-    return VideoModel::LinearTrajectoryInstantColumnCount;
+    return VideoModel::TrajectoryInstantColumnCount;
 }
