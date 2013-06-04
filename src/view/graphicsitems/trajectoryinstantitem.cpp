@@ -5,17 +5,22 @@
 const QPointF radius = QPointF(1, 1);
 
 TrajectoryInstantItem::TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF accel,
+                                             QGraphicsItem *parent,
                                              QGraphicsLineItem *lineBefore,
                                              TrajectoryInstantItem *instantAfter) :
+    QGraphicsRectItem(pos.x() - radius.x(), pos.y() - radius.y(),
+                      radius.x() * 2, radius.y() * 2, parent),
     _speed(speed),
     _accel(accel),
     _speedLine(new QGraphicsLineItem(QLineF(pos, pos + speed), this)),
     _accelLine(new QGraphicsLineItem(QLineF(pos, pos + accel), this)),
     _lineBefore(lineBefore),
     _instantAfter(instantAfter)
-{
-    setRect(QRectF(pos - radius, pos + radius));
-}
+{}
+
+TrajectoryInstantItem::TrajectoryInstantItem(QGraphicsItem *parent) :
+    TrajectoryInstantItem(QPointF(0, 0), QPointF(0, 0), QPointF(0, 0), parent)
+{}
 
 TrajectoryInstantItem::~TrajectoryInstantItem()
 {

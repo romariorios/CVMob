@@ -25,8 +25,10 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsScene>
 #include <QImage>
+#include <QLineF>
 #include <QResizeEvent>
 #include <QVBoxLayout>
+#include <view/graphicsitems/trajectoryinstantitem.hpp>
 #include <view/playbar.hpp>
 #include <view/videographicsview.hpp>
 #include <view/videostatus.hpp>
@@ -165,12 +167,10 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
     } else if (!parent.parent().parent().isValid()) { // Level 2
         if (parent.parent().column() == VideoModel::TrajectoriesColumn &&
             topLeft.column() == VideoModel::PositionColumn) {
-            auto point = topLeft.data(VideoModel::VideoSceneRole).toPointF();
-            QPointF dif(1, 1);
-            QRectF instantRect(point - dif, point + dif);
+            auto pos = topLeft.data(VideoModel::VideoSceneRole).toPointF();
             auto trajectory = _videos.at(parent.parent().row()).trajectories.at(parent.row());
             auto instant = trajectory.at(topLeft.row());
-            instant->setRect(instantRect);
+            instant->setPos(pos);
         }
     }
 }
@@ -279,7 +279,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
                 v.distances << new QGraphicsLineItem(v.bgRect);
                 break;
             case VideoModel::TrajectoriesColumn:
-                v.trajectories << QList<QGraphicsRectItem *>();
+                v.trajectories << QList<TrajectoryInstantItem *>();
                 break;
             default:
                 break;
@@ -287,15 +287,26 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         }
     } else if (!parent.parent().parent().isValid()) { // Level 2
         Video &v = _videos[parent.parent().row()];
+        QList<TrajectoryInstantItem *> &instantList = v.trajectories[parent.row()];
+
         for (int i = start; i <= end; ++i) {
             switch (parent.parent().column()) {
             case VideoModel::TrajectoriesColumn:
-                auto instant = new QGraphicsRectItem(v.bgRect);
+                auto instant = new TrajectoryInstantItem(v.bgRect);
                 instant->setBrush(Qt::transparent);
                 instant->setPen(Qt::NoPen);
-                v.trajectories[parent.row()] << instant;
+                if (i > 0) {
+                    TrajectoryInstantItem *prevInstant = instantList[i - 1];
+                    instant->setLineBefore(new QGraphicsLineItem(QLineF(prevInstant->pos(), QPointF(0, 0))));
+                    prevInstant->setInstantAfter(instant);
+                }
+                instantList << instant;
                 break;
             }
+        }
+
+        if (end < instantList.size() - 1) {
+            instantList[end]->setInstantAfter(instantList[end + 1]);
         }
     }
 }

@@ -8,9 +8,10 @@ class QGraphicsLineItem;
 class TrajectoryInstantItem : public QGraphicsRectItem
 {
 public:
-    TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF accel,
+    TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF accel, QGraphicsItem *parent,
                           QGraphicsLineItem *lineBefore = 0,
                           TrajectoryInstantItem *instantAfter = 0);
+    TrajectoryInstantItem(QGraphicsItem *parent);
     ~TrajectoryInstantItem();
 
     bool isSpeedVisible() const;
