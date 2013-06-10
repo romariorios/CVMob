@@ -102,6 +102,7 @@ void TrajectoryCalcJob::run()
         emit progressChanged(i - _startFrame + 1);
 
         previousPoint = newPoint;
+        previousSpeed = newSpeed;
     }
 }
 
