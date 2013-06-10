@@ -113,7 +113,15 @@ void TrajectoryInstantItem::setLineBefore(QGraphicsLineItem *lineBefore)
 
 void TrajectoryInstantItem::setInstantAfter(TrajectoryInstantItem *instantAfter)
 {
-    if (!_instantAfter) {
-        _instantAfter = instantAfter;
+    if (_instantAfter) {
+        delete _instantAfter->_lineBefore;
+        _instantAfter->_lineBefore = 0;
     }
+
+    _instantAfter = instantAfter;
+
+    if (!_instantAfter->_lineBefore) {
+        _instantAfter->_lineBefore = new QGraphicsLineItem(this);
+    }
+    _instantAfter->_lineBefore->setLine(QLineF(pos(), _instantAfter->pos()));
 }

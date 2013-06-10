@@ -297,7 +297,6 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
                 instant->setPen(Qt::NoPen);
                 if (i > 0) {
                     TrajectoryInstantItem *prevInstant = instantList[i - 1];
-                    instant->setLineBefore(new QGraphicsLineItem(QLineF(prevInstant->pos(), QPointF(0, 0))));
                     prevInstant->setInstantAfter(instant);
                 }
                 instantList << instant;
