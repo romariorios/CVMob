@@ -27,6 +27,9 @@ TrajectoryInstantItem::~TrajectoryInstantItem()
     delete _instantAfter->_lineBefore;
     _instantAfter->_lineBefore = _lineBefore;
     _lineBefore->setLine(QLineF(_lineBefore->line().p1(), _instantAfter->pos()));
+
+    delete _speedLine;
+    delete _accelLine;
 }
 
 bool TrajectoryInstantItem::isSpeedVisible() const
