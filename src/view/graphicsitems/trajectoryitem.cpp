@@ -54,10 +54,9 @@ QRectF TrajectoryItem::boundingRect() const
 
 void TrajectoryItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    _groupedLines->paint(painter, option, widget);
-    if (_currentInstant) {
-        _currentInstant->paint(painter, option, widget);
-    }
+    Q_UNUSED(painter)
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
 }
 
 TrajectoryItem::DrawingPolicy TrajectoryItem::drawTrajectory() const
@@ -140,6 +139,7 @@ void TrajectoryItem::setCurrentFrame(int frame)
     _otherInstants->addToGroup(prevInstant);
 
     _currentInstant->show();
+    _otherInstants->hide();
 
     // Fast-forward
     for (; _currentFrame < frame; ++_currentFrame) {
@@ -172,7 +172,9 @@ void TrajectoryItem::appendInstant(QPointF pos, QPointF speed, QPointF accel)
     instant->setLineBefore(lineBefore);
     if (_instants.size() != 0) {
         _instants.last()->setInstantAfter(instant);
-    } else if (!_currentInstant) {
+    }
+
+    if (!_currentInstant) {
         _currentInstant = instant;
     } else {
         _otherInstants->addToGroup(instant);

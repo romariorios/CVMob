@@ -35,7 +35,9 @@ TrajectoryInstantItem::TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF
     _accelLine(new QGraphicsLineItem(QLineF(pos, pos + accel), this)),
     _lineBefore(lineBefore),
     _instantAfter(instantAfter)
-{}
+{
+    hide();
+}
 
 TrajectoryInstantItem::TrajectoryInstantItem(QGraphicsItem *parent) :
     TrajectoryInstantItem(QPointF(0, 0), QPointF(0, 0), QPointF(0, 0), parent)
