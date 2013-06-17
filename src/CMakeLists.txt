@@ -25,6 +25,7 @@ set(CVMob_sources
     view/playbar.cpp
     view/videostatus.cpp
     view/graphicsitems/trajectoryinstantitem.cpp
+    view/graphicsitems/trajectoryitem.cpp
 )
 
 set(CVMob_headers
@@ -41,6 +42,7 @@ set(CVMob_headers
     view/playbar.hpp
     view/videostatus.hpp
     view/graphicsitems/trajectoryinstantitem.hpp
+    view/graphicsitems/trajectoryitem.hpp
 )
 
 set(CVMob_forms

@@ -28,7 +28,7 @@ class PlayBar;
 class QGraphicsLineItem;
 class QGraphicsRectItem;
 class QGraphicsScene;
-class TrajectoryInstantItem;
+class TrajectoryItem;
 class VideoGraphicsView;
 class VideoStatus;
 
@@ -61,7 +61,7 @@ private:
         QGraphicsScene *scene;
         QGraphicsRectItem *bgRect;
         QList<QGraphicsLineItem *> distances;
-        QList<QList<TrajectoryInstantItem *> > trajectories;
+        QList<TrajectoryItem *> trajectories;
 
         Video(QGraphicsScene *e_s, QGraphicsRectItem *e_bgr) :
             scene(e_s),

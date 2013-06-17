@@ -29,6 +29,7 @@
 #include <QResizeEvent>
 #include <QVBoxLayout>
 #include <view/graphicsitems/trajectoryinstantitem.hpp>
+#include <view/graphicsitems/trajectoryitem.hpp>
 #include <view/playbar.hpp>
 #include <view/videographicsview.hpp>
 #include <view/videostatus.hpp>
@@ -144,19 +145,9 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
                                                          VideoModel::FramesColumn))
                                .data(VideoModel::VideoSceneRole)
                                .value<QImage>());
-            for (auto traj : v.trajectories) {
-                if (frame >= traj.size()) {
-                    qDebug() << QString("Frame %1 out of range").arg(frame).toUtf8().constData();
-                    continue;
-                }
 
-                traj[frame]->setBrush(Qt::red);
-
-                if (frame == 0) {
-                    continue;
-                }
-
-                traj[frame - 1]->setBrush(Qt::transparent);
+            for (TrajectoryItem *traj : v.trajectories) {
+                traj->setCurrentFrame(frame);
             }
         }
     } else if (!parent.parent().isValid()) { // Level 1
@@ -167,10 +158,9 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
     } else if (!parent.parent().parent().isValid()) { // Level 2
         if (parent.parent().column() == VideoModel::TrajectoriesColumn &&
             topLeft.column() == VideoModel::PositionColumn) {
-            auto pos = topLeft.data(VideoModel::VideoSceneRole).toPointF();
-            auto trajectory = _videos.at(parent.parent().row()).trajectories.at(parent.row());
-            auto instant = trajectory.at(topLeft.row());
-            instant->setPos(pos);
+            QPointF pos = topLeft.data(VideoModel::VideoSceneRole).toPointF();
+            TrajectoryItem *trajectory = _videos.at(parent.parent().row()).trajectories.at(parent.row());
+            trajectory->instantAt(topLeft.row())->setPos(pos);
         }
     }
 }
@@ -275,11 +265,14 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         Video &v = _videos[parent.row()];
         for (int i = start; i <= end; ++i) {
             switch (parent.column()) {
+            TrajectoryItem *traj;
             case VideoModel::DistancesColumn:
                 v.distances << new QGraphicsLineItem(v.bgRect);
                 break;
             case VideoModel::TrajectoriesColumn:
-                v.trajectories << QList<TrajectoryInstantItem *>();
+                traj = new TrajectoryItem(v.bgRect);
+                traj->setDrawTrajectory(TrajectoryItem::DrawBefore);
+                v.trajectories << traj;
                 break;
             default:
                 break;
@@ -287,25 +280,14 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         }
     } else if (!parent.parent().parent().isValid()) { // Level 2
         Video &v = _videos[parent.parent().row()];
-        QList<TrajectoryInstantItem *> &instantList = v.trajectories[parent.row()];
+        TrajectoryItem *trajectory = v.trajectories[parent.row()];
 
         for (int i = start; i <= end; ++i) {
             switch (parent.parent().column()) {
             case VideoModel::TrajectoriesColumn:
-                auto instant = new TrajectoryInstantItem(v.bgRect);
-                instant->setBrush(Qt::transparent);
-                instant->setPen(Qt::NoPen);
-                if (i > 0) {
-                    TrajectoryInstantItem *prevInstant = instantList[i - 1];
-                    prevInstant->setInstantAfter(instant);
-                }
-                instantList << instant;
+                trajectory->appendInstant();
                 break;
             }
-        }
-
-        if (end < instantList.size() - 1) {
-            instantList[end]->setInstantAfter(instantList[end + 1]);
         }
     }
 }
