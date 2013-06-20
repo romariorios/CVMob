@@ -28,6 +28,7 @@
 #include <QLineF>
 #include <QResizeEvent>
 #include <QVBoxLayout>
+#include <view/graphicsitems/distanceitem.hpp>
 #include <view/graphicsitems/trajectoryinstantitem.hpp>
 #include <view/graphicsitems/trajectoryitem.hpp>
 #include <view/playbar.hpp>
@@ -267,7 +268,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
             switch (parent.column()) {
             TrajectoryItem *traj;
             case VideoModel::DistancesColumn:
-                v.distances << new QGraphicsLineItem(v.bgRect);
+                v.distances << new DistanceItem(v.bgRect);
                 break;
             case VideoModel::TrajectoriesColumn:
                 traj = new TrajectoryItem(v.bgRect);
