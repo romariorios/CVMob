@@ -76,6 +76,10 @@ public:
     inline int size() const { return _instants.size(); }
 
 private:
+    void followDrawPolicy();
+    void followShowSpeedPolicy();
+    void followShowAccelPolicy();
+
     DrawingPolicy _drawTrajectory;
     ShowPolicy _showSpeed;
     ShowPolicy _showAccel;

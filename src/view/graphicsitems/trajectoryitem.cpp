@@ -39,6 +39,10 @@ TrajectoryItem::TrajectoryItem(QGraphicsItem *parent) :
 {
     _groupedLines->addToGroup(_linesBefore);
     _groupedLines->addToGroup(_linesAfter);
+
+    followDrawPolicy();
+    followShowSpeedPolicy();
+    followShowAccelPolicy();
 }
 
 TrajectoryItem::~TrajectoryItem()
@@ -70,21 +74,9 @@ void TrajectoryItem::setDrawTrajectory(TrajectoryItem::DrawingPolicy policy)
         return;
     }
 
-    switch (policy) {
-    case NoDraw:
-        _groupedLines->hide();
-        break;
-    case DrawBefore:
-        _groupedLines->show();
-        _linesAfter->hide();
-        break;
-    case DrawBeforeAndAfter:
-        _groupedLines->show();
-        _linesAfter->show();
-        break;
-    }
-
     _drawTrajectory = policy;
+
+    followDrawPolicy();
 }
 
 TrajectoryItem::ShowPolicy TrajectoryItem::showSpeed() const
@@ -94,9 +86,9 @@ TrajectoryItem::ShowPolicy TrajectoryItem::showSpeed() const
 
 void TrajectoryItem::setShowSpeed(TrajectoryItem::ShowPolicy policy)
 {
-    // TODO
-
     _showSpeed = policy;
+
+    followShowSpeedPolicy();
 }
 
 TrajectoryItem::ShowPolicy TrajectoryItem::showAccel() const
@@ -106,9 +98,9 @@ TrajectoryItem::ShowPolicy TrajectoryItem::showAccel() const
 
 void TrajectoryItem::setShowAccel(TrajectoryItem::ShowPolicy policy)
 {
-    // TODO
-
     _showAccel = policy;
+
+    followShowAccelPolicy();
 }
 
 int TrajectoryItem::startingFrame() const
@@ -151,7 +143,7 @@ void TrajectoryItem::setCurrentFrame(int frame)
 
     // Backwards
     for (; _currentFrame > frame; --_currentFrame) {
-        int li = frame - _startingFrame;
+        int li = _currentFrame - _startingFrame;
 
         _linesBefore->removeFromGroup(_lines.at(li));
         _linesAfter->addToGroup(_lines.at(li));
@@ -181,4 +173,31 @@ void TrajectoryItem::appendInstant(QPointF pos, QPointF speed, QPointF accel)
     }
 
     _instants << instant;
+}
+
+void TrajectoryItem::followDrawPolicy()
+{
+    switch (_drawTrajectory) {
+    case NoDraw:
+        _groupedLines->hide();
+        break;
+    case DrawBefore:
+        _groupedLines->show();
+        _linesAfter->hide();
+        break;
+    case DrawBeforeAndAfter:
+        _groupedLines->show();
+        _linesAfter->show();
+        break;
+    }
+}
+
+void TrajectoryItem::followShowAccelPolicy()
+{
+    // TODO
+}
+
+void TrajectoryItem::followShowSpeedPolicy()
+{
+    // TODO
 }
