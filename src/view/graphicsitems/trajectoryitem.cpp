@@ -168,6 +168,7 @@ void TrajectoryItem::appendInstant(QPointF pos, QPointF speed, QPointF accel)
 
     if (!_currentInstant) {
         _currentInstant = instant;
+        _currentInstant->show();
     } else {
         _otherInstants->addToGroup(instant);
     }
