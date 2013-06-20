@@ -256,7 +256,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
     if (!parent.isValid()) { // Level 0
         for (int i = start; i <= end; ++i) {
             _videos.insert(i, Video(new QGraphicsScene(_view), 0));
-            Video &v = _videos.last();
+            Video &v = _videos[i];
             v.bgRect = new QGraphicsRectItem();
             v.scene->addItem(v.bgRect);
             v.bgRect->setPen(Qt::NoPen);
