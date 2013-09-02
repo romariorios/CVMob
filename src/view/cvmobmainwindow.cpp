@@ -21,8 +21,8 @@
 #include "ui_cvmobmainwindow.h"
 
 #include <model/videomodel.hpp>
-#include <model/distancesproxymodel.hpp>
-#include <model/trajectoriesproxymodel.hpp>
+#include <model/proxies/distancesproxymodel.hpp>
+#include <model/proxies/trajectoriesproxymodel.hpp>
 #include <QPointF>
 #include <QStandardItemModel>
 #include <QFileDialog>

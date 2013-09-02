@@ -20,7 +20,7 @@
 #ifndef DISTANCESPROXYMODEL_HPP
 #define DISTANCESPROXYMODEL_HPP
 
-#include <model/baseproxymodel.hpp>
+#include <model/proxies/baseproxymodel.hpp>
 
 class QItemSelectionModel;
 

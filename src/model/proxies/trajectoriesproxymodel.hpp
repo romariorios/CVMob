@@ -20,7 +20,7 @@
 #ifndef TRAJECTORIESPROXYMODEL_HPP
 #define TRAJECTORIESPROXYMODEL_HPP
 
-#include <model/baseproxymodel.hpp>
+#include <model/proxies/baseproxymodel.hpp>
 
 class TrajectoriesProxyModel : public BaseProxyModel
 {
