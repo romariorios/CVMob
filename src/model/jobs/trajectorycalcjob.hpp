@@ -20,7 +20,7 @@
 #ifndef TRAJECTORYCALCJOB_HPP
 #define TRAJECTORYCALCJOB_HPP
 
-#include <model/basejob.hpp>
+#include <model/jobs/basejob.hpp>
 
 #include <QAbstractItemModel>
 #include <QPointF>

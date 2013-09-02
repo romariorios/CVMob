@@ -20,7 +20,7 @@
 #include "videostatus.hpp"
 #include "ui_videostatus.h"
 
-#include <model/basejob.hpp>
+#include <model/jobs/basejob.hpp>
 
 #include <QTimer>
 

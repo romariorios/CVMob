@@ -30,7 +30,7 @@
 #include <QSizeF>
 
 #include <opencv/highgui.h>
-#include <model/trajectorycalcjob.hpp>
+#include <model/jobs/trajectorycalcjob.hpp>
 
 class VideoModel : public QAbstractItemModel
 {
