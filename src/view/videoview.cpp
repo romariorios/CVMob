@@ -153,7 +153,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
         }
     } else if (!parent.parent().isValid()) { // Level 1
         if (parent.column() == VideoModel::DistancesColumn) {
-            QGraphicsLineItem *line = _videos.at(parent.row()).distances.at(topLeft.row());
+            DistanceItem *line = _videos.at(parent.row()).distances.at(topLeft.row());
             line->setLine(topLeft.data(VideoModel::VideoSceneRole).toLineF());
         }
     } else if (!parent.parent().parent().isValid()) { // Level 2
@@ -301,16 +301,16 @@ void VideoView::beginDistanceCreation()
     connect(_view, SIGNAL(mousePressed(QPointF)), status, SLOT(deleteLater()));
 }
 
+static QGraphicsLineItem *guideLine = 0;
+
 void VideoView::distanceFirstPoint(const QPointF &p)
 {
     disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(distanceFirstPoint(QPointF)));
 
     Video &currentVideo = _videos[_currentVideoRow];
 
-    QGraphicsLineItem *guideLine =
-            new QGraphicsLineItem(QLineF(p, p), currentVideo.bgRect);
+    guideLine = new QGraphicsLineItem(QLineF(p, p), currentVideo.bgRect);
     guideLine->setPen(QColor(0, 0, 255));
-    _videos[_currentVideoRow].distances << guideLine;
 
     auto status = new Status::Persistent(_status, tr("Release to finish"));
 
@@ -321,16 +321,14 @@ void VideoView::distanceFirstPoint(const QPointF &p)
 
 void VideoView::distanceUpdateSecondPoint(const QPointF &p)
 {
-    QGraphicsLineItem *guideLine = _videos[_currentVideoRow].distances.last();
     guideLine->setLine(QLineF(guideLine->line().p1(), p));
 }
 
 void VideoView::distanceEndCreation(const QPointF &p)
 {
-    QGraphicsLineItem *guideLine = _videos[_currentVideoRow].distances.takeLast();
-
     static_cast<VideoModel *>(model())->createDistance(guideLine->line(), _currentVideoRow);
     delete guideLine;
+    guideLine = 0;
 
     new Status::Message(_status, tr("Done"), 3000);
 

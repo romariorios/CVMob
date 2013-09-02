@@ -19,6 +19,11 @@
 
 #include "distanceitem.hpp"
 
+#include <QBrush>
+#include <QPen>
+
+#include <QDebug>
+
 static const QPointF radius(2, 2);
 
 DistanceItem::DistanceItem(QLineF line, QGraphicsItem *parent) :
@@ -27,12 +32,17 @@ DistanceItem::DistanceItem(QLineF line, QGraphicsItem *parent) :
     _p2(new QGraphicsRectItem(this))
 {
     setLine(line);
+    _p1->show();
+    _p1->setBrush(Qt::red);
+    _p1->setPen(Qt::NoPen);
+    _p2->show();
+    _p2->setBrush(Qt::red);
+    _p2->setPen(Qt::NoPen);
 }
 
 DistanceItem::DistanceItem(QGraphicsItem *parent) :
-    QGraphicsLineItem(parent)
-{
-}
+    DistanceItem(QLineF(0, 0, 0, 0), parent)
+{}
 
 DistanceItem::~DistanceItem()
 {
@@ -42,8 +52,8 @@ DistanceItem::~DistanceItem()
 
 void DistanceItem::setLine(const QLineF &l)
 {
+    QGraphicsLineItem::setLine(l);
+
     _p1->setRect(QRectF(l.p1() - radius, l.p1() + radius));
     _p2->setRect(QRectF(l.p2() - radius, l.p2() + radius));
-
-    QGraphicsLineItem::setLine(l);
 }

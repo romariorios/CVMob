@@ -24,6 +24,7 @@
 
 #include <QList>
 
+class DistanceItem;
 class PlayBar;
 class QGraphicsLineItem;
 class QGraphicsRectItem;
@@ -60,7 +61,7 @@ private:
     {
         QGraphicsScene *scene;
         QGraphicsRectItem *bgRect;
-        QList<QGraphicsLineItem *> distances;
+        QList<DistanceItem *> distances;
         QList<TrajectoryItem *> trajectories;
 
         Video(QGraphicsScene *e_s, QGraphicsRectItem *e_bgr) :
