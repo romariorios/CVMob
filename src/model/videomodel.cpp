@@ -154,11 +154,11 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
         if (!currentVideo.videoStream.read(rawImg)) {
             return QVariant();
         }
+        
+        cvtColor(rawImg, rawImg, CV_BGR2RGB);
+        QImage frame = QImage(rawImg.data, rawImg.cols, rawImg.rows, QImage::Format_RGB888).copy();
 
         locker.unlock();
-
-        cvtColor(rawImg, rawImg, CV_BGR2RGB);
-        const QImage frame(rawImg.data, rawImg.cols, rawImg.rows, QImage::Format_RGB888);
 
         switch (index.column()) {
         case 0:

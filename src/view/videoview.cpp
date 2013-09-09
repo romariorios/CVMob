@@ -87,14 +87,6 @@ VideoView::VideoView(QWidget *parent) :
         model()->setData(currentFrameIndex, frame, VideoModel::VideoSceneEditRole);
     });
 
-    connect(_playBar, &PlayBar::playingChanged, [=](bool playing)
-    {
-        if (!playing) {
-            QImage bgImage = _videos[_currentVideoRow].bgRect->brush().textureImage().copy();
-            _videos[_currentVideoRow].bgRect->setBrush(bgImage);
-        }
-    });
-
     connect(_playBar, &PlayBar::newTrajectoryRequested, [=]()
     {
         auto status = new Status::Persistent(_status, tr("Click a point to track"));
