@@ -22,11 +22,20 @@
 
 #include <QThread>
 
+#include <QVector>
+#include <QPointF>
+
 class BaseJob : public QThread
 {
     Q_OBJECT
 public:
     explicit BaseJob(QObject *parent);
+    
+protected:
+    QVector<QPointF> trackPoints(const QVector<QPointF> &startPoints,
+                                 const QImage &startFrame,
+                                 const QImage &endFrame,
+                                 const QSize &windowSize);
 
 signals:
     void progressRangeChanged(int minimum, int maximum);
