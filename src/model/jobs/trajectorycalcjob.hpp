@@ -26,10 +26,10 @@
 #include <QPointF>
 #include <QSize>
 
-class Target : public QObject {
+class TargetTrajectory : public QObject {
     Q_OBJECT
 private:
-    Target(QObject *parent = 0);
+    TargetTrajectory(QObject *parent = 0);
 
     QModelIndex parentIndex;
     QAbstractItemModel *model;
@@ -61,7 +61,7 @@ signals:
 private:
     QPointF _previousPoint;
     QPointF _previousSpeed;
-    Target _target;
+    TargetTrajectory _target;
 };
 
 #endif // TRAJECTORYCALCJOB_HPP

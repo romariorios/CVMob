@@ -37,7 +37,7 @@ TrajectoryCalcJob::TrajectoryCalcJob(const QPointF &startPoint,
     _previousSpeed(0, 0)
 {
     connect(this, &TrajectoryCalcJob::instantGenerated,
-            &_target, &Target::storeInstant, Qt::QueuedConnection);
+            &_target, &TargetTrajectory::storeInstant, Qt::QueuedConnection);
     _target.model = parent;
 }
 
@@ -63,11 +63,11 @@ void TrajectoryCalcJob::emitNewPoints(int frame,
     _previousSpeed = newSpeed;
 }
 
-Target::Target(QObject *parent) :
+TargetTrajectory::TargetTrajectory(QObject *parent) :
     QObject(parent)
 {}
 
-void Target::storeInstant(int frame, const QPointF &p, const QPointF &s, const QPointF &a)
+void TargetTrajectory::storeInstant(int frame, const QPointF &p, const QPointF &s, const QPointF &a)
 {
     if (!parentIndex.isValid()) {
         return;
