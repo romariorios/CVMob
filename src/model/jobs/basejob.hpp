@@ -22,24 +22,38 @@
 
 #include <QThread>
 
+#include <QAbstractItemModel>
 #include <QVector>
 #include <QPointF>
+#include <QSize>
 
 class BaseJob : public QThread
 {
     Q_OBJECT
 public:
-    explicit BaseJob(QObject *parent);
+    explicit BaseJob(const QVector<QPointF> &startPoints, int startFrame, int endFrame,
+                     int videoRow, const QSize &windowSize, QAbstractItemModel *parent);
     
 protected:
-    QVector<QPointF> trackPoints(const QVector<QPointF> &startPoints,
-                                 const QImage &startFrame,
-                                 const QImage &endFrame,
-                                 const QSize &windowSize);
+    void run();
+    virtual void emitNewPoints(int frame,
+                               const QVector<QPointF> &points) = 0;
 
 signals:
     void progressRangeChanged(int minimum, int maximum);
     void progressChanged(int progress);
+    
+private:
+    QVector<QPointF> trackPoints(const QVector<QPointF> &startPoints,
+                                 const QImage &startFrame,
+                                 const QImage &endFrame);
+    
+    QVector<QPointF> _startPoints;
+    int _startFrame;
+    int _endFrame;
+    int _videoRow;
+    QSize _windowSize;
+    QAbstractItemModel *_model;
 };
 
 #endif

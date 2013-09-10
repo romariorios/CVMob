@@ -51,21 +51,16 @@ public:
                                      const QSize &windowSize,
                                      QAbstractItemModel *parent);
     void setTarget(const QModelIndex &targetIndex);
-
+    
 protected:
-    void run();
+    void emitNewPoints(int frame, const QVector< QPointF >& points);
 
 signals:
     void instantGenerated(int frame, const QPointF &p, const QPointF &s, const QPointF &a);
 
 private:
-    QPointF _startPoint;
-    int _videoRow;
-    int _startFrame;
-    int _endFrame;
-    QSize _windowSize;
-    QAbstractItemModel *_model;
-    QModelIndex _framesParentIndex;
+    QPointF _previousPoint;
+    QPointF _previousSpeed;
     Target _target;
 };
 

@@ -19,6 +19,8 @@
 
 #include "basejob.hpp"
 
+#include <model/videomodel.hpp>
+
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/video.hpp>
 
@@ -27,14 +29,45 @@
 
 #include <vector>
 
-BaseJob::BaseJob(QObject *parent) :
-    QThread(parent)
+BaseJob::BaseJob(const QVector< QPointF >& startPoints, int startFrame, int endFrame, int videoRow, const QSize& windowSize, QAbstractItemModel* parent) :
+    QThread(parent),
+    _startPoints(startPoints),
+    _startFrame(startFrame),
+    _endFrame(endFrame),
+    _videoRow(videoRow),
+    _windowSize(windowSize),
+    _model(parent)
 {}
+
+void BaseJob::run()
+{
+    QModelIndex framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
+
+    emitNewPoints(0, _startPoints);
+    emit progressRangeChanged(0, _endFrame - _startFrame);
+    emit progressChanged(0);
+
+    QVector<QPointF> previousPoints = _startPoints;
+
+    for (int i = _startFrame + 1; i <= _endFrame; ++i) {
+        QVector<QPointF> newPoints = trackPoints(
+            previousPoints,
+            _model->index(i - 1, 0, framesParentIndex).data(VideoModel::VideoSceneRole)
+                          .value<QImage>(),
+            _model->index(i, 0, framesParentIndex).data(VideoModel::VideoSceneRole)
+                        .value<QImage>()
+        );
+
+        emitNewPoints(i, newPoints);
+        emit progressChanged(i - _startFrame + 1);
+
+        previousPoints = newPoints;
+    }
+}
 
 QVector< QPointF > BaseJob::trackPoints(const QVector< QPointF >& startPoints,
                                         const QImage& startFrame,
-                                        const QImage& endFrame,
-                                        const QSize& windowSize)
+                                        const QImage& endFrame)
 {
     QImage i8startFrame(startFrame.convertToFormat(QImage::Format_Indexed8));
     QImage i8endFrame(endFrame.convertToFormat(QImage::Format_Indexed8));
@@ -53,10 +86,10 @@ QVector< QPointF > BaseJob::trackPoints(const QVector< QPointF >& startPoints,
     std::vector<cv::Point2f> cvEndPoints;
     std::vector<uchar> status;
     std::vector<float> err;
-    Size cvWindowSize;
+    cv::Size cvWindowSize;
 
-    cvWindowSize.height = windowSize.height();
-    cvWindowSize.width = windowSize.width();
+    cvWindowSize.height = _windowSize.height();
+    cvWindowSize.width = _windowSize.width();
 
     cv::calcOpticalFlowPyrLK(cvStartFrame, cvEndFrame, cvStartPoints, cvEndPoints, status, err,
                             cvWindowSize,
