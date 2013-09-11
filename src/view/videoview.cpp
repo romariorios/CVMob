@@ -273,7 +273,12 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         }
     } else if (!parent.parent().parent().isValid()) { // Level 2
         Video &v = _videos[parent.parent().row()];
-        TrajectoryItem *trajectory = v.trajectories[parent.row()];
+        TrajectoryItem *trajectory;
+        
+        switch (parent.parent().column()) {
+        case VideoModel::TrajectoriesColumn:
+            trajectory = v.trajectories[parent.row()];
+        }
 
         for (int i = start; i <= end; ++i) {
             switch (parent.parent().column()) {
