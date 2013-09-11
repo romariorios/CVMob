@@ -24,7 +24,20 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/video.hpp>
 
-#include <QDebug>
+// From the cosines law:
+// c^2 = a^2 + b^2 - 2ab cos(t)
+// cos(t) = (a^2 + b^2 - c^2) / 2ab
+
+float angleFromPoints(const QPointF& c, const QPointF& e1, const QPointF& e2)
+{
+    float v1 = QLineF(e1, c).length();
+    float v2 = QLineF(e2, c).length();
+    float oc = QLineF(e1, e2).length();
+    
+    return acos(
+        (v1 * v1 + v2 * v2 - oc * oc) / 2 * v1 * v2
+    );
+}
 
 VideoModel::VideoModel(QObject *parent) :
     QAbstractItemModel(parent),
@@ -238,6 +251,10 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
         switch (index.column()) {
         case AFrameColumn:
             return currentInstant.frame;
+        case AngleColumn:
+            return angleFromPoints(currentInstant.centralEdge,
+                                   currentInstant.peripheralEdges.first,
+                                   currentInstant.peripheralEdges.second);
         case ASpeedColumn:
             return currentInstant.speed;
         case AAccelerationColumn:

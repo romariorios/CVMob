@@ -60,6 +60,7 @@ public:
 
     enum AngleInstantColumn {
         AFrameColumn = 0,
+        AngleColumn,
         ASpeedColumn,
         AAccelerationColumn,
         CentralEdgeColumn,
