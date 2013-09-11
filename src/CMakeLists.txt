@@ -20,6 +20,7 @@ set(CVMob_sources
     model/proxies/baseproxymodel.cpp
     model/proxies/distancesproxymodel.cpp
     model/proxies/trajectoriesproxymodel.cpp
+    model/jobs/anglecalcjob.cpp
     model/jobs/basejob.cpp
     model/jobs/trajectorycalcjob.cpp
     view/playbar.cpp
@@ -38,6 +39,7 @@ set(CVMob_headers
     model/proxies/baseproxymodel.hpp
     model/proxies/distancesproxymodel.hpp
     model/proxies/trajectoriesproxymodel.hpp
+    model/jobs/anglecalcjob.hpp
     model/jobs/basejob.hpp
     model/jobs/trajectorycalcjob.hpp
     view/playbar.hpp

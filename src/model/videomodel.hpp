@@ -32,6 +32,8 @@
 #include <opencv/highgui.h>
 #include <model/jobs/trajectorycalcjob.hpp>
 
+float angleFromPoints(const QPointF& c, const QPointF& e1, const QPointF& e2);
+
 class VideoModel : public QAbstractItemModel
 {
     Q_OBJECT
