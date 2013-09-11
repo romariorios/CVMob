@@ -118,7 +118,8 @@ private:
 
     struct AngleInstant
     {
-        int frame, speed, acceleration;
+        int frame;
+        float speed, acceleration;
         QPointF centralEdge;
         QPair<QPointF, QPointF> peripheralEdges;
     };

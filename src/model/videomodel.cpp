@@ -460,10 +460,10 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 currentInstant.frame = value.toInt();
                 break;
             case ASpeedColumn:
-                currentInstant.speed = value.toInt();
+                currentInstant.speed = value.toFloat();
                 break;
             case AAccelerationColumn:
-                currentInstant.acceleration = value.toInt();
+                currentInstant.acceleration = value.toFloat();
                 break;
             case CentralEdgeColumn:
                 currentInstant.centralEdge = value.toPointF();
