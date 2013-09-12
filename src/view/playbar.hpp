@@ -56,6 +56,7 @@ private:
     int _frameCount;
     int _frameDuration;
     int _currentTimer;
+    bool _playing;
     Ui::PlayBar *_ui;
 };
 

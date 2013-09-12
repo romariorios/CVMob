@@ -33,6 +33,7 @@ PlayBar::PlayBar(QWidget *parent) :
 {
     _ui->setupUi(this);
     _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
+    _ui->progressSlide->setTracking(false);
     
     QMenu *drawMenu = new QMenu(_ui->drawButton);
     drawMenu->addAction(_ui->actionMeasure_distance);
@@ -49,10 +50,18 @@ PlayBar::PlayBar(QWidget *parent) :
 
     connect(_ui->progressSlide, &QSlider::valueChanged, [&](int frame)
     {
-        if (!(frame < _frameCount)) {
+        if (!(frame < _frameCount) && _playing) {
             setPlaying(false);
             _ui->progressSlide->setValue(0);
         }
+    });
+    
+    connect(_ui->progressSlide, &QSlider::sliderPressed, [&](){
+        killTimer(_currentTimer);
+    });
+    
+    connect(_ui->progressSlide, &QSlider::sliderReleased, [&](){
+        setPlaying(_playing);
     });
 
     setPlayData(0, 0);
@@ -83,6 +92,8 @@ void PlayBar::timerEvent(QTimerEvent *)
 
 void PlayBar::setPlaying(bool playing)
 {
+    _playing = playing;
+    
     if (playing) {
         _currentTimer = startTimer(_frameDuration);
     } else {
