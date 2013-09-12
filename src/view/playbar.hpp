@@ -48,6 +48,7 @@ signals:
     void playDataChanged(int frames, int frameDuration);
 
     void frameChanged(int frame);
+    void newAngleRequested();
     void newDistanceRequested();
     void newTrajectoryRequested();
     

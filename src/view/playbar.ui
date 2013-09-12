@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>512</width>
-    <height>33</height>
+    <height>53</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -91,6 +91,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionTrack_angle">
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/angle.png</normaloff>:/images/icons/angle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Track angle</string>
+   </property>
+   <property name="toolTip">
+    <string>Track the changes of an angle over time</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
  </widget>

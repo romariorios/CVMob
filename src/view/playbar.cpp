@@ -37,6 +37,7 @@ PlayBar::PlayBar(QWidget *parent) :
     QMenu *drawMenu = new QMenu(_ui->drawButton);
     drawMenu->addAction(_ui->actionMeasure_distance);
     drawMenu->addAction(_ui->actionCalculate_trajectory);
+    drawMenu->addAction(_ui->actionTrack_angle);
     _ui->drawButton->setMenu(drawMenu);
     _ui->drawButton->setDefaultAction(_ui->actionMeasure_distance);
 
@@ -44,6 +45,7 @@ PlayBar::PlayBar(QWidget *parent) :
     connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
     connect(_ui->actionMeasure_distance, SIGNAL(triggered()), SIGNAL(newDistanceRequested()));
     connect(_ui->actionCalculate_trajectory, SIGNAL(triggered()), SIGNAL(newTrajectoryRequested()));
+    connect(_ui->actionTrack_angle, SIGNAL(triggered(bool)), SIGNAL(newAngleRequested()));
 
     connect(_ui->progressSlide, &QSlider::valueChanged, [&](int frame)
     {
