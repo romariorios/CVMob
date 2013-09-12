@@ -30,6 +30,8 @@
 #include <QSizeF>
 
 #include <opencv/highgui.h>
+
+#include <model/jobs/anglecalcjob.hpp>
 #include <model/jobs/trajectorycalcjob.hpp>
 
 float angleFromPoints(const QPointF& c, const QPointF& e1, const QPointF& e2);
@@ -95,10 +97,14 @@ public:
     void createDistance(const QLineF &l, int videoRow);
     void createDistance(const QPointF& p1, const QPointF& p2, const QModelIndex& videoIndex);
     void createDistance(const QPointF& p1, const QPointF& p2, int videoRow);
+    AngleCalcJob *calculateAngle(const QVector<QPointF> &anglePoints, int frame, int videoRow,
+                                 const QSize &windowSize = QSize(21, 21),
+                                 CalculationFlags flags = FromHereOnwards);
     TrajectoryCalcJob *calculateTrajectory(const QPointF &p, int frame,
                                                        int videoRow,
                                                        const QSize &windowSize = QSize(21, 21),
                                                        CalculationFlags flags = FromHereOnwards);
+    
 
     enum GraphicsViewRole
     {

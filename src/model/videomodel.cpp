@@ -712,6 +712,31 @@ void VideoModel::createDistance(const QPointF& p1, const QPointF& p2, int videoR
     createDistance(p1, p2, index(videoRow, DistancesColumn));
 }
 
+AngleCalcJob* VideoModel::calculateAngle(const QVector< QPointF >& anglePoints, int frame,
+                                         int videoRow, const QSize& windowSize,
+                                         VideoModel::CalculationFlags flags)
+{
+    if (flags != FromHereOnwards) {
+        // TODO implement backwards calculation
+        return 0;
+    }
+    
+    int startFrame = frame;
+    int endFrame = rowCount(index(videoRow, FramesColumn)) - 1;
+    
+    QModelIndex anglesIndex = index(videoRow, AnglesColumn);
+
+    int angleRow = rowCount(anglesIndex);
+    insertRow(angleRow, anglesIndex);
+
+    QModelIndex currentAngleIndex = index(angleRow, 0, anglesIndex);
+
+    auto job = new AngleCalcJob(anglePoints, startFrame, endFrame, videoRow, windowSize, this);
+    job->setTarget(currentAngleIndex);
+
+    return job;
+}
+
 TrajectoryCalcJob *VideoModel::calculateTrajectory(const QPointF &p, int frame,
                                                                  int videoRow,
                                                                  const QSize &windowSize,
