@@ -35,7 +35,7 @@ float angleFromPoints(const QPointF& c, const QPointF& e1, const QPointF& e2)
     float oc = QLineF(e1, e2).length();
     
     return acos(
-        (v1 * v1 + v2 * v2 - oc * oc) / 2 * v1 * v2
+        (v1 * v1 + v2 * v2 - oc * oc) / (2 * v1 * v2)
     );
 }
 
