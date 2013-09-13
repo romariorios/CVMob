@@ -20,7 +20,7 @@
 #ifndef TRAJECTORYITEM_HPP
 #define TRAJECTORYITEM_HPP
 
-#include <QGraphicsItem>
+#include <QGraphicsItemGroup>
 
 #include <QList>
 #include <QPair>
@@ -29,14 +29,11 @@ class QGraphicsItemGroup;
 class QGraphicsLineItem;
 class TrajectoryInstantItem;
 
-class TrajectoryItem : public QGraphicsItem
+class TrajectoryItem : public QGraphicsItemGroup
 {
 public:
     TrajectoryItem(QGraphicsItem *parent = 0);
     ~TrajectoryItem();
-
-    QRectF boundingRect() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     enum DrawingPolicy
     {
@@ -88,7 +85,6 @@ private:
 
     QList<TrajectoryInstantItem *> _instants;
     QList<QGraphicsLineItem *> _lines;
-    QGraphicsItemGroup *_groupedLines;
     QGraphicsItemGroup *_linesBefore;
     QGraphicsItemGroup *_linesAfter;
 

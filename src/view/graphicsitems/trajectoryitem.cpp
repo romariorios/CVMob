@@ -21,24 +21,22 @@
 
 #include "trajectoryinstantitem.hpp"
 
-#include <QGraphicsItemGroup>
 #include <QGraphicsLineItem>
 
 TrajectoryItem::TrajectoryItem(QGraphicsItem *parent) :
-    QGraphicsItem(parent),
+    QGraphicsItemGroup(parent),
     _drawTrajectory(DrawBefore),
     _showSpeed(ShowInCurrentInstant),
     _showAccel(ShowInCurrentInstant),
     _startingFrame(0),
     _currentFrame(0),
-    _groupedLines(new QGraphicsItemGroup(this)),
-    _linesBefore(new QGraphicsItemGroup(_groupedLines)),
-    _linesAfter(new QGraphicsItemGroup(_groupedLines)),
+    _linesBefore(new QGraphicsItemGroup(this)),
+    _linesAfter(new QGraphicsItemGroup(this)),
     _currentInstant(0),
     _otherInstants(new QGraphicsItemGroup(this))
 {
-    _groupedLines->addToGroup(_linesBefore);
-    _groupedLines->addToGroup(_linesAfter);
+    addToGroup(_linesBefore);
+    addToGroup(_linesAfter);
 
     followDrawPolicy();
     followShowSpeedPolicy();
@@ -47,20 +45,7 @@ TrajectoryItem::TrajectoryItem(QGraphicsItem *parent) :
 
 TrajectoryItem::~TrajectoryItem()
 {
-    delete _groupedLines;
     delete _otherInstants;
-}
-
-QRectF TrajectoryItem::boundingRect() const
-{
-    return _groupedLines->boundingRect();
-}
-
-void TrajectoryItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    Q_UNUSED(painter)
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
 }
 
 TrajectoryItem::DrawingPolicy TrajectoryItem::drawTrajectory() const
@@ -180,14 +165,14 @@ void TrajectoryItem::followDrawPolicy()
 {
     switch (_drawTrajectory) {
     case NoDraw:
-        _groupedLines->hide();
+        _otherInstants->hide();
         break;
     case DrawBefore:
-        _groupedLines->show();
+        _otherInstants->show();
         _linesAfter->hide();
         break;
     case DrawBeforeAndAfter:
-        _groupedLines->show();
+        _otherInstants->show();
         _linesAfter->show();
         break;
     }
