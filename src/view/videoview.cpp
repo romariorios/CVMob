@@ -172,6 +172,26 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
             QPointF pos = topLeft.data(VideoModel::VideoSceneRole).toPointF();
             TrajectoryItem *trajectory = _videos.at(parent.parent().row()).trajectories.at(parent.row());
             trajectory->instantAt(topLeft.row())->setPos(pos);
+        } else if (parent.parent().column() == VideoModel::AnglesColumn) {
+            int frame = model()->index(_currentVideoRow, VideoModel::CurrentFrameColumn)
+                .data(VideoModel::VideoSceneRole).toInt();
+                
+            if (frame == topLeft.row()) {
+                AngleItem *angle = _videos[parent.parent().row()].angles[parent.row()];
+                switch (topLeft.column()) {
+                case VideoModel::CentralEdgeColumn:
+                    angle->setCenter(topLeft.data(VideoModel::VideoSceneRole).toPointF());
+                    break;
+                case VideoModel::PeripheralEdge1Column:
+                    angle->setEdge1(topLeft.data(VideoModel::VideoSceneRole).toPointF());
+                    break;
+                case VideoModel::PeripheralEdge2Column:
+                    angle->setEdge2(topLeft.data(VideoModel::VideoSceneRole).toPointF());
+                    break;
+                default:
+                    break;
+                }
+            }
         }
     }
 }
