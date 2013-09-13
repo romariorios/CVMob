@@ -25,7 +25,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QSlider" name="progressSlide">
+    <widget class="PlaySlider" name="progressSlide">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -109,6 +109,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlaySlider</class>
+   <extends>QSlider</extends>
+   <header location="global">view/playslider.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../cvmob_resource.qrc"/>
  </resources>

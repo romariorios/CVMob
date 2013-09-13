@@ -24,6 +24,7 @@ set(CVMob_sources
     model/jobs/basejob.cpp
     model/jobs/trajectorycalcjob.cpp
     view/playbar.cpp
+    view/playslider.cpp
     view/videostatus.cpp
     view/graphicsitems/angleitem.cpp
     view/graphicsitems/distanceitem.cpp
@@ -44,6 +45,7 @@ set(CVMob_headers
     model/jobs/basejob.hpp
     model/jobs/trajectorycalcjob.hpp
     view/playbar.hpp
+    view/playslider.hpp
     view/videostatus.hpp
     view/graphicsitems/angleitem.hpp
     view/graphicsitems/distanceitem.hpp
