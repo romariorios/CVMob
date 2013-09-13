@@ -47,18 +47,18 @@ void BaseProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
     connect(sourceModel, &QAbstractItemModel::dataChanged,
             [=](const QModelIndex &topLeft, const QModelIndex &bottomRight)
     {
-        beginResetModel();
         emit dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight));
-        endResetModel();
     });
 
-    connect(sourceModel, &QAbstractItemModel::rowsInserted, [=](const QModelIndex &parent)
+    connect(sourceModel, &QAbstractItemModel::rowsInserted, [=](const QModelIndex &parent,
+                                                                int first, int last)
     {
-        if (parent == _parentIndex) {
-            beginResetModel();
-            endResetModel();
-        }
+        
+        beginInsertRows(mapFromSource(parent), first, last);
+        endInsertRows();
     });
+    
+    // TODO rows removed
 }
 
 void BaseProxyModel::setSelectionModel(QItemSelectionModel *selectionModel)
