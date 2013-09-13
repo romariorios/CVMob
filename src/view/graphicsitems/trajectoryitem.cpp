@@ -120,7 +120,7 @@ void TrajectoryItem::setCurrentFrame(int frame)
 
     // Fast-forward
     for (; _currentFrame < frame; ++_currentFrame) {
-        int li = frame - _startingFrame;
+        int li = _currentFrame - _startingFrame;
 
         _linesAfter->removeFromGroup(_lines.at(li));
         _linesBefore->addToGroup(_lines.at(li));
