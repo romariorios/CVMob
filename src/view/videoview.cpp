@@ -28,6 +28,7 @@
 #include <QLineF>
 #include <QResizeEvent>
 #include <QVBoxLayout>
+#include <view/graphicsitems/angleitem.hpp>
 #include <view/graphicsitems/distanceitem.hpp>
 #include <view/graphicsitems/trajectoryinstantitem.hpp>
 #include <view/graphicsitems/trajectoryitem.hpp>
@@ -141,6 +142,22 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
 
             for (TrajectoryItem *traj : v.trajectories) {
                 traj->setCurrentFrame(frame);
+            }
+            
+            for (int i = 0; i < v.angles.size(); ++i) {
+                QModelIndex anglesIndex = model()->index(topLeft.row(), VideoModel::AnglesColumn);
+                QModelIndex currentAngleIndex = model()->index(i, 0, anglesIndex);
+                // TODO start from right frame
+                QModelIndex centerIndex = model()->index(frame, VideoModel::CentralEdgeColumn, currentAngleIndex);
+                QModelIndex edge1Index = model()->index(frame, VideoModel::PeripheralEdge1Column, currentAngleIndex);
+                QModelIndex edge2Index = model()->index(frame, VideoModel::PeripheralEdge2Column, currentAngleIndex);
+                
+                QPointF center = centerIndex.data(VideoModel::VideoSceneRole).toPointF();
+                QPointF edge1 = edge1Index.data(VideoModel::VideoSceneRole).toPointF();
+                QPointF edge2 = edge2Index.data(VideoModel::VideoSceneRole).toPointF();
+                
+                AngleItem *ang = v.angles.at(i);
+                ang->setPoints(center, edge1, edge2);
             }
         }
     } else if (!parent.parent().isValid()) { // Level 1
@@ -258,7 +275,13 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         Video &v = _videos[parent.row()];
         for (int i = start; i <= end; ++i) {
             switch (parent.column()) {
+            AngleItem *ang;
             TrajectoryItem *traj;
+            case VideoModel::AnglesColumn:
+                ang = new AngleItem(v.bgRect);
+                v.scene->addItem(ang);
+                v.angles << ang;
+                break;
             case VideoModel::DistancesColumn:
                 v.distances << new DistanceItem(v.bgRect);
                 break;
@@ -278,6 +301,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
         switch (parent.parent().column()) {
         case VideoModel::TrajectoriesColumn:
             trajectory = v.trajectories[parent.row()];
+            break;
         }
 
         for (int i = start; i <= end; ++i) {

@@ -24,6 +24,7 @@
 
 #include <QList>
 
+class AngleItem;
 class DistanceItem;
 class PlayBar;
 class QGraphicsLineItem;
@@ -61,6 +62,7 @@ private:
     {
         QGraphicsScene *scene;
         QGraphicsRectItem *bgRect;
+        QList<AngleItem *> angles;
         QList<DistanceItem *> distances;
         QList<TrajectoryItem *> trajectories;
 
