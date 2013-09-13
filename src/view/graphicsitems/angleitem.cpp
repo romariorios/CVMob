@@ -59,10 +59,29 @@ QRectF rectFromPoint(const QPointF &point)
 
 void AngleItem::setPoints(const QPointF& center, const QPointF& edge1, const QPointF& edge2)
 {
+    _centerPoint = center;
+    _edge1Point = edge1;
+    _edge2Point = edge2;
+    
     _center->setRect(rectFromPoint(center));
     _edge1->setRect(rectFromPoint(edge1));
     _edge2->setRect(rectFromPoint(edge2));
     
     _line1->setLine(QLineF(center, edge1));
     _line2->setLine(QLineF(center, edge2));
+}
+
+void AngleItem::setCenter(const QPointF& center)
+{
+    setPoints(center, _edge1Point, _edge2Point);
+}
+
+void AngleItem::setEdge1(const QPointF& edge1)
+{
+    setPoints(_centerPoint, edge1, _edge2Point);
+}
+
+void AngleItem::setEdge2(const QPointF& edge2)
+{
+    setPoints(_centerPoint, _edge1Point, edge2);
 }

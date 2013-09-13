@@ -32,6 +32,9 @@ public:
     AngleItem(const QPointF &center, const QPointF &edge1, const QPointF &edge2, QGraphicsItem* parent = 0);
     
     void setPoints(const QPointF &center, const QPointF &edge1, const QPointF &edge2);
+    void setCenter(const QPointF &center);
+    void setEdge1(const QPointF &edge1);
+    void setEdge2(const QPointF &edge2);
     
 private:
     QGraphicsRectItem *_center;
@@ -39,6 +42,10 @@ private:
     QGraphicsRectItem *_edge2;
     QGraphicsLineItem *_line1;
     QGraphicsLineItem *_line2;
+    
+    QPointF _centerPoint;
+    QPointF _edge1Point;
+    QPointF _edge2Point;
 };
 
 #endif
