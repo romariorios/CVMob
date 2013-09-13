@@ -24,6 +24,7 @@
 #include <QPen>
 
 AngleItem::AngleItem(QGraphicsItem* parent) :
+    QGraphicsItemGroup(parent),
     _center(new QGraphicsRectItem(this)),
     _edge1(new QGraphicsRectItem(this)),
     _edge2(new QGraphicsRectItem(this)),

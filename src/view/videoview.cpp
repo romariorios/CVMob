@@ -279,9 +279,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
             AngleItem *ang;
             TrajectoryItem *traj;
             case VideoModel::AnglesColumn:
-                ang = new AngleItem(v.bgRect);
-                v.scene->addItem(ang);
-                v.angles << ang;
+                v.angles << new AngleItem(v.bgRect);
                 break;
             case VideoModel::DistancesColumn:
                 v.distances << new DistanceItem(v.bgRect);
@@ -373,7 +371,6 @@ void VideoView::angleCenter(const QPointF& p)
     disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleCenter(QPointF)));
     
     guideAngleItem = new AngleItem(p, p, p, _videos[_currentVideoRow].bgRect);
-    _videos[_currentVideoRow].scene->addItem(guideAngleItem);
     
     auto status = new Status::Persistent(_status, tr("Now click on the first peripheral edge"));
     
