@@ -75,6 +75,7 @@ VideoView::VideoView(QWidget *parent) :
     noVideoText->moveBy(100, 50);
 
     connect(_playBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
+    connect(_playBar, SIGNAL(newAngleRequested()), SLOT(beginAngleCreation()));
 
     connect(_playBar, &PlayBar::frameChanged, [=](int frame)
     {
@@ -355,6 +356,62 @@ void VideoView::distanceEndCreation(const QPointF &p)
 
     disconnect(_view, SIGNAL(mouseDragged(QPointF)), this, SLOT(distanceUpdateSecondPoint(QPointF)));
     disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(distanceEndCreation(QPointF)));
+}
+
+void VideoView::beginAngleCreation()
+{
+    auto status = new Status::Persistent(_status, tr("Click on the center of the angle"));
+    
+    connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleCenter(QPointF)));
+    connect(_view, SIGNAL(mousePressed(QPointF)), status, SLOT(deleteLater()));
+}
+
+static AngleItem *guideAngleItem = 0;
+
+void VideoView::angleCenter(const QPointF& p)
+{
+    disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleCenter(QPointF)));
+    
+    guideAngleItem = new AngleItem(p, p, p, _videos[_currentVideoRow].bgRect);
+    _videos[_currentVideoRow].scene->addItem(guideAngleItem);
+    
+    auto status = new Status::Persistent(_status, tr("Now click on the first peripheral edge"));
+    
+    connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge1(QPointF)));
+    connect(_view, SIGNAL(mousePressed(QPointF)), status, SLOT(deleteLater()));
+}
+
+void VideoView::angleEdge1(const QPointF& p)
+{
+    disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleEdge1(QPointF)));
+    
+    guideAngleItem->setEdge1(p);
+    
+    auto status = new Status::Persistent(_status, tr("Now click on the second peripheral edge"));
+    
+    connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge2(QPointF)));
+    connect(_view, SIGNAL(mousePressed(QPointF)),  status, SLOT(deleteLater()));
+}
+
+void VideoView::angleEdge2(const QPointF& p)
+{
+    disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleEdge2(QPointF)));
+    
+    guideAngleItem->setEdge2(p);
+    
+    int frame = model()->index(_currentVideoRow, VideoModel::CurrentFrameColumn)
+            .data(VideoModel::VideoSceneRole).toInt();
+    
+    auto job = static_cast<VideoModel *>(model())->calculateAngle(
+        { guideAngleItem->center(), guideAngleItem->edge1(), guideAngleItem->edge2() },
+        frame, _currentVideoRow
+    );
+    new Status::Job(_status, tr("Calculating angle..."), job);
+    
+    delete guideAngleItem;
+    guideAngleItem = 0;
+    
+    job->start();
 }
 
 void VideoView::calculateTrajectory(const QPointF &p)

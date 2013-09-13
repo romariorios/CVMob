@@ -91,6 +91,12 @@ private slots:
     void distanceFirstPoint(const QPointF &p);
     void distanceUpdateSecondPoint(const QPointF &p);
     void distanceEndCreation(const QPointF &p);
+    
+    void beginAngleCreation();
+    
+    void angleCenter(const QPointF &p);
+    void angleEdge1(const QPointF &p);
+    void angleEdge2(const QPointF &p);
 
     void calculateTrajectory(const QPointF &p);
 };
