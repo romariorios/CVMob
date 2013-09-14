@@ -70,7 +70,6 @@ VideoView::VideoView(QWidget *parent) :
     _noVideoVideo.bgRect->setPen(Qt::NoPen);
     _noVideoVideo.scene->addItem(_noVideoVideo.bgRect);
     _noVideoVideo.scene->setSceneRect(QRectF(QPointF(0, 0), bgImage.size()));
-    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
     QGraphicsItem *noVideoText = _noVideoVideo.scene->addText(tr("No video"));
     noVideoText->moveBy(100, 50);
 
@@ -271,13 +270,6 @@ QRegion VideoView::visualRegionForSelection(const QItemSelection &selection) con
     Q_UNUSED(selection)
 
     return QRegion();
-}
-
-void VideoView::resizeEvent(QResizeEvent *event)
-{;
-    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
-
-    QAbstractItemView::resizeEvent(event);
 }
 
 void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)

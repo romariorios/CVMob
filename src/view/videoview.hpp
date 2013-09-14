@@ -55,7 +55,6 @@ protected:
     bool isIndexHidden(const QModelIndex &index) const;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command);
     QRegion visualRegionForSelection(const QItemSelection &selection) const;
-    void resizeEvent(QResizeEvent *event);
 
 private:
     struct Video

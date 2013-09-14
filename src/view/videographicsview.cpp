@@ -28,3 +28,10 @@ void VideoGraphicsView::mouseMoveEvent(QMouseEvent *event)
         emit mouseDragged(mapToScene(event->pos()));
     }
 }
+
+void VideoGraphicsView::resizeEvent(QResizeEvent* event)
+{
+    fitInView(sceneRect(), Qt::KeepAspectRatio);
+    
+    QGraphicsView::resizeEvent(event);
+}
