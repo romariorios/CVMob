@@ -83,12 +83,12 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &child) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = VideoSceneRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = VideoSceneEditRole);
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
     
@@ -104,14 +104,6 @@ public:
                                                        int videoRow,
                                                        const QSize &windowSize = QSize(21, 21),
                                                        CalculationFlags flags = FromHereOnwards);
-    
-
-    enum GraphicsViewRole
-    {
-        VideoSceneRole,
-        VideoSceneEditRole,
-        VideoListRole
-    };
 
 private:
     struct TrajectoryInstant

@@ -39,7 +39,7 @@ QVariant DistancesProxyModel::data(const QModelIndex &proxyIndex, int role) cons
         return QVariant();
     }
 
-    const QLineF line = mapToSource(proxyIndex).data(VideoModel::VideoSceneRole).toLineF();
+    const QLineF line = mapToSource(proxyIndex).data().toLineF();
 
     switch (proxyIndex.column()) {
     case 0:

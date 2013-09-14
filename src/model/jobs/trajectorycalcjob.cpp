@@ -81,12 +81,8 @@ void TargetTrajectory::storeInstant(int frame, const QPointF &p, const QPointF &
         model->insertColumns(0, VideoModel::TrajectoryInstantColumnCount, parentIndex);
     }
 
-    model->setData(model->index(currentRow, VideoModel::LFrameColumn, parentIndex), frame,
-                   VideoModel::VideoSceneEditRole);
-    model->setData(model->index(currentRow, VideoModel::PositionColumn, parentIndex), p,
-                   VideoModel::VideoSceneEditRole);
-    model->setData(model->index(currentRow, VideoModel::LSpeedColumn, parentIndex), s,
-                   VideoModel::VideoSceneEditRole);
-    model->setData(model->index(currentRow, VideoModel::LAccelerationColumn, parentIndex), a,
-                   VideoModel::VideoSceneEditRole);
+    model->setData(model->index(currentRow, VideoModel::LFrameColumn, parentIndex), frame);
+    model->setData(model->index(currentRow, VideoModel::PositionColumn, parentIndex), p);
+    model->setData(model->index(currentRow, VideoModel::LSpeedColumn, parentIndex), s);
+    model->setData(model->index(currentRow, VideoModel::LAccelerationColumn, parentIndex), a);
 }

@@ -75,16 +75,13 @@ void TargetAngle::storeInstant(int frame, float aSpeed, float aAccel, const QPoi
         model->insertColumns(0, VideoModel::AngleInstantColumnCount, parentIndex);
     }
 
-    model->setData(model->index(currentRow, VideoModel::AFrameColumn, parentIndex), frame,
-                   VideoModel::VideoSceneEditRole);
-    model->setData(model->index(currentRow, VideoModel::ASpeedColumn, parentIndex), aSpeed,
-                   VideoModel::VideoSceneEditRole);
-    model->setData(model->index(currentRow, VideoModel::AAccelerationColumn, parentIndex), aAccel,
-                   VideoModel::VideoSceneEditRole);
+    model->setData(model->index(currentRow, VideoModel::AFrameColumn, parentIndex), frame);
+    model->setData(model->index(currentRow, VideoModel::ASpeedColumn, parentIndex), aSpeed);
+    model->setData(model->index(currentRow, VideoModel::AAccelerationColumn, parentIndex), aAccel);
     model->setData(model->index(currentRow, VideoModel::CentralEdgeColumn, parentIndex),
-                   centralEdge, VideoModel::VideoSceneEditRole);
+                   centralEdge);
     model->setData(model->index(currentRow, VideoModel::PeripheralEdge1Column, parentIndex),
-                   pEdge1, VideoModel::VideoSceneEditRole);
+                   pEdge1);
     model->setData(model->index(currentRow, VideoModel::PeripheralEdge2Column, parentIndex),
-                   pEdge2, VideoModel::VideoSceneEditRole);
+                   pEdge2);
 }

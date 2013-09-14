@@ -37,7 +37,7 @@ QVariant TrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int role) c
         return proxyIndex.column() == 0? tr("Trajectory %1").arg(proxyIndex.row()) : QVariant();
     }
 
-    QVariant data = mapToSource(proxyIndex).data(VideoModel::VideoSceneEditRole);
+    QVariant data = mapToSource(proxyIndex).data();
 
     switch (proxyIndex.column()) {
     case VideoModel::LFrameColumn:

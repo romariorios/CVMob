@@ -124,9 +124,7 @@ QModelIndex VideoModel::parent(const QModelIndex &child) const
 
 QVariant VideoModel::data(const QModelIndex &index, int role) const
 {
-    if ((role != VideoSceneRole &&
-        role != VideoSceneEditRole &&
-        role != Qt::DisplayRole) ||
+    if (role != Qt::DisplayRole ||
         !index.isValid()) {
         return QVariant();
     }
@@ -356,7 +354,7 @@ Qt::ItemFlags VideoModel::flags(const QModelIndex &index) const
 
 bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != VideoSceneEditRole ||
+    if (role != Qt::EditRole ||
         !index.isValid() ||
         !value.isValid()) {
         return false;
@@ -644,15 +642,13 @@ bool VideoModel::openVideo(const QString& path)
     }
     
     QModelIndex fileNameIndex = index(rowCount() - 1, FileNameColumn);
-    setData(fileNameIndex, path, VideoSceneEditRole);
+    setData(fileNameIndex, path);
     
     QModelIndex currentFrameIndex = index(fileNameIndex.row(), CurrentFrameColumn);
-    setData(currentFrameIndex, 0, VideoSceneEditRole);
+    setData(currentFrameIndex, 0);
     
     QModelIndex frameDurationIndex = index(fileNameIndex.row(), FrameDurationColumn);
-    setData(frameDurationIndex,
-            1000 * (1 / videoStream.get(CV_CAP_PROP_FPS)),
-            VideoSceneEditRole);
+    setData(frameDurationIndex, 1000 * (1 / videoStream.get(CV_CAP_PROP_FPS)));
     
     QModelIndex frameSizeIndex = index(fileNameIndex.row(), FrameSizeColumn);
     setData(
@@ -660,8 +656,7 @@ bool VideoModel::openVideo(const QString& path)
         QSizeF(
             videoStream.get(CV_CAP_PROP_FRAME_WIDTH),
             videoStream.get(CV_CAP_PROP_FRAME_HEIGHT)
-        ), 
-        VideoSceneEditRole
+        )
     );
     
     newVideo.frameCount = videoStream.get(CV_CAP_PROP_FRAME_COUNT);
@@ -673,7 +668,7 @@ void VideoModel::createDistance(const QLineF &l, const QModelIndex &distancesInd
 {
     int ind = rowCount(distancesIndex);
     insertRow(ind, distancesIndex);
-    setData(index(ind, 0, distancesIndex), l, VideoSceneEditRole);
+    setData(index(ind, 0, distancesIndex), l);
 }
 
 void VideoModel::createDistance(const QLineF &l, int videoRow)

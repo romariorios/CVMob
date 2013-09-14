@@ -52,10 +52,8 @@ void BaseJob::run()
     for (int i = _startFrame + 1; i <= _endFrame; ++i) {
         QVector<QPointF> newPoints = trackPoints(
             previousPoints,
-            _model->index(i - 1, 0, framesParentIndex).data(VideoModel::VideoSceneRole)
-                          .value<QImage>(),
-            _model->index(i, 0, framesParentIndex).data(VideoModel::VideoSceneRole)
-                        .value<QImage>()
+            _model->index(i - 1, 0, framesParentIndex).data().value<QImage>(),
+            _model->index(i, 0, framesParentIndex).data().value<QImage>()
         );
 
         emitNewPoints(i, newPoints);
