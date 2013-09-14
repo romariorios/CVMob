@@ -21,8 +21,10 @@
 #include "ui_cvmobmainwindow.h"
 
 #include <model/videomodel.hpp>
+#include <model/itemmodels/klinkitemselectionmodel.h>
 #include <model/proxies/distancesproxymodel.hpp>
 #include <model/proxies/trajectoriesproxymodel.hpp>
+#include <model/proxies/videolistproxymodel.hpp>
 #include <QPointF>
 #include <QStandardItemModel>
 #include <QFileDialog>
@@ -40,9 +42,15 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     _ui->openButton->setDefaultAction(_ui->action_Open);
 
-    _ui->openedVideosList->setModel(_videoModel);
+    VideoListProxyModel *videoNamesModel = new VideoListProxyModel(this);
+    videoNamesModel->setSourceModel(_videoModel);
+    
+    _ui->openedVideosList->setModel(videoNamesModel);
     _videoView->setModel(_videoModel);
-    _videoView->setSelectionModel(_ui->openedVideosList->selectionModel());
+    
+    KLinkItemSelectionModel *selectionModel =
+        new KLinkItemSelectionModel(_videoModel, _ui->openedVideosList->selectionModel());
+    _videoView->setSelectionModel(selectionModel);
 
     DistancesProxyModel *distancesModel = new DistancesProxyModel(this);
     distancesModel->setSourceModel(_videoModel);

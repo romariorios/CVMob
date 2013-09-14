@@ -17,6 +17,8 @@ set(CVMob_sources
     view/videographicsview.cpp
     view/videoview.cpp
     model/videomodel.cpp
+    model/itemmodels/klinkitemselectionmodel.cpp
+    model/itemmodels/kmodelindexproxymapper.cpp
     model/proxies/baseproxymodel.cpp
     model/proxies/distancesproxymodel.cpp
     model/proxies/trajectoriesproxymodel.cpp
@@ -55,6 +57,11 @@ set(CVMob_headers
     view/graphicsitems/trajectoryitem.hpp
 )
 
+set(kde_itemmodels_headers
+    model/itemmodels/klinkitemselectionmodel.h
+    model/itemmodels/kmodelindexproxymapper.h
+)
+
 set(CVMob_forms
     view/aboutdialog.ui
     view/cvmobmainwindow.ui
@@ -69,6 +76,7 @@ set(CVMob_translations
 set(CVMob_resources cvmob_resource.qrc)
 
 QT5_WRAP_CPP(CVMob_headers_moc ${CVMob_headers})
+QT5_WRAP_CPP(kde_itemmodels_headers_moc ${kde_itemmodels_headers})
 QT5_WRAP_UI(CVMob_forms_headers ${CVMob_forms})
 QT5_ADD_RESOURCES(CVMob_resources_rcc ${CVMob_resources})
 if (CVMOB_UPDATE_TRANSLATIONS)
