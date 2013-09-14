@@ -17,20 +17,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef TRAJECTORIESPROXYMODEL_HPP
-#define TRAJECTORIESPROXYMODEL_HPP
+#ifndef INSTANTSPROXYMODEL_HPP
+#define INSTANTSPROXYMODEL_HPP
 
-#include <model/proxies/instantsproxymodel.hpp>
+#include <model/proxies/baseproxymodel.hpp>
 
-class TrajectoriesProxyModel : public InstantsProxyModel
+class InstantsProxyModel : public BaseProxyModel
 {
     Q_OBJECT
 public:
-    explicit TrajectoriesProxyModel(QObject *parent = 0);
-    
-    QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    explicit InstantsProxyModel(QObject* parent = 0);
+    QModelIndex mapFromSource(const QModelIndex &sourceIndex) const;
+    QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+    QModelIndex parent(const QModelIndex &child) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
 };
 
-#endif // TRAJECTORIESPROXYMODEL_HPP
+#endif

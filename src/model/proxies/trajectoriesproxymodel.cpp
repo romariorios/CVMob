@@ -20,7 +20,7 @@
 #include "trajectoriesproxymodel.hpp"
 
 TrajectoriesProxyModel::TrajectoriesProxyModel(QObject *parent) :
-    BaseProxyModel(parent)
+    InstantsProxyModel(parent)
 {
     setColumn(VideoModel::TrajectoriesColumn);
 }
@@ -71,65 +71,6 @@ QVariant TrajectoriesProxyModel::headerData(int section, Qt::Orientation orienta
     default:
         return QVariant();
     }
-}
-
-QModelIndex TrajectoriesProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
-{
-    if (sourceIndex.parent() == _parentIndex) {
-        return index(sourceIndex.row(), 0);
-    }
-
-    if (sourceIndex.parent().parent() == _parentIndex) {
-        return index(sourceIndex.row(), sourceIndex.column(), index(sourceIndex.parent().row(), 0));
-    }
-
-    return QModelIndex();
-}
-
-QModelIndex TrajectoriesProxyModel::mapToSource(const QModelIndex &proxyIndex) const
-{
-    if (!_parentIndex.isValid() ||
-        !proxyIndex.isValid()) {
-        return QModelIndex();
-    }
-
-    if (!proxyIndex.parent().isValid()) {
-        return sourceModel()->index(proxyIndex.row(), 0, _parentIndex);
-    }
-
-    QModelIndex parent = sourceModel()->index(proxyIndex.parent().row(), 0, _parentIndex);
-    return sourceModel()->index(proxyIndex.row(), proxyIndex.column(), parent);
-}
-
-QModelIndex TrajectoriesProxyModel::index(int row, int column, const QModelIndex &parent) const
-{
-    if (parent.isValid()) {
-        return createIndex(row, column, parent.row());
-    }
-
-    return createIndex(row, column, -1);
-}
-
-QModelIndex TrajectoriesProxyModel::parent(const QModelIndex &child) const
-{
-    if (child.internalId() == -1) {
-        return QModelIndex();
-    }
-
-    return index(child.internalId(), 0);
-}
-
-int TrajectoriesProxyModel::rowCount(const QModelIndex &parent) const
-{
-    if (!_parentIndex.isValid()) {
-        return 0;
-    }
-
-    if (!parent.isValid()) {
-        return sourceModel()->rowCount(_parentIndex);
-    }
-
-    return sourceModel()->rowCount(mapToSource(parent));
 }
 
 int TrajectoriesProxyModel::columnCount(const QModelIndex &parent) const
