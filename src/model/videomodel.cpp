@@ -273,25 +273,6 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
 
 QVariant VideoModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role != VideoSceneRole ||
-        role != VideoSceneEditRole ||
-        role != Qt::DisplayRole) {
-        return QVariant();
-    }
-
-    if (orientation == Qt::Horizontal) {
-        switch (section) {
-        case FileNameColumn:
-            return tr("File name");
-        case CurrentFrameColumn:
-            return tr("Current frame");
-        case FrameDurationColumn:
-            return tr("Frame duration");
-        case FrameSizeColumn:
-            return tr("Frame size");
-        }
-    }
-
     return QVariant();
 }
 
