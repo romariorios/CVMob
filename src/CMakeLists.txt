@@ -19,6 +19,7 @@ set(CVMob_sources
     model/videomodel.cpp
     model/itemmodels/klinkitemselectionmodel.cpp
     model/itemmodels/kmodelindexproxymapper.cpp
+    model/proxies/anglesproxymodel.cpp
     model/proxies/baseproxymodel.cpp
     model/proxies/distancesproxymodel.cpp
     model/proxies/instantsproxymodel.cpp
@@ -42,6 +43,7 @@ set(CVMob_headers
     view/videographicsview.hpp
     view/videoview.hpp
     model/videomodel.hpp
+    model/proxies/anglesproxymodel.hpp
     model/proxies/baseproxymodel.hpp
     model/proxies/distancesproxymodel.hpp
     model/proxies/instantsproxymodel.hpp
