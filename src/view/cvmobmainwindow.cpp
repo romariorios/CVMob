@@ -22,6 +22,7 @@
 
 #include <model/videomodel.hpp>
 #include <model/itemmodels/klinkitemselectionmodel.h>
+#include <model/proxies/anglesproxymodel.hpp>
 #include <model/proxies/distancesproxymodel.hpp>
 #include <model/proxies/trajectoriesproxymodel.hpp>
 #include <model/proxies/videolistproxymodel.hpp>
@@ -63,6 +64,11 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     trajectoriesModel->setSourceModel(_videoModel);
     trajectoriesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->trajectoriesView->setModel(trajectoriesModel);
+    
+    AnglesProxyModel *anglesModel = new AnglesProxyModel(this);
+    anglesModel->setSourceModel(_videoModel);
+    anglesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
+    _ui->anglesView->setModel(anglesModel);
 
     setCentralWidget(_videoView);
 
