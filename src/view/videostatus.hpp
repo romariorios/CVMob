@@ -26,7 +26,7 @@
 
 namespace Status {
 class Base;
-class Job;
+class JobHandler;
 }
 
 namespace Ui {
@@ -42,15 +42,18 @@ class VideoStatus : public QWidget
 public:
     explicit VideoStatus(QWidget *parent = 0);
     ~VideoStatus();
-
-    void clearQueue();
+    
+    void addJob(BaseJob *j);
 
     friend class Status::Base;
-    friend class Status::Job;
+    
+private slots:
+    void callItDone();
     
 private:
     Ui::VideoStatus *_ui;
     QList<Status::Base *> _statusQueue;
+    Status::JobHandler *_jobHandler;
 };
 
 namespace Status
@@ -65,6 +68,8 @@ protected:
     VideoStatus *_parent;
 
     Base(VideoStatus *parent, QString message);
+    
+    inline QList<Status::Base *> &statusQueue() const { return _parent->_statusQueue; }
 
 private:
     QString _message;
@@ -83,15 +88,34 @@ public:
     ~Persistent();
 };
 
-class Job : public Base
+class JobHandler : public QObject
 {
     Q_OBJECT
-
 public:
-    Job(VideoStatus *parent, QString message, BaseJob *job);
-
-private slots:
-    void callItDone();
+    explicit JobHandler(VideoStatus* parent);
+    
+    void addJob(BaseJob* j);
+    inline int jobAmount() const { return _progress.size(); }
+    
+signals:
+    void rangeChanged(int minimum, int maximum);
+    void progressChanged(int progress);
+    void allFinished();
+    void jobAmountChanged(int amount);
+    
+private:
+    void onJobRangeChanged(BaseJob *j, int maximum);
+    void onJobProgressChanged(BaseJob *j, int progress);
+    void onJobFinished(BaseJob *j);
+    
+    struct Progress {
+        Progress(int m = 0, int v = 0) : maximum(m), value(v) {}
+        int maximum;
+        int value;
+    };
+    QHash<BaseJob *, Progress> _progress;
+    int _maximum;
+    int _curProgress;
 };
 
 }

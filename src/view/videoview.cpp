@@ -412,7 +412,7 @@ void VideoView::angleEdge2(const QPointF& p)
         { guideAngleItem->center(), guideAngleItem->edge1(), guideAngleItem->edge2() },
         frame, _currentVideoRow
     );
-    new Status::Job(_status, tr("Calculating angle..."), job);
+    _status->addJob(job);
     
     delete guideAngleItem;
     guideAngleItem = 0;
@@ -428,7 +428,7 @@ void VideoView::calculateTrajectory(const QPointF &p)
 
     TrajectoryCalcJob *job = static_cast<VideoModel *>(model())->calculateTrajectory
             (p, frame, _currentVideoRow);
-    new Status::Job(_status, tr("Calculating trajectory..."), job);
+    _status->addJob(job);
 
     connect(job, SIGNAL(finished()), job, SLOT(deleteLater()));
 
