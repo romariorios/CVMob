@@ -43,7 +43,7 @@ void BaseJob::run()
 {
     QModelIndex framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
 
-    emitNewPoints(0, _startPoints);
+    emitNewPoints(_startFrame, _startPoints);
     emit progressRangeChanged(0, _endFrame - _startFrame);
     emit progressChanged(0);
 
