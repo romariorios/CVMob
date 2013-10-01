@@ -161,9 +161,9 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
 
         QMutexLocker locker(&_streamLock);
 
-        currentVideo.videoStream.set(CV_CAP_PROP_POS_FRAMES, index.row());
-        if (!currentVideo.videoStream.read(rawImg)) {
-            return QVariant();
+        if (!currentVideo.videoStream.set(CV_CAP_PROP_POS_FRAMES, index.row()) ||
+            !currentVideo.videoStream.read(rawImg)) {
+            return QVariant(); // TODO report error
         }
         
         cvtColor(rawImg, rawImg, CV_BGR2RGB);
