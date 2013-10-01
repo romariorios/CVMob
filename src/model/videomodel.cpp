@@ -636,7 +636,8 @@ bool VideoModel::openVideo(const QString& path)
     Video &newVideo = _cvmobVideoData->last();
     cv::VideoCapture &videoStream = newVideo.videoStream;
     
-    if (!videoStream.open(path.toUtf8().constData())) {
+    if (!videoStream.open(path.toUtf8().constData()) ||
+        videoStream.get(CV_CAP_PROP_FRAME_COUNT) == 0) {
         removeRow(rowCount() - 1);
         return false;
     }
