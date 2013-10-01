@@ -26,6 +26,7 @@
 #include <model/proxies/distancesproxymodel.hpp>
 #include <model/proxies/trajectoriesproxymodel.hpp>
 #include <model/proxies/videolistproxymodel.hpp>
+#include <QMessageBox>
 #include <QPointF>
 #include <QStandardItemModel>
 #include <QFileDialog>
@@ -88,7 +89,7 @@ void CvMobMainWindow::openFile() {
     if (_videoModel->openVideo(pathName)) {
         _videoView->showMessage(tr("%1 opened").arg(pathName));
     } else {
-        _videoView->showMessage(tr("Could not open %1").arg(pathName));
+        QMessageBox::critical(this, tr("Error"), tr("Could not open %1").arg(pathName));
     }
 }
 
