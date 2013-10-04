@@ -1,6 +1,6 @@
 project(CVMob)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.6)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
@@ -37,35 +37,6 @@ set(CVMob_sources
     view/graphicsitems/trajectoryitem.cpp
 )
 
-set(CVMob_headers
-    view/aboutdialog.hpp
-    view/cvmobmainwindow.hpp
-    view/videographicsview.hpp
-    view/videoview.hpp
-    model/videomodel.hpp
-    model/proxies/anglesproxymodel.hpp
-    model/proxies/baseproxymodel.hpp
-    model/proxies/distancesproxymodel.hpp
-    model/proxies/instantsproxymodel.hpp
-    model/proxies/trajectoriesproxymodel.hpp
-    model/proxies/videolistproxymodel.hpp
-    model/jobs/anglecalcjob.hpp
-    model/jobs/basejob.hpp
-    model/jobs/trajectorycalcjob.hpp
-    view/playbar.hpp
-    view/playslider.hpp
-    view/videostatus.hpp
-    view/graphicsitems/angleitem.hpp
-    view/graphicsitems/distanceitem.hpp
-    view/graphicsitems/trajectoryinstantitem.hpp
-    view/graphicsitems/trajectoryitem.hpp
-)
-
-set(kde_itemmodels_headers
-    model/itemmodels/klinkitemselectionmodel.h
-    model/itemmodels/kmodelindexproxymapper.h
-)
-
 set(CVMob_forms
     view/aboutdialog.ui
     view/cvmobmainwindow.ui
@@ -79,8 +50,6 @@ set(CVMob_translations
 
 set(CVMob_resources cvmob_resource.qrc)
 
-QT5_WRAP_CPP(CVMob_headers_moc ${CVMob_headers})
-QT5_WRAP_CPP(kde_itemmodels_headers_moc ${kde_itemmodels_headers})
 QT5_WRAP_UI(CVMob_forms_headers ${CVMob_forms})
 QT5_ADD_RESOURCES(CVMob_resources_rcc ${CVMob_resources})
 if (CVMOB_UPDATE_TRANSLATIONS)
@@ -94,10 +63,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(cvmob
     ${CVMob_sources}
-    ${CVMob_headers_moc}
     ${CVMob_forms_headers}
     ${CVMob_resources_rcc}
     ${CVMob_translations_qm}
 )
+
+set_target_properties(cvmob PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(cvmob ${Qt5Widgets_LIBRARIES} ${OpenCV_LIBS})
