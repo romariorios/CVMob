@@ -65,10 +65,7 @@ public:
                        QPointF speed = QPointF(0, 0),
                        QPointF accel = QPointF(0, 0));
 
-    inline TrajectoryInstantItem *instantAt(int frame) const
-    {
-        return _instants.at(frame - _startingFrame);
-    }
+    TrajectoryInstantItem *instantAt(int pos) const;
 
     inline int size() const { return _instants.size(); }
 
@@ -89,7 +86,6 @@ private:
     QGraphicsItemGroup *_linesAfter;
 
     QGraphicsItem *_currentInstant;
-    QGraphicsItemGroup *_otherInstants;
 };
 
 #endif // TRAJECTORYITEM_HPP

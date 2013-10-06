@@ -145,7 +145,8 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
             for (int i = 0; i < v.angles.size(); ++i) {
                 QModelIndex anglesIndex = model()->index(topLeft.row(), VideoModel::AnglesColumn);
                 QModelIndex currentAngleIndex = model()->index(i, 0, anglesIndex);
-                // TODO start from right frame
+                int startFrame = model()->index(0, VideoModel::AFrameColumn, currentAngleIndex).data().toInt();
+                frame -= startFrame;
                 QModelIndex centerIndex = model()->index(frame, VideoModel::CentralEdgeColumn, currentAngleIndex);
                 QModelIndex edge1Index = model()->index(frame, VideoModel::PeripheralEdge1Column, currentAngleIndex);
                 QModelIndex edge2Index = model()->index(frame, VideoModel::PeripheralEdge2Column, currentAngleIndex);
@@ -164,11 +165,24 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
             line->setLine(topLeft.data().toLineF());
         }
     } else if (!parent.parent().parent().isValid()) { // Level 2
-        if (parent.parent().column() == VideoModel::TrajectoriesColumn &&
-            topLeft.column() == VideoModel::PositionColumn) {
+        if (parent.parent().column() == VideoModel::TrajectoriesColumn) {
             QPointF pos = topLeft.data().toPointF();
             TrajectoryItem *trajectory = _videos.at(parent.parent().row()).trajectories.at(parent.row());
-            trajectory->instantAt(topLeft.row())->setPos(pos);
+            TrajectoryInstantItem *instant;
+            
+            switch (topLeft.column()) {
+            case VideoModel::PositionColumn:
+                instant = trajectory->instantAt(topLeft.row());
+                instant? instant->setPos(pos) : void();
+                break;
+            case VideoModel::LFrameColumn:
+                if (topLeft.row() == 0) {
+                    trajectory->setStartingFrame(topLeft.data().toInt());
+                }
+                break;
+            default:
+                break;
+            }
         } else if (parent.parent().column() == VideoModel::AnglesColumn) {
             int frame = model()->index(_currentVideoRow, VideoModel::CurrentFrameColumn)
                 .data().toInt();

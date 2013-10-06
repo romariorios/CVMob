@@ -32,8 +32,7 @@ TrajectoryItem::TrajectoryItem(QGraphicsItem *parent) :
     _currentFrame(0),
     _linesBefore(new QGraphicsItemGroup(this)),
     _linesAfter(new QGraphicsItemGroup(this)),
-    _currentInstant(0),
-    _otherInstants(new QGraphicsItemGroup(this))
+    _currentInstant(0)
 {
     addToGroup(_linesBefore);
     addToGroup(_linesAfter);
@@ -44,9 +43,7 @@ TrajectoryItem::TrajectoryItem(QGraphicsItem *parent) :
 }
 
 TrajectoryItem::~TrajectoryItem()
-{
-    delete _otherInstants;
-}
+{}
 
 TrajectoryItem::DrawingPolicy TrajectoryItem::drawTrajectory() const
 {
@@ -102,36 +99,32 @@ void TrajectoryItem::setStartingFrame(int frame)
 
 void TrajectoryItem::setCurrentFrame(int frame)
 {
-    if (frame == _currentFrame ||
-            frame < _startingFrame ||
-            frame - _startingFrame >= _instants.size()) {
-        return;
-    }
-
-    int curI = frame - _startingFrame;
-
     QGraphicsItem *prevInstant = _currentInstant;
-    _currentInstant = _instants.at(curI);
-    _otherInstants->removeFromGroup(_currentInstant);
-    _otherInstants->addToGroup(prevInstant);
-
-    _currentInstant->show();
-    _otherInstants->hide();
-
+    _currentInstant = instantAt(frame - _startingFrame);
+    
+    _currentInstant? _currentInstant->show() : void();
+    prevInstant? prevInstant->hide() : void();
+    
     // Fast-forward
     for (; _currentFrame < frame; ++_currentFrame) {
-        int li = _currentFrame - _startingFrame;
-
-        _linesAfter->removeFromGroup(_lines.at(li));
-        _linesBefore->addToGroup(_lines.at(li));
+        int curL = _currentFrame - _startingFrame;
+        if (curL < 0 || curL >= _lines.size()) {
+            continue;
+        }
+        
+        _linesAfter->removeFromGroup(_lines[curL]);
+        _linesBefore->addToGroup(_lines[curL]);
     }
-
+    
     // Backwards
     for (; _currentFrame > frame; --_currentFrame) {
-        int li = _currentFrame - _startingFrame;
-
-        _linesBefore->removeFromGroup(_lines.at(li));
-        _linesAfter->addToGroup(_lines.at(li));
+        int curL = _currentFrame - _startingFrame;
+        if (curL < 0 || curL >= _lines.size()) {
+            continue;
+        }
+        
+        _linesBefore->removeFromGroup(_lines[curL]);
+        _linesAfter->addToGroup(_lines[curL]);
     }
 }
 
@@ -154,25 +147,25 @@ void TrajectoryItem::appendInstant(QPointF pos, QPointF speed, QPointF accel)
     if (!_currentInstant) {
         _currentInstant = instant;
         _currentInstant->show();
-    } else {
-        _otherInstants->addToGroup(instant);
     }
 
     _instants << instant;
+}
+
+TrajectoryInstantItem* TrajectoryItem::instantAt(int pos) const
+{
+    return pos < 0 || pos >= _instants.size()? nullptr : _instants.at(pos);
 }
 
 void TrajectoryItem::followDrawPolicy()
 {
     switch (_drawTrajectory) {
     case NoDraw:
-        _otherInstants->hide();
         break;
     case DrawBefore:
-        _otherInstants->show();
         _linesAfter->hide();
         break;
     case DrawBeforeAndAfter:
-        _otherInstants->show();
         _linesAfter->show();
         break;
     }
