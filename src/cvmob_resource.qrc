@@ -2,8 +2,6 @@
     <qresource prefix="/images">
         <file>icons/trajectory.png</file>
         <file>icons/draw-distance.png</file>
-        <file>icons/media-playback-pause.png</file>
-        <file>icons/media-playback-start.png</file>
         <file>logo.png</file>
         <file>translucent-logo.png</file>
         <file>icons/angle.png</file>

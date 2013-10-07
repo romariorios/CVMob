@@ -35,6 +35,8 @@ PlayBar::PlayBar(QWidget *parent) :
     _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
     _ui->progressSlide->setTracking(false);
     
+    _ui->actionPlay->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
+    
     QMenu *drawMenu = new QMenu(_ui->drawButton);
     drawMenu->addAction(_ui->actionMeasure_distance);
     drawMenu->addAction(_ui->actionCalculate_trajectory);
@@ -102,8 +104,8 @@ void PlayBar::setPlaying(bool playing)
     
     _ui->actionPlay->setText(playing? tr("Pause") : tr("Play"));
     _ui->actionPlay->setToolTip(playing? tr("Pause playback") : tr("Start playback"));
-    _ui->actionPlay->setIcon(QIcon(playing? ":/images/icons/media-playback-pause" :
-                                            ":/images/icons/media-playback-start"));
+    _ui->actionPlay->setIcon(playing? QApplication::style()->standardIcon(QStyle::SP_MediaPause) :
+                                      QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
     
     disconnect(_ui->actionPlay, SIGNAL(toggled(bool)), this, SLOT(setPlaying(bool)));
     _ui->actionPlay->setChecked(playing);
