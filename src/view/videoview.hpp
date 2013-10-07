@@ -83,6 +83,7 @@ protected slots:
                      const QVector<int> & = QVector<int>());          // roles is always empty
     void selectionChanged(const QItemSelection &selected, const QItemSelection &);
     void rowsInserted(const QModelIndex &parent, int start, int end);
+    void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
 
 private slots:
     void beginDistanceCreation();

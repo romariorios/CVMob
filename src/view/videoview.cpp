@@ -337,6 +337,18 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
     }
 }
 
+void VideoView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
+{
+    if (!parent.isValid()) { // Level 0
+        for (int i = start; i <= end; ++i) {
+            Video v = _videos.takeAt(i);
+            delete v.scene;
+        }
+        
+        _view->setScene(_videos.empty()? _noVideoVideo.scene : _videos.first().scene);
+    }
+}
+
 void VideoView::beginDistanceCreation()
 {
     auto status = new Status::Persistent(_status, tr("Click and drag to measure a distance"));
