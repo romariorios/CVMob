@@ -38,7 +38,8 @@ void VideoListDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
         QPixmap closePixmap = QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton);
         QRect closeRect = closePixmap.rect();
         closeRect.setX(option.rect.width() - closePixmap.width());
-        closeRect.setWidth(closePixmap.width());
+        closeRect.setY(index.row() * option.rect.height());
+        closeRect.setSize(closePixmap.size());
         QApplication::style()->drawItemPixmap(painter, closeRect, 0, closePixmap);
     }
 }
@@ -52,7 +53,8 @@ bool VideoListDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, co
     QPixmap closePixmap = QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton);
     QRect closeRect = closePixmap.rect();
     closeRect.setX(option.rect.width() - closePixmap.width());
-    closeRect.setWidth(closePixmap.width());
+    closeRect.setY(index.row() * option.rect.height());
+    closeRect.setSize(closePixmap.size());
     QPoint clickedPoint = static_cast<QMouseEvent *>(event)->pos();
     
     if (!closeRect.contains(clickedPoint)) {
