@@ -16,6 +16,7 @@ set(CVMob_sources
     view/cvmobmainwindow.cpp
     view/videographicsview.cpp
     view/videoview.cpp
+    view/videolistdelegate.cpp
     model/videomodel.cpp
     model/itemmodels/klinkitemselectionmodel.cpp
     model/itemmodels/kmodelindexproxymapper.cpp

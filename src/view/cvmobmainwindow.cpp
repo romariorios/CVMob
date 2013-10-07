@@ -31,6 +31,7 @@
 #include <QStandardItemModel>
 #include <QFileDialog>
 #include <view/videoview.hpp>
+#include <view/videolistdelegate.hpp>
 
 #include <QDebug>
 
@@ -48,6 +49,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     videoNamesModel->setSourceModel(_videoModel);
     
     _ui->openedVideosList->setModel(videoNamesModel);
+    _ui->openedVideosList->setItemDelegate(new VideoListDelegate(this));
     _videoView->setModel(_videoModel);
     
     KLinkItemSelectionModel *selectionModel =
