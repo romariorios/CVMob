@@ -20,6 +20,7 @@
 #include "videolistdelegate.hpp"
 
 #include <QApplication>
+#include <QMouseEvent>
 
 VideoListDelegate::VideoListDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
@@ -44,6 +45,20 @@ void VideoListDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
 
 bool VideoListDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-    return QStyledItemDelegate::editorEvent(event, model, option, index);
+    if (event->type() != QEvent::MouseButtonRelease) {
+        return QStyledItemDelegate::editorEvent(event, model, option, index);
+    }
+    
+    QPixmap closePixmap = QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton);
+    QRect closeRect = closePixmap.rect();
+    closeRect.setX(option.rect.width() - closePixmap.width());
+    closeRect.setWidth(closePixmap.width());
+    QPoint clickedPoint = static_cast<QMouseEvent *>(event)->pos();
+    
+    if (!closeRect.contains(clickedPoint)) {
+        return QStyledItemDelegate::editorEvent(event, model, option, index);
+    }
+    
+    return model->removeRow(index.row());
 }
 
