@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8.6)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
+find_package(Qt5PrintSupport REQUIRED)
 find_package(OpenCV 2 REQUIRED)
 
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
@@ -14,6 +15,8 @@ set(CVMob_sources
     main.cpp
     view/aboutdialog.cpp
     view/cvmobmainwindow.cpp
+    view/plotitemview.cpp
+    view/qcustomplot.cpp
     view/videographicsview.cpp
     view/videoview.cpp
     view/videolistdelegate.cpp
@@ -71,4 +74,4 @@ add_executable(cvmob
 
 set_target_properties(cvmob PROPERTIES AUTOMOC TRUE)
 
-target_link_libraries(cvmob ${Qt5Widgets_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(cvmob ${Qt5Widgets_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${OpenCV_LIBS})
