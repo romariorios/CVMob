@@ -24,8 +24,18 @@
 
 PlotItemView::PlotItemView(QWidget* parent) :
     QAbstractItemView(parent),
-    _plot(new QCustomPlot(this))
+    _plot(new QCustomPlot(this)),
+    _title(new QCPPlotTitle(_plot, tr("(untitled)")))
 {
+    _plot->setInteraction(QCP::iRangeDrag, true);
+    _plot->setInteraction(QCP::iRangeZoom, true);
+    _plot->setInteraction(QCP::iSelectPlottables, true);
+    _plot->setInteraction(QCP::iSelectItems, true);
+    _plot->setInteraction(QCP::iSelectAxes, true);
+    _plot->setInteraction(QCP::iSelectOther, true);
+    _plot->plotLayout()->insertRow(0);
+    _plot->plotLayout()->addElement(0, 0, _title);
+    
     new QBoxLayout(QBoxLayout::TopToBottom, viewport());
     viewport()->layout()->addWidget(_plot);
 }
@@ -73,7 +83,7 @@ bool PlotItemView::isIndexHidden(const QModelIndex& index) const
     // TODO
     Q_UNUSED(index)
     
-    return true;
+    return false;
 }
 
 int PlotItemView::verticalOffset() const
@@ -95,4 +105,48 @@ QModelIndex PlotItemView::moveCursor(QAbstractItemView::CursorAction cursorActio
     Q_UNUSED(modifiers)
     
     return QModelIndex();
+}
+
+void PlotItemView::reset()
+{
+    _title->setText(model()->headerData(0, Qt::Horizontal).toString());
+    _plot->xAxis->setLabel(model()->headerData(1, Qt::Horizontal).toString());
+    _plot->yAxis->setLabel(model()->headerData(2, Qt::Vertical).toString());
+    
+    _plot->clearGraphs();
+    
+    for (int i = 0; i < model()->rowCount(); ++i) {
+        _plot->addGraph();
+        
+        QModelIndex iIndex = model()->index(i, 0);
+        for (int j = 0; j < model()->rowCount(iIndex); ++j) {
+            _plot->graph(i)->addData(model()->index(j, 0, iIndex).data().toDouble(),
+                                     model()->index(j, 1, iIndex).data().toDouble());
+        }
+    }
+    
+    _plot->rescaleAxes();
+}
+
+void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , const QVector< int >& roles)
+{
+    if (!topLeft.parent().isValid() || topLeft.column() != 1) {
+        return;
+    }
+    
+    int graphIndex = topLeft.parent().row();
+    _plot->graph(graphIndex)->addData(model()->index(topLeft.row(), 0).data().toDouble(),
+                                      model()->index(topLeft.row(), 1).data().toDouble());
+    _plot->rescaleAxes();
+}
+
+void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
+{
+    for (int i = start; i <= end; ++i) {
+        if (parent.isValid()) {
+            continue;
+        }
+        
+        _plot->addGraph();
+    }
 }

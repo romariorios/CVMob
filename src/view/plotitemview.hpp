@@ -22,10 +22,13 @@
 
 #include <QAbstractItemView>
 
+class QCPPlotTitle;
 class QCustomPlot;
 
 class PlotItemView : public QAbstractItemView
 {
+    Q_OBJECT
+    
 public:
     explicit PlotItemView(QWidget* parent = 0);
     QModelIndex indexAt(const QPoint& point) const;
@@ -40,8 +43,18 @@ protected:
     int horizontalOffset() const;
     QModelIndex moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers);
     
+public slots:
+    void reset();
+    
+protected slots:
+    void dataChanged(const QModelIndex &topLeft, const QModelIndex &, // Topleft always equals
+                                                                      // bottomright
+                     const QVector<int> &roles = QVector<int>());
+    void rowsInserted(const QModelIndex &parent, int start, int end);
+    
 private:
     QCustomPlot *_plot;
+    QCPPlotTitle *_title;
 
 };
 
