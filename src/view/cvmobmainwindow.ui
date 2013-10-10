@@ -175,12 +175,18 @@
           <property name="text">
            <string>X (Trajectory)</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="yGraphCheckBox">
           <property name="text">
            <string>Y (Trajectory)</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
