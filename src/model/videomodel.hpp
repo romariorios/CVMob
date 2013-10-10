@@ -79,6 +79,7 @@ public:
     };
 
     explicit VideoModel(QObject *parent = 0);
+    ~VideoModel();
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &child) const;
@@ -142,28 +143,20 @@ private:
         QList<Angle> angles;
     };
 
-    enum InternalDataType
-    {
-        VideoData,
-        DistanceData,
-        FrameData,
-        TrajectoryData,
-        AngleData,
-        TrajectoryInstantData,
-        AngleInstantData
-    };
-
     struct InternalData
     {
-        InternalDataType type;
-        int row;
         InternalData *parent;
-
-        InternalData(InternalDataType e_type, int e_row, InternalData *e_parent = 0) :
-            type(e_type),
-            row(e_row),
-            parent(e_parent) {}
+        int row, column;
+        QHash<QPair<int, int>, InternalData *> children;
+        
+        InternalData(int row, int column, InternalData *parent = 0) :
+            row(row),
+            column(column),
+            parent(parent)
+        {}
     };
+    
+    QHash<QPair<int, int>, InternalData *> *_indexesData;
 
     QList<Video> *_cvmobVideoData;
     mutable QMutex _streamLock;
