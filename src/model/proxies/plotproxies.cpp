@@ -27,9 +27,9 @@ QVariant BasePlotProxyModel::data(const QModelIndex& proxyIndex, int role) const
 {
     switch (proxyIndex.column()) {
     case 0:
-        return xData(proxyIndex);
+        return xData(mapToSource(proxyIndex));
     case 1:
-        return yData(proxyIndex);
+        return yData(mapToSource(proxyIndex));
     default:
         return QVariant();
     }
