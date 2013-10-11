@@ -386,7 +386,8 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
             }
 
             AngleInstant &currentInstant = currentTrajectory.instants[index.row()];
-
+            QModelIndex angleIndex = this->index(index.row(), AngleColumn, index.parent());
+            
             switch (index.column()) {
             case AFrameColumn:
                 currentInstant.frame = value.toInt();
@@ -400,12 +401,15 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 break;
             case CentralEdgeColumn:
                 currentInstant.centralEdge = value.toPointF();
+                emit dataChanged(angleIndex, angleIndex);
                 break;
             case PeripheralEdge1Column:
                 currentInstant.peripheralEdges.first = value.toPointF();
+                emit dataChanged(angleIndex, angleIndex);
                 break;
             case PeripheralEdge2Column:
                 currentInstant.peripheralEdges.second = value.toPointF();
+                emit dataChanged(angleIndex, angleIndex);
                 break;
             default:
                 return false;
