@@ -33,6 +33,7 @@ TrajectoryCalcJob::TrajectoryCalcJob(const QPointF &startPoint,
                                                  const QSize &windowSize,
                                                  QAbstractItemModel *parent) :
     BaseJob({ startPoint }, startFrame, endFrame, videoRow, windowSize, parent),
+    _previousPoint(startPoint),
     _previousSpeed(0, 0)
 {
     connect(this, &TrajectoryCalcJob::instantGenerated,
