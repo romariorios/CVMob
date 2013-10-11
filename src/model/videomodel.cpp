@@ -56,13 +56,13 @@ QModelIndex VideoModel::index(int row, int column, const QModelIndex &parent) co
 {
     auto ind = qMakePair(row, column);
     InternalData *parentData = static_cast<InternalData *>(parent.internalPointer());
-    auto parentChildrenTable = parentData? parentData->children : *_indexesData;
+    auto parentChildrenTable = parentData? &parentData->children : _indexesData;
     
-    if (!parentChildrenTable.contains(ind)) {
-        parentChildrenTable[ind] = new InternalData(row, column, parentData);
+    if (!parentChildrenTable->contains(ind)) {
+        (*parentChildrenTable)[ind] = new InternalData(row, column, parentData);
     }
     
-    return createIndex(row, column, parentChildrenTable[ind]);
+    return createIndex(row, column, (*parentChildrenTable)[ind]);
 }
 
 QModelIndex VideoModel::parent(const QModelIndex &child) const
