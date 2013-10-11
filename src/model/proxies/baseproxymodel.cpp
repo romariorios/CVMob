@@ -47,13 +47,15 @@ void BaseProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
     connect(sourceModel, &QAbstractItemModel::dataChanged,
             [=](const QModelIndex &topLeft, const QModelIndex &bottomRight)
     {
-        emit dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight));
+        QModelIndex proxyTopLeft = mapFromSource(topLeft);
+        QModelIndex proxyBottomRight = topLeft == bottomRight? proxyTopLeft :
+                                                               mapFromSource(bottomRight);
+        emit dataChanged(proxyTopLeft, proxyBottomRight);
     });
 
     connect(sourceModel, &QAbstractItemModel::rowsInserted, [=](const QModelIndex &parent,
                                                                 int first, int last)
     {
-        
         beginInsertRows(mapFromSource(parent), first, last);
         endInsertRows();
     });
