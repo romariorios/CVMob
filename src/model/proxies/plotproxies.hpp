@@ -22,10 +22,10 @@
 
 #include <model/proxies/instantsproxymodel.hpp>
 
-#include <model/proxies/baseproxymodel.hpp>
-
 class BasePlotProxyModel : public InstantsProxyModel
 {
+    Q_OBJECT
+    
 public:
     explicit BasePlotProxyModel(QObject* parent = 0);
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
@@ -46,8 +46,13 @@ protected:
 
 class XTrajectoryPlotProxyModel : public BasePlotProxyModel
 {
+    Q_OBJECT
+    
 public:
-    inline explicit XTrajectoryPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent) {}
+    inline explicit XTrajectoryPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
+    {
+        setColumn(VideoModel::TrajectoriesColumn);
+    }
     
 protected:
     inline QVariant yData(const QModelIndex& index) const { return index.data().toPointF().x(); }
@@ -59,8 +64,13 @@ protected:
 
 class YTrajectoryPlotProxyModel : public BasePlotProxyModel
 {
+    Q_OBJECT
+    
 public:
-    inline explicit YTrajectoryPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent) {}
+    inline explicit YTrajectoryPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
+    {
+        setColumn(VideoModel::TrajectoriesColumn);
+    }
     
 protected:
     inline QVariant yData(const QModelIndex& index) const { return index.data().toPointF().y(); }
@@ -73,7 +83,10 @@ protected:
 class TrajectorySpeedPlotProxyModel : public BasePlotProxyModel
 {
 public:
-    inline explicit TrajectorySpeedPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent) {}
+    inline explicit TrajectorySpeedPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
+    {
+        setColumn(VideoModel::TrajectoriesColumn);
+    }
     
 protected:
     inline QVariant yData(const QModelIndex& index) const { return QLineF(QPointF(0, 0), index.data().toPointF()).length(); }
@@ -86,7 +99,10 @@ protected:
 class TrajectoryAccelPlotProxyModel : public BasePlotProxyModel
 {
 public:
-    inline explicit TrajectoryAccelPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent) {}
+    inline explicit TrajectoryAccelPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
+    {
+        setColumn(VideoModel::TrajectoriesColumn);
+    }
     
 protected:
     inline QVariant yData(const QModelIndex& index) const { return QLineF(QPointF(0, 0), index.data().toPointF()).length(); }
@@ -99,7 +115,10 @@ protected:
 class AnglePlotProxyModel : public BasePlotProxyModel
 {
 public:
-    inline explicit AnglePlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent) {}
+    inline explicit AnglePlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
+    {
+        setColumn(VideoModel::AnglesColumn);
+    }
     
 protected:
     inline QString graphTitle() const { return tr("Angle"); }
