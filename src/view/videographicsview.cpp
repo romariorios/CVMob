@@ -20,8 +20,6 @@
 
 #include <QMouseEvent>
 
-#include <QDebug>
-
 VideoGraphicsView::VideoGraphicsView(QWidget *parent) :
     QGraphicsView(parent),
     _pressed(false)

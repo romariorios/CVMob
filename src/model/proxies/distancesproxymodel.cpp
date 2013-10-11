@@ -19,9 +19,6 @@
 #include "distancesproxymodel.hpp"
 
 #include <model/videomodel.hpp>
-#include <QItemSelectionModel>
-
-#include <QDebug>
 
 DistancesProxyModel::DistancesProxyModel(QObject *parent) :
     BaseProxyModel(parent)

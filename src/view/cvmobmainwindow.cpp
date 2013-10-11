@@ -34,8 +34,6 @@
 #include <view/videoview.hpp>
 #include <view/videolistdelegate.hpp>
 
-#include <QDebug>
-
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::CvMobMainWindow),

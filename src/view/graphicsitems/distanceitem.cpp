@@ -21,8 +21,6 @@
 #include <QBrush>
 #include <QPen>
 
-#include <QDebug>
-
 static const QPointF radius(2, 2);
 
 DistanceItem::DistanceItem(QLineF line, QGraphicsItem *parent) :

@@ -35,14 +35,6 @@
 #include <view/videographicsview.hpp>
 #include <view/videostatus.hpp>
 
-#include <QLabel>
-
-#include <QTimer>
-
-#include <QDebug>
-#include <cstdlib>
-#include <ctime>
-
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
     _view(new VideoGraphicsView),

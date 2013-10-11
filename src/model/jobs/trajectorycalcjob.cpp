@@ -20,10 +20,6 @@
 
 #include <model/videomodel.hpp>
 
-#include <QSize>
-
-#include <QDebug>
-
 using namespace std;
 
 TrajectoryCalcJob::TrajectoryCalcJob(const QPointF &startPoint,
