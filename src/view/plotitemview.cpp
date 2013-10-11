@@ -135,9 +135,14 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
     }
     
     int graphRow = topLeft.parent().row();
-    QModelIndex graphIndex = model()->index(graphRow, 0);
-    _plot->graph(graphRow)->addData(model()->index(topLeft.row(), 0, graphIndex).data().toDouble(),
-                                    model()->index(topLeft.row(), 1, graphIndex).data().toDouble());
+    QModelIndex graphIndex = model()->index(topLeft.parent().row(), 0);
+    double key = model()->index(topLeft.row(), 0, graphIndex).data().toDouble();
+    QCPGraph *graph = _plot->graph(graphRow);
+    
+    graph->removeData(key);
+    graph->addData(model()->index(topLeft.row(), 0, graphIndex).data().toDouble(),
+                   model()->index(topLeft.row(), 1, graphIndex).data().toDouble());
+    
     _plot->rescaleAxes();
     _plot->replot();
 }
