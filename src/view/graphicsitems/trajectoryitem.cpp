@@ -42,7 +42,10 @@ TrajectoryItem::TrajectoryItem(QGraphicsItem *parent) :
 }
 
 TrajectoryItem::~TrajectoryItem()
-{}
+{
+    delete _linesBefore;
+    delete _linesAfter;
+}
 
 TrajectoryItem::DrawingPolicy TrajectoryItem::drawTrajectory() const
 {
