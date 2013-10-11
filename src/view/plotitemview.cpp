@@ -126,6 +126,7 @@ void PlotItemView::reset()
     }
     
     _plot->rescaleAxes();
+    _plot->replot();
 }
 
 void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , const QVector< int >& roles)
@@ -134,10 +135,12 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
         return;
     }
     
-    int graphIndex = topLeft.parent().row();
-    _plot->graph(graphIndex)->addData(model()->index(topLeft.row(), 0).data().toDouble(),
-                                      model()->index(topLeft.row(), 1).data().toDouble());
+    int graphRow = topLeft.parent().row();
+    QModelIndex graphIndex = model()->index(graphRow, 0);
+    _plot->graph(graphRow)->addData(model()->index(topLeft.row(), 0, graphIndex).data().toDouble(),
+                                    model()->index(topLeft.row(), 1, graphIndex).data().toDouble());
     _plot->rescaleAxes();
+    _plot->replot();
 }
 
 void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
