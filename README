@@ -1,29 +1,55 @@
 CVMob - Movement analysis tool
-Copyright (C) 2012  The CVMob contributors
+Copyright (C) 2012, 2013  The CVMob contributors
+
+#### THIS SOFTWARE IS UNDER HEAVY DEVELOPMENT AND NOT USABLE YET ####
+
+Requires:
+ * OpenCV (>= 2.0)
+ * Qt (>= 5.0)
+ * CMake (>= 2.8.6, for build only)
+
+Note: A Qt 4.6 version of this software can be found at the qt4
+branch, but it's long unmaintained and severely outdated. You can try
+to compile the master branch using Qt 4, but the code now uses quite
+a few Qt5- (and C++11-) only features, so you'll have to port those.
 
 Build instructions:
-CVMob requires OpenCV 2.0 and Qt 4.8 minimum in order to get built and
-run. If they're in path, you just need to enter in the src directory
-and run:
+If you have both OpenCV and Qt in your path, you can configure the
+project simply by running:
 
-    cmake . && make
+    cmake .
 
-If you want to specify a different directory for both OpenCV and Qt,
-you'll have to do:
+inside the src/ directory.
 
-    cmake . -DOpenCV_DIR=/path/to/OpenCV \
-            -DQT_QMAKE_EXECUTABLE=/path/to/Qt/qmake
+However, if you have a custom installation of OpenCV, you may have to
+modify the command above to:
 
-You can also set a custom prefix path, if both OpenCV and Qt are in it:
+    cmake . -DOpenCV_DIR=/path/to/opencv/share/OpenCV/
 
-    cmake . -DCMAKE_PREFIX_PATH=/path/to/qt-and-opencv
+If Qt is not in your path, the easiest way to tell CMake where it is,
+is to set CMAKE_PREFIX_PATH to the Qt 5 prefix:
 
-Then, you can run:
+    cmake . -DCMAKE_PREFIX_PATH=/path/to/qt5
+
+Of course, if neither of Qt and OpenCV is in your path, you'll have to
+combine both commands above:
+
+    cmake . -DCMAKE_PREFIX_PATH=/path/to/qt5 \
+            -DOpenCV_DIR=/path/to/opencv/share/OpenCV
+
+After configuring CVMob a Makefile will be generated. To build that
+Makefile, just run make:
 
     make
 
-The cvmob executable will be inside src and you just need to run it
-like any other executable file. Enjoy!
+You can make the compilation faster by adding the -jn argument to make,
+being n the number of threads make will run (usually, a sane number is
+the number of threads you processor supports plus 1):
+
+    make -j5
+
+After that, a cvmob executable will appear in the src folder and then you
+can simply run it. Enjoy!
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
