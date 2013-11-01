@@ -114,10 +114,11 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
         
         if (index.parent().column() == FramesColumn) {
             cv::Mat rawImg;
-            int oldFrame = currentVideo.streamFrame;
-            int newFrame = index.row();
 
             QMutexLocker locker(&_streamLock);
+            
+            int oldFrame = currentVideo.streamFrame;
+            int newFrame = index.row();
 
             if (newFrame == oldFrame + 1) {
                 if (!currentVideo.videoStream.grab()) {
@@ -136,9 +137,9 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             cvtColor(rawImg, rawImg, CV_BGR2RGB);
             QImage frame = QImage(rawImg.data, rawImg.cols, rawImg.rows, QImage::Format_RGB888).copy();
 
-            locker.unlock();
-            
             currentVideo.streamFrame = newFrame;
+            
+            locker.unlock();
 
             switch (index.column()) {
             case 0:
