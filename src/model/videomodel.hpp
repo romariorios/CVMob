@@ -132,8 +132,12 @@ private:
 
     struct Video
     {
+        Video() :
+            streamFrame(-1)
+        {}
+        
         QString fileName;
-        int currentFrame, frameDuration, frameCount;
+        int currentFrame, frameDuration, frameCount, streamFrame;
         QSizeF frameSize;
         cv::VideoCapture videoStream;
 

@@ -110,15 +110,26 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
 
-        Video currentVideo = _cvmobVideoData->at(index.parent().row());
+        Video &currentVideo = (*_cvmobVideoData)[index.parent().row()];
         
         if (index.parent().column() == FramesColumn) {
             cv::Mat rawImg;
+            int oldFrame = currentVideo.streamFrame;
+            int newFrame = index.row();
 
             QMutexLocker locker(&_streamLock);
 
-            if (!currentVideo.videoStream.set(CV_CAP_PROP_POS_FRAMES, index.row()) ||
-                !currentVideo.videoStream.read(rawImg)) {
+            if (newFrame == oldFrame + 1) {
+                if (!currentVideo.videoStream.grab()) {
+                    return QVariant();
+                }
+            } else {
+                if (!currentVideo.videoStream.set(CV_CAP_PROP_POS_FRAMES, newFrame)) {
+                    return QVariant();
+                }
+            }
+
+            if (!currentVideo.videoStream.retrieve(rawImg)) {
                 return QVariant(); // TODO report error
             }
             
@@ -126,6 +137,8 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             QImage frame = QImage(rawImg.data, rawImg.cols, rawImg.rows, QImage::Format_RGB888).copy();
 
             locker.unlock();
+            
+            currentVideo.streamFrame = newFrame;
 
             switch (index.column()) {
             case 0:
