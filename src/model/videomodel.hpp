@@ -138,6 +138,7 @@ private:
         
         QString fileName;
         int currentFrame, frameDuration, frameCount, streamFrame;
+        QImage frameImage;
         QSizeF frameSize;
         cv::VideoCapture videoStream;
 

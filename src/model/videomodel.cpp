@@ -120,7 +120,9 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             int oldFrame = currentVideo.streamFrame;
             int newFrame = index.row();
 
-            if (newFrame == oldFrame + 1) {
+            if (newFrame == oldFrame) {
+                return QVariant::fromValue(currentVideo.frameImage);
+            } else if (newFrame == oldFrame + 1) {
                 if (!currentVideo.videoStream.grab()) {
                     return QVariant();
                 }
@@ -135,7 +137,7 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             }
             
             cvtColor(rawImg, rawImg, CV_BGR2RGB);
-            QImage frame = QImage(rawImg.data, rawImg.cols, rawImg.rows, QImage::Format_RGB888).copy();
+            currentVideo.frameImage = QImage(rawImg.data, rawImg.cols, rawImg.rows, QImage::Format_RGB888).copy();
 
             currentVideo.streamFrame = newFrame;
             
@@ -143,7 +145,7 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
 
             switch (index.column()) {
             case 0:
-                return QVariant::fromValue(frame);
+                return QVariant::fromValue(currentVideo.frameImage);
             default:
                 return QVariant();
             }
