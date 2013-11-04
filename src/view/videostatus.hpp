@@ -25,7 +25,6 @@
 
 namespace Status {
 class Base;
-class JobHandler;
 }
 
 namespace Ui {
@@ -33,16 +32,15 @@ class VideoStatus;
 }
 
 class BaseJob;
+class JobHandler;
 
 class VideoStatus : public QWidget
 {
     Q_OBJECT
     
 public:
-    explicit VideoStatus(QWidget *parent = 0);
+    explicit VideoStatus(JobHandler *handler, QWidget *parent = 0);
     ~VideoStatus();
-    
-    void addJob(BaseJob *j);
 
     friend class Status::Base;
     
@@ -52,7 +50,7 @@ private slots:
 private:
     Ui::VideoStatus *_ui;
     QList<Status::Base *> _statusQueue;
-    Status::JobHandler *_jobHandler;
+    JobHandler *_jobHandler;
 };
 
 namespace Status
@@ -85,36 +83,6 @@ class Persistent : public Base
 public:
     Persistent(VideoStatus *parent, QString message);
     ~Persistent();
-};
-
-class JobHandler : public QObject
-{
-    Q_OBJECT
-public:
-    explicit JobHandler(VideoStatus* parent);
-    
-    void addJob(BaseJob* j);
-    inline int jobAmount() const { return _progress.size(); }
-    
-signals:
-    void rangeChanged(int minimum, int maximum);
-    void progressChanged(int progress);
-    void allFinished();
-    void jobAmountChanged(int amount);
-    
-private:
-    void onJobRangeChanged(BaseJob *j, int maximum);
-    void onJobProgressChanged(BaseJob *j, int progress);
-    void onJobFinished(BaseJob *j);
-    
-    struct Progress {
-        Progress(int m = 0, int v = 0) : maximum(m), value(v) {}
-        int maximum;
-        int value;
-    };
-    QHash<BaseJob *, Progress> _progress;
-    int _maximum;
-    int _curProgress;
 };
 
 }

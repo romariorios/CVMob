@@ -18,6 +18,7 @@
 
 #include "videoview.hpp"
 
+#include <model/jobs/jobhandler.hpp>
 #include <model/videomodel.hpp>
 #include <QGraphicsItem>
 #include <QGraphicsLineItem>
@@ -40,7 +41,8 @@ VideoView::VideoView(QWidget *parent) :
     _view(new VideoGraphicsView),
     _noVideoVideo(Video(new QGraphicsScene(_view), 0)),
     _playBar(new PlayBar(this)),
-    _status(new VideoStatus(this))
+    _jobHandler(new JobHandler(this)),
+    _status(new VideoStatus(_jobHandler, this))
 {
     new QVBoxLayout(viewport());
     viewport()->layout()->addWidget(_status);
@@ -429,7 +431,7 @@ void VideoView::angleEdge2(const QPointF& p)
         { guideAngleItem->center(), guideAngleItem->edge1(), guideAngleItem->edge2() },
         frame, _currentVideoRow
     );
-    _status->addJob(job);
+    _jobHandler->addJob(job);
     
     delete guideAngleItem;
     guideAngleItem = 0;
@@ -445,7 +447,7 @@ void VideoView::calculateTrajectory(const QPointF &p)
 
     TrajectoryCalcJob *job = static_cast<VideoModel *>(model())->calculateTrajectory
             (p, frame, _currentVideoRow);
-    _status->addJob(job);
+    _jobHandler->addJob(job);
 
     connect(job, SIGNAL(finished()), job, SLOT(deleteLater()));
 

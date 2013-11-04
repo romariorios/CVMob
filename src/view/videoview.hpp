@@ -25,6 +25,7 @@
 
 class AngleItem;
 class DistanceItem;
+class JobHandler;
 class PlayBar;
 class QGraphicsLineItem;
 class QGraphicsRectItem;
@@ -75,6 +76,7 @@ private:
     Video _noVideoVideo;
     int _currentVideoRow;
     PlayBar *_playBar;
+    JobHandler *_jobHandler;
     VideoStatus *_status;
 
 protected slots:

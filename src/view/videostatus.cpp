@@ -20,43 +20,40 @@
 #include "ui_videostatus.h"
 
 #include <model/jobs/basejob.hpp>
+#include <model/jobs/jobhandler.hpp>
 
 #include <QTimer>
 
-VideoStatus::VideoStatus(QWidget *parent) :
+VideoStatus::VideoStatus(JobHandler* handler, QWidget* parent) :
     QWidget(parent),
-    _ui(new Ui::VideoStatus)
+    _ui(new Ui::VideoStatus),
+    _jobHandler(handler)
 {
-    _jobHandler = new Status::JobHandler(this);
     _ui->setupUi(this);
     _ui->messageWidget->hide();
     _ui->progressWidget->hide();
     
-    connect(_jobHandler, &Status::JobHandler::rangeChanged,
+    connect(_jobHandler, &JobHandler::rangeChanged,
             _ui->progressBar, &QProgressBar::setRange);
-    connect(_jobHandler, &Status::JobHandler::progressChanged,
+    connect(_jobHandler, &JobHandler::progressChanged,
             _ui->progressBar, &QProgressBar::setValue);
-    connect(_jobHandler, &Status::JobHandler::allFinished,
+    connect(_jobHandler, &JobHandler::allFinished,
             _ui->progressWidget, &QWidget::hide);
-    connect(_jobHandler, &Status::JobHandler::allFinished,
+    connect(_jobHandler, &JobHandler::allFinished,
             this, &VideoStatus::callItDone);
     
-    connect(_jobHandler, &Status::JobHandler::jobAmountChanged,
+    connect(_jobHandler, &JobHandler::jobAmountChanged,
             [this](int amount){
                 _ui->progressText->setText(tr("Calculating (%n jobs remain)", "",
                                               amount));
             });
+    connect(_jobHandler, &JobHandler::jobAmountChanged, // if amount == 0, then setVisible(0) gets
+            _ui->progressWidget, &QWidget::setVisible); // called, which equals setVisible(false)
 }
 
 VideoStatus::~VideoStatus()
 {
     delete _ui;
-}
-
-void VideoStatus::addJob(BaseJob *j)
-{
-    _jobHandler->addJob(j);
-    _ui->progressWidget->show();
 }
 
 void VideoStatus::callItDone()
@@ -105,59 +102,3 @@ Status::Persistent::Persistent(VideoStatus *parent, QString message) :
 
 Status::Persistent::~Persistent()
 {}
-
-void Status::JobHandler::addJob(BaseJob* j)
-{
-    _progress[j] = Progress();
-    connect(j, &BaseJob::progressRangeChanged, [this, j](int min, int max){
-        onJobRangeChanged(j, max);
-    });
-    connect(j, &BaseJob::progressChanged, [this, j](int progress){
-        onJobProgressChanged(j, progress);
-    });
-    connect(j, &QThread::finished, [this, j](){
-        onJobFinished(j);
-    });
-    
-    emit jobAmountChanged(jobAmount());
-}
-
-Status::JobHandler::JobHandler(VideoStatus* parent) :
-    QObject(parent),
-    _maximum(0),
-    _curProgress(0)
-{}
-
-void Status::JobHandler::onJobRangeChanged(BaseJob* j, int maximum)
-{
-    int oldMaximum = _progress[j].maximum;
-    _progress[j].maximum = maximum;
-    
-    _maximum += maximum - oldMaximum;
-    emit rangeChanged(0, _maximum);
-}
-
-void Status::JobHandler::onJobProgressChanged(BaseJob* j, int progress)
-{
-    int oldProgress = _progress[j].value;
-    _progress[j].value = progress;
-    
-    _curProgress += progress - oldProgress;
-    emit progressChanged(_curProgress);
-}
-
-void Status::JobHandler::onJobFinished(BaseJob* j)
-{
-    _maximum -= _progress[j].maximum;
-    _curProgress -= _progress[j].maximum;
-    
-    emit rangeChanged(0, _maximum);
-    emit progressChanged(_curProgress);
-    
-    _progress.remove(j);
-    if (_progress.empty()) {
-        emit allFinished();
-    }
-    
-    emit jobAmountChanged(jobAmount());
-}
