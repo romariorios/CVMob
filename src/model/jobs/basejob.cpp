@@ -56,6 +56,7 @@ void BaseJob::run()
     emit progressRangeChanged(0, _endFrame - _startFrame);
     
     requestFrame(0);
+    QImage previousFrameImage = _model->index(0, 0, framesParentIndex).data().value<QImage>();
     emitNewPoints(_startFrame, _startPoints);
     emit progressChanged(0);
 
@@ -64,16 +65,19 @@ void BaseJob::run()
     for (int i = _startFrame + 1; i <= _endFrame; ++i) {
         requestFrame(i);
         
+        QImage currentFrameImage = _model->index(i, 0, framesParentIndex).data().value<QImage>();
+        
         QVector<QPointF> newPoints = trackPoints(
             previousPoints,
-            _model->index(i - 1, 0, framesParentIndex).data().value<QImage>(),
-            _model->index(i, 0, framesParentIndex).data().value<QImage>()
+            previousFrameImage,
+            currentFrameImage
         );
 
         emitNewPoints(i, newPoints);
         emit progressChanged(i - _startFrame + 1);
 
         previousPoints = newPoints;
+        previousFrameImage = currentFrameImage;
     }
 }
 
