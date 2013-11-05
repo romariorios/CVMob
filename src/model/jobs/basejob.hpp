@@ -35,6 +35,7 @@ public:
     explicit BaseJob(const QVector<QPointF> &startPoints, int startFrame, int endFrame,
                      int videoRow, const QSize &windowSize, QAbstractItemModel *parent);
     void onFrameReady(int frame);
+    inline int startFrame() const { return _startFrame; }
     
 protected:
     void run();
@@ -50,6 +51,7 @@ private:
     QVector<QPointF> trackPoints(const QVector<QPointF> &startPoints,
                                  const QImage &startFrame,
                                  const QImage &endFrame);
+    void requestFrame(int frame);
     
     QVector<QPointF> _startPoints;
     int _startFrame;

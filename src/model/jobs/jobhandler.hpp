@@ -22,6 +22,7 @@
 #include <QObject>
 
 #include <QHash>
+#include <QSet>
 
 class BaseJob;
 
@@ -31,7 +32,7 @@ class JobHandler : public QObject
 public:
     explicit JobHandler(QObject* parent);
     
-    void addJob(BaseJob* j);
+    void startJob(BaseJob* j);
     inline int jobAmount() const { return _progress.size(); }
     
 signals:
@@ -42,9 +43,9 @@ signals:
     void frameReady(int frame);
     
 private:
-    void onJobRangeChanged(BaseJob *j, int maximum);
-    void onJobProgressChanged(BaseJob *j, int progress);
-    void onJobFinished(BaseJob *j);
+    void onJobRangeChanged(int, int maximum);
+    void onJobProgressChanged(int progress);
+    void onJobFinished();
     void onFrameRequested(int frame);
     
     struct Progress {
@@ -53,8 +54,11 @@ private:
         int value;
     };
     QHash<BaseJob *, Progress> _progress;
+    QHash<int, QSet<BaseJob *> > _frameWantedBy;
     int _maximum;
     int _curProgress;
+    int _currentFrameAvailable;
+    BaseJob *_currentLateJob;
 };
 
 

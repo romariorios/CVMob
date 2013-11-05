@@ -20,21 +20,26 @@
 
 #include <model/jobs/basejob.hpp>
 
-void JobHandler::addJob(BaseJob* j)
+void JobHandler::startJob(BaseJob* j)
 {
     _progress[j] = Progress();
-    connect(j, &BaseJob::progressRangeChanged, [this, j](int min, int max){
-        onJobRangeChanged(j, max);
-    });
-    connect(j, &BaseJob::progressChanged, [this, j](int progress){
-        onJobProgressChanged(j, progress);
-    });
-    connect(j, &QThread::finished, [this, j](){
-        onJobFinished(j);
-    });
-    connect(j, &BaseJob::frameRequested, this ,&JobHandler::onFrameRequested, Qt::QueuedConnection);
+    connect(j, &BaseJob::progressRangeChanged,
+            this, &JobHandler::onJobRangeChanged, Qt::QueuedConnection);
+    connect(j, &BaseJob::progressChanged,
+            this, &JobHandler::onJobProgressChanged, Qt::QueuedConnection);
+    connect(j, &QThread::finished,
+            this, &JobHandler::onJobFinished, Qt::QueuedConnection);
+    connect(j, &BaseJob::frameRequested,
+            this, &JobHandler::onFrameRequested, Qt::QueuedConnection);
+    
+    if (_progress.size() == 1 || j->startFrame() < _currentFrameAvailable) {
+        _currentFrameAvailable = j->startFrame();
+        _currentLateJob = j;
+    }
     
     emit jobAmountChanged(jobAmount());
+    
+    j->start();
 }
 
 JobHandler::JobHandler(QObject* parent) :
@@ -43,8 +48,10 @@ JobHandler::JobHandler(QObject* parent) :
     _curProgress(0)
 {}
 
-void JobHandler::onJobRangeChanged(BaseJob* j, int maximum)
+void JobHandler::onJobRangeChanged(int, int maximum)
 {
+    BaseJob *j = qobject_cast<BaseJob *>(sender());
+    
     int oldMaximum = _progress[j].maximum;
     _progress[j].maximum = maximum;
     
@@ -52,17 +59,32 @@ void JobHandler::onJobRangeChanged(BaseJob* j, int maximum)
     emit rangeChanged(0, _maximum);
 }
 
-void JobHandler::onJobProgressChanged(BaseJob* j, int progress)
+void JobHandler::onJobProgressChanged(int progress)
 {
+    BaseJob *j = qobject_cast<BaseJob *>(sender());
+    
     int oldProgress = _progress[j].value;
     _progress[j].value = progress;
+    
+    if (j == _currentLateJob) { 
+        _currentFrameAvailable = j->startFrame() + progress + 1;
+        QSet<BaseJob *> &wantThisFrame = _frameWantedBy[_currentFrameAvailable];
+        
+        for (BaseJob *job : wantThisFrame) {
+            job->onFrameReady(_currentFrameAvailable);
+        }
+        
+        wantThisFrame = QSet<BaseJob *>();
+    }
     
     _curProgress += progress - oldProgress;
     emit progressChanged(_curProgress);
 }
 
-void JobHandler::onJobFinished(BaseJob* j)
+void JobHandler::onJobFinished()
 {
+    BaseJob *j = qobject_cast<BaseJob *>(sender());
+    
     _maximum -= _progress[j].maximum;
     _curProgress -= _progress[j].maximum;
     
@@ -75,11 +97,17 @@ void JobHandler::onJobFinished(BaseJob* j)
     }
     
     emit jobAmountChanged(jobAmount());
+    
+    j->deleteLater();
 }
 
 void JobHandler::onFrameRequested(int frame)
 {
     BaseJob *j = qobject_cast<BaseJob *>(sender());
     
-    j->onFrameReady(frame);
+    if (frame > _currentFrameAvailable) {
+        _frameWantedBy[frame].insert(j);
+    } else {
+        j->onFrameReady(frame);
+    }
 }
