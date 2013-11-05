@@ -39,11 +39,13 @@ signals:
     void progressChanged(int progress);
     void allFinished();
     void jobAmountChanged(int amount);
+    void frameReady(int frame);
     
 private:
     void onJobRangeChanged(BaseJob *j, int maximum);
     void onJobProgressChanged(BaseJob *j, int progress);
     void onJobFinished(BaseJob *j);
+    void onFrameRequested(int frame);
     
     struct Progress {
         Progress(int m = 0, int v = 0) : maximum(m), value(v) {}

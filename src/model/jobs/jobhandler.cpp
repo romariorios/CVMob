@@ -32,6 +32,7 @@ void JobHandler::addJob(BaseJob* j)
     connect(j, &QThread::finished, [this, j](){
         onJobFinished(j);
     });
+    connect(j, &BaseJob::frameRequested, this ,&JobHandler::onFrameRequested, Qt::QueuedConnection);
     
     emit jobAmountChanged(jobAmount());
 }
@@ -74,4 +75,11 @@ void JobHandler::onJobFinished(BaseJob* j)
     }
     
     emit jobAmountChanged(jobAmount());
+}
+
+void JobHandler::onFrameRequested(int frame)
+{
+    BaseJob *j = qobject_cast<BaseJob *>(sender());
+    
+    j->onFrameReady(frame);
 }

@@ -38,6 +38,17 @@ BaseJob::BaseJob(const QVector< QPointF >& startPoints, int startFrame, int endF
     _model(parent)
 {}
 
+void BaseJob::onFrameReady(int frame)
+{
+    _mutex.lock();
+    
+    if (frame == _wantedFrame) {
+        _frameIsAvailable.wakeAll();
+    }
+    
+    _mutex.unlock();
+}
+
 void BaseJob::run()
 {
     QModelIndex framesParentIndex = _model->index(_videoRow, VideoModel::FramesColumn);
@@ -49,6 +60,15 @@ void BaseJob::run()
     QVector<QPointF> previousPoints = _startPoints;
 
     for (int i = _startFrame + 1; i <= _endFrame; ++i) {
+        _mutex.lock();
+        
+        _wantedFrame = i;
+        emit frameRequested(_wantedFrame);
+        
+        _frameIsAvailable.wait(&_mutex);
+        
+        _mutex.unlock();
+        
         QVector<QPointF> newPoints = trackPoints(
             previousPoints,
             _model->index(i - 1, 0, framesParentIndex).data().value<QImage>(),

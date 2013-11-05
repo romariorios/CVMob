@@ -25,6 +25,8 @@
 #include <QVector>
 #include <QPointF>
 #include <QSize>
+#include <QMutex>
+#include <QWaitCondition>
 
 class BaseJob : public QThread
 {
@@ -32,6 +34,7 @@ class BaseJob : public QThread
 public:
     explicit BaseJob(const QVector<QPointF> &startPoints, int startFrame, int endFrame,
                      int videoRow, const QSize &windowSize, QAbstractItemModel *parent);
+    void onFrameReady(int frame);
     
 protected:
     void run();
@@ -41,6 +44,7 @@ protected:
 signals:
     void progressRangeChanged(int minimum, int maximum);
     void progressChanged(int progress);
+    void frameRequested(int frame);
     
 private:
     QVector<QPointF> trackPoints(const QVector<QPointF> &startPoints,
@@ -51,8 +55,11 @@ private:
     int _startFrame;
     int _endFrame;
     int _videoRow;
+    int _wantedFrame;
     QSize _windowSize;
     QAbstractItemModel *_model;
+    QMutex _mutex;
+    QWaitCondition _frameIsAvailable;
 };
 
 #endif
