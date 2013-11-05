@@ -35,6 +35,10 @@ public:
     void startJob(BaseJob* j);
     inline int jobAmount() const { return _progress.size(); }
     
+public slots:
+    void onVideoFrameChanged(int frame);
+    void onVideoPlaybackChanged(bool playing);
+    
 signals:
     void rangeChanged(int minimum, int maximum);
     void progressChanged(int progress);
@@ -58,6 +62,7 @@ private:
     int _maximum;
     int _curProgress;
     int _currentFrameAvailable;
+    bool _videoPlaying;
     BaseJob *_currentLateJob;
 };
 

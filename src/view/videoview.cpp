@@ -44,6 +44,9 @@ VideoView::VideoView(QWidget *parent) :
     _jobHandler(new JobHandler(this)),
     _status(new VideoStatus(_jobHandler, this))
 {
+    connect(_playBar, &PlayBar::playingChanged, _jobHandler, &JobHandler::onVideoPlaybackChanged);
+    connect(_playBar, &PlayBar::frameChanged, _jobHandler, &JobHandler::onVideoFrameChanged);
+    
     new QVBoxLayout(viewport());
     viewport()->layout()->addWidget(_status);
     _status->hide();

@@ -42,6 +42,20 @@ void JobHandler::startJob(BaseJob* j)
     j->start();
 }
 
+void JobHandler::onVideoFrameChanged(int frame)
+{
+    _currentFrameAvailable = frame;
+    
+    for (BaseJob *job : _frameWantedBy[frame]) {
+        job->onFrameReady(frame);
+    }
+}
+
+void JobHandler::onVideoPlaybackChanged(bool playing)
+{
+    _videoPlaying = playing;
+}
+
 JobHandler::JobHandler(QObject* parent) :
     QObject(parent),
     _maximum(0),
@@ -66,7 +80,7 @@ void JobHandler::onJobProgressChanged(int progress)
     int oldProgress = _progress[j].value;
     _progress[j].value = progress;
     
-    if (j == _currentLateJob) { 
+    if (!_videoPlaying && j == _currentLateJob) { 
         _currentFrameAvailable = j->startFrame() + progress + 1;
         QSet<BaseJob *> &wantThisFrame = _frameWantedBy[_currentFrameAvailable];
         
@@ -94,6 +108,10 @@ void JobHandler::onJobFinished()
     _progress.remove(j);
     if (_progress.empty()) {
         emit allFinished();
+    }
+    
+    for (QSet<BaseJob *> &jobsWantingFrame : _frameWantedBy) {
+        jobsWantingFrame.remove(j);
     }
     
     emit jobAmountChanged(jobAmount());

@@ -53,6 +53,8 @@ VideoModel::~VideoModel()
 
 QModelIndex VideoModel::index(int row, int column, const QModelIndex &parent) const
 {
+    QMutexLocker l(&_streamLock);
+    
     auto ind = qMakePair(row, column);
     InternalData *parentData = static_cast<InternalData *>(parent.internalPointer());
     auto parentChildrenTable = parentData? &parentData->children : _indexesData;
