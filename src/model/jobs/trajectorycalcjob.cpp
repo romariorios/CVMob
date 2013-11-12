@@ -34,16 +34,6 @@ TrajectoryCalcJob::TrajectoryCalcJob(const QPointF &startPoint,
 {
     connect(this, &TrajectoryCalcJob::instantGenerated,
             &_target, &TargetTrajectory::storeInstant, Qt::QueuedConnection);
-    _target.model = parent;
-}
-
-void TrajectoryCalcJob::setTarget(const QModelIndex &targetIndex)
-{
-    if (isRunning() || isFinished()) {
-        return;
-    }
-
-    _target.parentIndex = targetIndex;
 }
 
 void TrajectoryCalcJob::emitNewPoints(int frame,
@@ -60,7 +50,7 @@ void TrajectoryCalcJob::emitNewPoints(int frame,
 }
 
 TargetTrajectory::TargetTrajectory(QObject *parent) :
-    QObject(parent)
+    BaseTarget(parent)
 {}
 
 void TargetTrajectory::storeInstant(int frame, const QPointF &p, const QPointF &s, const QPointF &a)

@@ -28,6 +28,17 @@
 #include <QMutex>
 #include <QWaitCondition>
 
+class BaseTarget : public QObject
+{
+protected:
+    explicit BaseTarget(QObject* parent = 0);
+    
+    QModelIndex parentIndex;
+    QAbstractItemModel *model;
+    
+    friend class BaseJob;
+};
+
 class BaseJob : public QThread
 {
     Q_OBJECT
@@ -35,12 +46,14 @@ public:
     explicit BaseJob(const QVector<QPointF> &startPoints, int startFrame, int endFrame,
                      int videoRow, const QSize &windowSize, QAbstractItemModel *parent);
     void onFrameReady(int frame);
+    void setTarget(const QModelIndex &index);
     inline int startFrame() const { return _startFrame; }
     
 protected:
     void run();
     virtual void emitNewPoints(int frame,
                                const QVector<QPointF> &points) = 0;
+    virtual BaseTarget &target() = 0;
 
 signals:
     void progressRangeChanged(int minimum, int maximum);

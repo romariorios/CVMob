@@ -31,16 +31,6 @@ AngleCalcJob::AngleCalcJob(const QVector< QPointF >& startAngle,
 {
     connect(this, &AngleCalcJob::instantGenerated,
             &_target, &TargetAngle::storeInstant);
-    _target.model = parent;
-}
-
-void AngleCalcJob::setTarget(const QModelIndex &targetIndex)
-{
-    if (isRunning() || isFinished()) {
-        return;
-    }
-
-    _target.parentIndex = targetIndex;
 }
 
 void AngleCalcJob::emitNewPoints(int frame, const QVector< QPointF >& points)
@@ -56,7 +46,7 @@ void AngleCalcJob::emitNewPoints(int frame, const QVector< QPointF >& points)
 }
 
 TargetAngle::TargetAngle(QObject* parent) :
-    QObject(parent)
+    BaseTarget(parent)
 {}
 
 void TargetAngle::storeInstant(int frame, float aSpeed, float aAccel, const QPointF& centralEdge,

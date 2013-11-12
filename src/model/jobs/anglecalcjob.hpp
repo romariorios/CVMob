@@ -21,14 +21,11 @@
 
 #include <model/jobs/basejob.hpp>
 
-class TargetAngle : public QObject
+class TargetAngle : public BaseTarget
 {
     Q_OBJECT
 private:
     explicit TargetAngle(QObject* parent = 0);
-    
-    QModelIndex parentIndex;
-    QAbstractItemModel *model;
     
 private:
     void storeInstant(int frame, float aSpeed, float aAccel, const QPointF &centralEdge,
@@ -43,10 +40,10 @@ class AngleCalcJob : public BaseJob
 public:
     explicit AngleCalcJob(const QVector< QPointF >& startAngle, int startFrame, int endFrame,
                           int videoRow, const QSize& windowSize, QAbstractItemModel* parent);
-    void setTarget(const QModelIndex &targetIndex);
     
 protected:
     void emitNewPoints(int frame, const QVector<QPointF> &points);
+    inline BaseTarget &target() { return _target; }
     
 signals:
     void instantGenerated(int frame, float aSpeed, float aAccel, const QPointF &centralEdge,

@@ -28,6 +28,11 @@
 
 #include <vector>
 
+BaseTarget::BaseTarget(QObject* parent) :
+    QObject(parent),
+    model(0)
+{}
+
 BaseJob::BaseJob(const QVector< QPointF >& startPoints, int startFrame, int endFrame, int videoRow, const QSize& windowSize, QAbstractItemModel* parent) :
     QThread(parent),
     _startPoints(startPoints),
@@ -47,6 +52,16 @@ void BaseJob::onFrameReady(int frame)
     }
     
     _mutex.unlock();
+}
+
+void BaseJob::setTarget(const QModelIndex& index)
+{
+    if (isRunning() || isFinished()) {
+        return;
+    }
+
+    target().model = _model;
+    target().parentIndex = index;
 }
 
 void BaseJob::run()
