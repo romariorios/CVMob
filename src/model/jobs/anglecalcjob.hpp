@@ -39,7 +39,7 @@ class AngleCalcJob : public BaseJob
     Q_OBJECT
 public:
     explicit AngleCalcJob(const QVector< QPointF >& startAngle, int startFrame, int endFrame,
-                          int videoRow, const QSize& windowSize, QAbstractItemModel* parent);
+                          int videoRow, QAbstractItemModel* parent);
     
 protected:
     void emitNewPoints(int frame, const QVector<QPointF> &points);

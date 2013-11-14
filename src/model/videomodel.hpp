@@ -33,6 +33,8 @@
 #include <model/jobs/anglecalcjob.hpp>
 #include <model/jobs/trajectorycalcjob.hpp>
 
+class JobHandler;
+
 float angleFromPoints(const QPointF& c, const QPointF& e1, const QPointF& e2);
 
 class VideoModel : public QAbstractItemModel
@@ -93,6 +95,7 @@ public:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
     
     bool openVideo(const QString &path);
+    JobHandler *jobHandlerForVideo(int videoRow);
     void createDistance(const QLineF& l, const QModelIndex &videoIndex);
     void createDistance(const QLineF &l, int videoRow);
     void createDistance(const QPointF& p1, const QPointF& p2, const QModelIndex& videoIndex);
@@ -133,14 +136,17 @@ private:
     struct Video
     {
         Video() :
-            streamFrame(-1)
+            streamFrame(-1),
+            jobHandler(0)
         {}
+        ~Video();
         
         QString fileName;
         int currentFrame, frameDuration, frameCount, streamFrame;
         QImage frameImage;
         QSizeF frameSize;
         cv::VideoCapture videoStream;
+        JobHandler *jobHandler;
 
         QList<QLineF> distances;
         QList<Trajectory> trajectories;

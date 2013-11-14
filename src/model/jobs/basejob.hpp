@@ -19,14 +19,12 @@
 #ifndef BASEJOB_HPP
 #define BASEJOB_HPP
 
-#include <QThread>
+#include <QObject>
 
 #include <QAbstractItemModel>
 #include <QVector>
 #include <QPointF>
 #include <QSize>
-#include <QMutex>
-#include <QWaitCondition>
 
 class BaseTarget : public QObject
 {
@@ -39,42 +37,32 @@ protected:
     friend class BaseJob;
 };
 
-class BaseJob : public QThread
+class JobHandler;
+
+class BaseJob : public QObject
 {
     Q_OBJECT
 public:
+    // TODO bring back individual search window size
     explicit BaseJob(const QVector<QPointF> &startPoints, int startFrame, int endFrame,
-                     int videoRow, const QSize &windowSize, QAbstractItemModel *parent);
-    void onFrameReady(int frame);
+                     int videoRow, QAbstractItemModel *parent);
     void setTarget(const QModelIndex &index);
-    inline int startFrame() const { return _startFrame; }
+    virtual BaseTarget &target() = 0;
     
 protected:
     void run();
     virtual void emitNewPoints(int frame,
                                const QVector<QPointF> &points) = 0;
-    virtual BaseTarget &target() = 0;
-
-signals:
-    void progressRangeChanged(int minimum, int maximum);
-    void progressChanged(int progress);
-    void frameRequested(int frame);
     
 private:
-    QVector<QPointF> trackPoints(const QVector<QPointF> &startPoints,
-                                 const QImage &startFrame,
-                                 const QImage &endFrame);
-    void requestFrame(int frame);
-    
-    QVector<QPointF> _startPoints;
+    QVector<QPointF> _currentPoints;
     int _startFrame;
     int _endFrame;
     int _videoRow;
-    int _wantedFrame;
-    QSize _windowSize;
+    int _currentFrame;
     QAbstractItemModel *_model;
-    QMutex _mutex;
-    QWaitCondition _frameIsAvailable;
+    
+    friend class JobHandler;
 };
 
 #endif

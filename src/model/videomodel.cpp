@@ -23,6 +23,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/video.hpp>
 
+#include <model/jobs/jobhandler.hpp>
+
 // From the cosines law:
 // c^2 = a^2 + b^2 - 2ab cos(t)
 // cos(t) = (a^2 + b^2 - c^2) / 2ab
@@ -53,8 +55,6 @@ VideoModel::~VideoModel()
 
 QModelIndex VideoModel::index(int row, int column, const QModelIndex &parent) const
 {
-    QMutexLocker l(&_streamLock);
-    
     auto ind = qMakePair(row, column);
     InternalData *parentData = static_cast<InternalData *>(parent.internalPointer());
     auto parentChildrenTable = parentData? &parentData->children : _indexesData;
@@ -631,8 +631,15 @@ bool VideoModel::openVideo(const QString& path)
     );
     
     newVideo.frameCount = videoStream.get(CV_CAP_PROP_FRAME_COUNT);
+    newVideo.jobHandler = new JobHandler(fileNameIndex.row(), this);
+    newVideo.jobHandler->setWindowSize(QSize(21, 21));
     
     return true;
+}
+
+JobHandler* VideoModel::jobHandlerForVideo(int videoRow)
+{
+    return _cvmobVideoData->at(videoRow).jobHandler;
 }
 
 void VideoModel::createDistance(const QLineF &l, const QModelIndex &distancesIndex)
@@ -678,7 +685,7 @@ AngleCalcJob* VideoModel::calculateAngle(const QVector< QPointF >& anglePoints, 
 
     QModelIndex currentAngleIndex = index(angleRow, 0, anglesIndex);
 
-    auto job = new AngleCalcJob(anglePoints, startFrame, endFrame, videoRow, windowSize, this);
+    auto job = new AngleCalcJob(anglePoints, startFrame, endFrame, videoRow, this);
     job->setTarget(currentAngleIndex);
 
     return job;
@@ -712,9 +719,13 @@ TrajectoryCalcJob *VideoModel::calculateTrajectory(const QPointF &p, int frame,
                                         startFrame,
                                         endFrame,
                                         videoRow,
-                                        windowSize,
                                         this);
     job->setTarget(currentTrajectoryIndex);
 
     return job;
+}
+
+VideoModel::Video::~Video()
+{
+    delete jobHandler;
 }

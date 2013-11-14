@@ -39,8 +39,9 @@ class VideoStatus : public QWidget
     Q_OBJECT
     
 public:
-    explicit VideoStatus(JobHandler *handler, QWidget *parent = 0);
+    explicit VideoStatus(QWidget *parent = 0);
     ~VideoStatus();
+    void setJobHandler(JobHandler *jh);
 
     friend class Status::Base;
     

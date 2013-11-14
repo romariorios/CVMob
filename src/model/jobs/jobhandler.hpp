@@ -21,50 +21,37 @@
 
 #include <QObject>
 
-#include <QHash>
-#include <QSet>
+#include <QMutex>
+#include <QSize>
+#include <QThread>
+#include <QVector>
 
 class BaseJob;
+class VideoModel;
 
-class JobHandler : public QObject
+class JobHandler : public QThread
 {
     Q_OBJECT
 public:
-    explicit JobHandler(QObject* parent);
+    explicit JobHandler(int videoRow, VideoModel* parent);
+    void startJob(BaseJob *j);
+    void setWindowSize(const QSize &windowSize);
     
-    void startJob(BaseJob* j);
-    inline int jobAmount() const { return _progress.size(); }
-    
-public slots:
-    void onVideoFrameChanged(int frame);
-    void onVideoPlaybackChanged(bool playing);
-    
+protected:
+    void run();
+
 signals:
     void rangeChanged(int minimum, int maximum);
     void progressChanged(int progress);
     void allFinished();
     void jobAmountChanged(int amount);
-    void frameReady(int frame);
-    
-private:
-    void onJobRangeChanged(int, int maximum);
-    void onJobProgressChanged(int progress);
-    void onJobFinished();
-    void onFrameRequested(int frame);
-    
-    struct Progress {
-        Progress(int m = 0, int v = 0) : maximum(m), value(v) {}
-        int maximum;
-        int value;
-    };
-    QHash<BaseJob *, Progress> _progress;
-    QHash<int, QSet<BaseJob *> > _frameWantedBy;
-    int _maximum;
-    int _curProgress;
-    int _currentFrameAvailable;
-    bool _videoPlaying;
-    BaseJob *_currentLateJob;
-};
 
+private:
+    QVector<BaseJob *> _newJobs;
+    QSize _windowSize;
+    QMutex _lock;
+    VideoModel *_model;
+    const int _videoRow;
+};
 
 #endif // JOBHANDLER_H

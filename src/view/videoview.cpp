@@ -41,12 +41,8 @@ VideoView::VideoView(QWidget *parent) :
     _view(new VideoGraphicsView),
     _noVideoVideo(Video(new QGraphicsScene(_view), 0)),
     _playBar(new PlayBar(this)),
-    _jobHandler(new JobHandler(this)),
-    _status(new VideoStatus(_jobHandler, this))
+    _status(new VideoStatus(this))
 {
-    connect(_playBar, &PlayBar::playingChanged, _jobHandler, &JobHandler::onVideoPlaybackChanged);
-    connect(_playBar, &PlayBar::frameChanged, _jobHandler, &JobHandler::onVideoFrameChanged);
-    
     new QVBoxLayout(viewport());
     viewport()->layout()->addWidget(_status);
     _status->hide();
@@ -222,6 +218,7 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
                           model()->data(
                               model()->index(_currentVideoRow,
                                              VideoModel::FrameDurationColumn)).toInt());
+    _status->setJobHandler(static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow));
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -434,7 +431,7 @@ void VideoView::angleEdge2(const QPointF& p)
         { guideAngleItem->center(), guideAngleItem->edge1(), guideAngleItem->edge2() },
         frame, _currentVideoRow
     );
-    _jobHandler->startJob(job);
+    static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow)->startJob(job);
     
     delete guideAngleItem;
     guideAngleItem = 0;
@@ -448,5 +445,5 @@ void VideoView::calculateTrajectory(const QPointF &p)
 
     TrajectoryCalcJob *job = static_cast<VideoModel *>(model())->calculateTrajectory
             (p, frame, _currentVideoRow);
-    _jobHandler->startJob(job);
+    static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow)->startJob(job);
 }

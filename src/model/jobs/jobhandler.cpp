@@ -18,114 +18,197 @@
 
 #include "jobhandler.hpp"
 
+#include <model/videomodel.hpp>
 #include <model/jobs/basejob.hpp>
+
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/video/video.hpp>
+
+#include <QImage>
+#include <QMutexLocker>
+#include <QSize>
+
+#include <vector>
+
+#include <QDebug>
+
+JobHandler::JobHandler(int videoRow, VideoModel* parent) :
+    QThread(parent),
+    _model(parent),
+    _videoRow(videoRow)
+{}
 
 void JobHandler::startJob(BaseJob* j)
 {
-    _progress[j] = Progress();
-    connect(j, &BaseJob::progressRangeChanged,
-            this, &JobHandler::onJobRangeChanged, Qt::QueuedConnection);
-    connect(j, &BaseJob::progressChanged,
-            this, &JobHandler::onJobProgressChanged, Qt::QueuedConnection);
-    connect(j, &QThread::finished,
-            this, &JobHandler::onJobFinished, Qt::QueuedConnection);
-    connect(j, &BaseJob::frameRequested,
-            this, &JobHandler::onFrameRequested, Qt::QueuedConnection);
+    QMutexLocker l(&_lock);
     
-    if (_progress.size() == 1 || j->startFrame() < _currentFrameAvailable) {
-        _currentFrameAvailable = j->startFrame();
-        _currentLateJob = j;
-    }
+    _newJobs.append(j);
+    j->emitNewPoints(j->_startFrame, j->_currentPoints);
     
-    emit jobAmountChanged(jobAmount());
+    l.unlock();
     
-    j->start();
-}
-
-void JobHandler::onVideoFrameChanged(int frame)
-{
-    _currentFrameAvailable = frame;
-    
-    for (BaseJob *job : _frameWantedBy[frame]) {
-        job->onFrameReady(frame);
+    if (!isRunning()) {
+        start();
     }
 }
 
-void JobHandler::onVideoPlaybackChanged(bool playing)
+static QVector< QPointF > trackPoints(const QVector< QPointF >& startPoints,
+                                      const QImage& startFrame,
+                                      const QImage& endFrame,
+                                      const QSize &windowSize)
 {
-    _videoPlaying = playing;
+    if (startPoints.isEmpty()) {
+        return QVector<QPointF>();
+    }
+
+    QImage i8startFrame(startFrame.convertToFormat(QImage::Format_Indexed8));
+    QImage i8endFrame(endFrame.convertToFormat(QImage::Format_Indexed8));
+    cv::Mat cvStartFrame(i8startFrame.height(), i8startFrame.width(), CV_8UC1, i8startFrame.scanLine(0));
+    cv::Mat cvEndFrame(i8endFrame.height(), i8endFrame.width(), CV_8UC1, i8endFrame.scanLine(0));
+    
+    std::vector<cv::Point2f> cvStartPoints;
+    
+    for (const QPointF &startP : startPoints) {
+        cv::Point2f cvP;
+        cvP.x = startP.x();
+        cvP.y = startP.y();
+        cvStartPoints.push_back(cvP);
+    }
+    
+    std::vector<cv::Point2f> cvEndPoints;
+    std::vector<uchar> status;
+    std::vector<float> err;
+    cv::Size cvWindowSize;
+
+    cvWindowSize.height = windowSize.height();
+    cvWindowSize.width = windowSize.width();
+
+    cv::calcOpticalFlowPyrLK(cvStartFrame, cvEndFrame, cvStartPoints, cvEndPoints, status, err,
+                            cvWindowSize,
+                            // Magic numbers:
+                            3, cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS,
+                                                20, 0.01),
+                            0.5, 0);
+    
+    QVector<QPointF> endPoints;
+    
+    for (const cv::Point2f &cvEndP : cvEndPoints) {
+        endPoints << QPointF(cvEndP.x, cvEndP.y);
+    }
+    
+    return endPoints;
 }
 
-JobHandler::JobHandler(QObject* parent) :
-    QObject(parent),
-    _maximum(0),
-    _curProgress(0)
-{}
-
-void JobHandler::onJobRangeChanged(int, int maximum)
+void JobHandler::run()
 {
-    BaseJob *j = qobject_cast<BaseJob *>(sender());
+    QVector<BaseJob *> jobs;
+    int previousFrame = -1;
+    int currentFrame = -1;
+    int oldMaximumProgress = 0;
+    int maximumProgress = 0;
+    int curProgress = 0;
+    QImage previousFrameImage;
     
-    int oldMaximum = _progress[j].maximum;
-    _progress[j].maximum = maximum;
+    QMutexLocker l(&_lock);
+    QSize winSize = _windowSize;
+    l.unlock();
     
-    _maximum += maximum - oldMaximum;
-    emit rangeChanged(0, _maximum);
-}
-
-void JobHandler::onJobProgressChanged(int progress)
-{
-    BaseJob *j = qobject_cast<BaseJob *>(sender());
-    
-    int oldProgress = _progress[j].value;
-    _progress[j].value = progress;
-    
-    if (!_videoPlaying && j == _currentLateJob) { 
-        _currentFrameAvailable = j->startFrame() + progress + 1;
-        QSet<BaseJob *> &wantThisFrame = _frameWantedBy[_currentFrameAvailable];
+    do {
+        l.relock();
         
-        for (BaseJob *job : wantThisFrame) {
-            job->onFrameReady(_currentFrameAvailable);
+        bool jobsWereAdded = false;
+        while (!_newJobs.empty()) {
+            BaseJob *j = _newJobs.takeFirst();
+            
+            int jobFrame = j->_startFrame;
+            currentFrame = currentFrame < 0 || currentFrame > jobFrame?
+                jobFrame : currentFrame;
+            maximumProgress += j->_endFrame - j->_startFrame;
+            jobs.append(j);
+            
+            if (!jobsWereAdded) {
+                jobsWereAdded = true;
+            }
         }
         
-        wantThisFrame = QSet<BaseJob *>();
-    }
+        if (jobsWereAdded) {
+            emit jobAmountChanged(jobs.size());
+        }
+        
+        if (oldMaximumProgress != maximumProgress) {
+            oldMaximumProgress = maximumProgress;
+            emit rangeChanged(0, maximumProgress);
+        }
+        
+        emit progressChanged(curProgress);
+        
+        QModelIndex videoIndex = _model->index(_videoRow, VideoModel::FramesColumn);
+        QModelIndex currentFrameIndex = _model->index(currentFrame, 0, videoIndex);
+        QImage currentFrameImage = _model->data(currentFrameIndex).value<QImage>();
+        
+        if (currentFrame != previousFrame + 1) {
+            QModelIndex previousFrameIndex = _model->index(previousFrame, 0, videoIndex);
+            previousFrameImage = _model->data(previousFrameIndex).value<QImage>();
+        }
+        
+        l.unlock();
+        
+        if (previousFrameImage.isNull()) {
+            previousFrame = currentFrame;
+            previousFrameImage = currentFrameImage;
+            continue;
+        }
+        
+        QVector<QPointF> previousPoints;
+        
+        for (BaseJob *j : jobs) {
+            if (j->_currentFrame != currentFrame) {
+                continue;
+            }
+            
+            previousPoints += j->_currentPoints;
+        }
+        
+        QVector<QPointF> currentPoints = trackPoints(previousPoints, previousFrameImage,
+                                                     currentFrameImage, winSize);
+        
+        bool jobsWereRemoved = false;
+        for (int i = 0; i < jobs.size(); ++i, ++curProgress) {
+            BaseJob *j = jobs.at(i);
+            
+            if (j->_currentFrame != currentFrame) {
+                continue;
+            }
+            
+            for (QPointF &p : j->_currentPoints) {
+                p = currentPoints.takeFirst();
+            }
+            
+            j->emitNewPoints(currentFrame, j->_currentPoints);
+            
+            if (++j->_currentFrame > j->_endFrame) {
+                jobs.remove(i);
+                j->deleteLater();
+                
+                if (!jobsWereRemoved) {
+                    jobsWereRemoved = true;
+                }
+            }
+        }
+        
+        if (jobsWereRemoved) {
+            emit jobAmountChanged(jobs.size());
+        }
+        
+        previousFrame = currentFrame;
+        previousFrameImage = currentFrameImage;
+        ++currentFrame;
+    } while (!jobs.empty());
     
-    _curProgress += progress - oldProgress;
-    emit progressChanged(_curProgress);
+    emit allFinished();
 }
 
-void JobHandler::onJobFinished()
+void JobHandler::setWindowSize(const QSize& windowSize)
 {
-    BaseJob *j = qobject_cast<BaseJob *>(sender());
-    
-    _maximum -= _progress[j].maximum;
-    _curProgress -= _progress[j].maximum;
-    
-    emit rangeChanged(0, _maximum);
-    emit progressChanged(_curProgress);
-    
-    _progress.remove(j);
-    if (_progress.empty()) {
-        emit allFinished();
-    }
-    
-    for (QSet<BaseJob *> &jobsWantingFrame : _frameWantedBy) {
-        jobsWantingFrame.remove(j);
-    }
-    
-    emit jobAmountChanged(jobAmount());
-    
-    j->deleteLater();
-}
-
-void JobHandler::onFrameRequested(int frame)
-{
-    BaseJob *j = qobject_cast<BaseJob *>(sender());
-    
-    if (frame > _currentFrameAvailable) {
-        _frameWantedBy[frame].insert(j);
-    } else {
-        j->onFrameReady(frame);
-    }
+    _windowSize = windowSize;
 }

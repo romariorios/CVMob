@@ -24,8 +24,8 @@ using namespace std;
 
 AngleCalcJob::AngleCalcJob(const QVector< QPointF >& startAngle,
                            int startFrame, int endFrame, int videoRow,
-                           const QSize& windowSize, QAbstractItemModel* parent) :
-    BaseJob(startAngle, startFrame, endFrame, videoRow, windowSize, parent),
+                           QAbstractItemModel* parent) :
+    BaseJob(startAngle, startFrame, endFrame, videoRow, parent),
     _previousAngle(angleFromPoints(startAngle[0], startAngle[1], startAngle[2])),
     _previousASpeed(0)
 {

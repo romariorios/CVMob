@@ -24,14 +24,32 @@
 
 #include <QTimer>
 
-VideoStatus::VideoStatus(JobHandler* handler, QWidget* parent) :
+VideoStatus::VideoStatus(QWidget* parent) :
     QWidget(parent),
     _ui(new Ui::VideoStatus),
-    _jobHandler(handler)
+    _jobHandler(0)
 {
     _ui->setupUi(this);
     _ui->messageWidget->hide();
     _ui->progressWidget->hide();
+}
+
+VideoStatus::~VideoStatus()
+{
+    delete _ui;
+}
+
+void VideoStatus::setJobHandler(JobHandler* jh)
+{
+    if (_jobHandler) {
+        _jobHandler->disconnect();
+    }
+    
+    _jobHandler = jh;
+    
+    if (!_jobHandler) {
+        return;
+    }
     
     connect(_jobHandler, &JobHandler::rangeChanged,
             _ui->progressBar, &QProgressBar::setRange);
@@ -49,11 +67,6 @@ VideoStatus::VideoStatus(JobHandler* handler, QWidget* parent) :
             });
     connect(_jobHandler, &JobHandler::jobAmountChanged, // if amount == 0, then setVisible(0) gets
             _ui->progressWidget, &QWidget::setVisible); // called, which equals setVisible(false)
-}
-
-VideoStatus::~VideoStatus()
-{
-    delete _ui;
 }
 
 void VideoStatus::callItDone()
