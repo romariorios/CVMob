@@ -204,8 +204,6 @@ void JobHandler::run()
         previousFrameImage = currentFrameImage;
         ++currentFrame;
     } while (!jobs.empty());
-    
-    emit allFinished();
 }
 
 void JobHandler::setWindowSize(const QSize& windowSize)

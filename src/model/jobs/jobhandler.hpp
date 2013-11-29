@@ -43,7 +43,6 @@ protected:
 signals:
     void rangeChanged(int minimum, int maximum);
     void progressChanged(int progress);
-    void allFinished();
     void jobAmountChanged(int amount);
 
 private:
