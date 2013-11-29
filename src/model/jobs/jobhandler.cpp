@@ -102,23 +102,23 @@ static QVector< QPointF > trackPoints(const QVector< QPointF >& startPoints,
 void JobHandler::run()
 {
     QVector<BaseJob *> jobs;
-    int previousFrame = -1;
+    int previousFrame = -2;
     int currentFrame = -1;
-    int oldMaximumProgress = 0;
     int maximumProgress = 0;
     int curProgress = 0;
     QImage previousFrameImage;
     
-    QMutexLocker l(&_lock);
+    _lock.lock();
     QSize winSize = _windowSize;
-    l.unlock();
+    QModelIndex videoIndex = _model->index(_videoRow, VideoModel::FramesColumn);
+    _lock.unlock();
     
     do {
-        l.relock();
-        
         bool jobsWereAdded = false;
         while (!_newJobs.empty()) {
+            _lock.lock();
             BaseJob *j = _newJobs.takeFirst();
+            _lock.unlock();
             
             int jobFrame = j->_startFrame;
             currentFrame = currentFrame < 0 || currentFrame > jobFrame?
@@ -133,36 +133,28 @@ void JobHandler::run()
         
         if (jobsWereAdded) {
             emit jobAmountChanged(jobs.size());
-        }
-        
-        if (oldMaximumProgress != maximumProgress) {
-            oldMaximumProgress = maximumProgress;
             emit rangeChanged(0, maximumProgress);
         }
         
         emit progressChanged(curProgress);
         
-        QModelIndex videoIndex = _model->index(_videoRow, VideoModel::FramesColumn);
+        _lock.lock();
         QModelIndex currentFrameIndex = _model->index(currentFrame, 0, videoIndex);
+        _lock.unlock();
+        
         QImage currentFrameImage = _model->data(currentFrameIndex).value<QImage>();
         
         if (currentFrame != previousFrame + 1) {
-            QModelIndex previousFrameIndex = _model->index(previousFrame, 0, videoIndex);
-            previousFrameImage = _model->data(previousFrameIndex).value<QImage>();
-        }
-        
-        l.unlock();
-        
-        if (previousFrameImage.isNull()) {
             previousFrame = currentFrame;
             previousFrameImage = currentFrameImage;
+            ++currentFrame;
             continue;
         }
         
         QVector<QPointF> previousPoints;
         
         for (BaseJob *j : jobs) {
-            if (j->_currentFrame != currentFrame) {
+            if (j->_currentFrame != previousFrame) {
                 continue;
             }
             
@@ -173,10 +165,23 @@ void JobHandler::run()
                                                      currentFrameImage, winSize);
         
         bool jobsWereRemoved = false;
-        for (int i = 0; i < jobs.size(); ++i, ++curProgress) {
+        for (int i = 0; i < jobs.size(); ++i) {
             BaseJob *j = jobs.at(i);
             
-            if (j->_currentFrame != currentFrame) {
+            // This workaround is currently necessary because some jobs never get deleted for
+            // some reason (their currentFrame becomes less than previousFrame, thus they will
+            // never catch up with the rest of the jobs again), making the thread run forever.
+            // TODO Find out why that happens, fix it and remove this hack
+            if (j->_currentFrame < previousFrame) {
+                jobs.remove(i);
+                j->deleteLater();
+                
+                if (!jobsWereRemoved) {
+                    jobsWereRemoved = true;
+                }
+            }
+            
+            if (j->_currentFrame != previousFrame) {
                 continue;
             }
             
@@ -186,7 +191,8 @@ void JobHandler::run()
             
             j->emitNewPoints(currentFrame, j->_currentPoints);
             
-            if (++j->_currentFrame > j->_endFrame) {
+            ++j->_currentFrame;
+            if (j->_currentFrame >= j->_endFrame) {
                 jobs.remove(i);
                 j->deleteLater();
                 
@@ -194,6 +200,8 @@ void JobHandler::run()
                     jobsWereRemoved = true;
                 }
             }
+            
+            ++curProgress;
         }
         
         if (jobsWereRemoved) {
