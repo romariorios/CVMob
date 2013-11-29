@@ -30,7 +30,7 @@ AngleCalcJob::AngleCalcJob(const QVector< QPointF >& startAngle,
     _previousASpeed(0)
 {
     connect(this, &AngleCalcJob::instantGenerated,
-            &_target, &TargetAngle::storeInstant);
+            &_target, &TargetAngle::storeInstant, Qt::QueuedConnection);
 }
 
 void AngleCalcJob::emitNewPoints(int frame, const QVector< QPointF >& points)
