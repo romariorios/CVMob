@@ -16,25 +16,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "basejob.hpp"
+#ifndef JOBHANDLER_H
+#define JOBHANDLER_H
 
-BaseTarget::BaseTarget(QObject* parent) :
-    QObject(parent),
-    model(0)
-{}
+#include <QObject>
 
-BaseJob::BaseJob(const QVector< QPointF >& startPoints, int startFrame, int endFrame, int videoRow, QAbstractItemModel* parent) :
-    QObject(parent),
-    _currentPoints(startPoints),
-    _startFrame(startFrame),
-    _endFrame(endFrame),
-    _videoRow(videoRow),
-    _currentFrame(startFrame),
-    _model(parent)
-{}
+#include <QMutex>
+#include <QSize>
+#include <QThread>
+#include <QVector>
 
-void BaseJob::setTarget(const QModelIndex& index)
+class BaseJob;
+class VideoModel;
+
+class JobHandler : public QThread
 {
-    target().model = _model;
-    target().parentIndex = index;
-}
+    Q_OBJECT
+public:
+    explicit JobHandler(int videoRow, VideoModel* parent);
+    ~JobHandler();
+    void startJob(BaseJob *j);
+    void setWindowSize(const QSize &windowSize);
+    
+protected:
+    void run();
+
+signals:
+    void rangeChanged(int minimum, int maximum);
+    void progressChanged(int progress);
+    void jobAmountChanged(int amount);
+
+private:
+    QVector<BaseJob *> _newJobs;
+    QSize _windowSize;
+    QMutex _lock;
+    VideoModel *_model;
+    const int _videoRow;
+};
+
+#endif // JOBHANDLER_H

@@ -24,23 +24,13 @@ using namespace std;
 
 AngleCalcJob::AngleCalcJob(const QVector< QPointF >& startAngle,
                            int startFrame, int endFrame, int videoRow,
-                           const QSize& windowSize, QAbstractItemModel* parent) :
-    BaseJob(startAngle, startFrame, endFrame, videoRow, windowSize, parent),
+                           QAbstractItemModel* parent) :
+    BaseJob(startAngle, startFrame, endFrame, videoRow, parent),
     _previousAngle(angleFromPoints(startAngle[0], startAngle[1], startAngle[2])),
     _previousASpeed(0)
 {
     connect(this, &AngleCalcJob::instantGenerated,
-            &_target, &TargetAngle::storeInstant);
-    _target.model = parent;
-}
-
-void AngleCalcJob::setTarget(const QModelIndex &targetIndex)
-{
-    if (isRunning() || isFinished()) {
-        return;
-    }
-
-    _target.parentIndex = targetIndex;
+            &_target, &TargetAngle::storeInstant, Qt::QueuedConnection);
 }
 
 void AngleCalcJob::emitNewPoints(int frame, const QVector< QPointF >& points)
@@ -56,7 +46,7 @@ void AngleCalcJob::emitNewPoints(int frame, const QVector< QPointF >& points)
 }
 
 TargetAngle::TargetAngle(QObject* parent) :
-    QObject(parent)
+    BaseTarget(parent)
 {}
 
 void TargetAngle::storeInstant(int frame, float aSpeed, float aAccel, const QPointF& centralEdge,

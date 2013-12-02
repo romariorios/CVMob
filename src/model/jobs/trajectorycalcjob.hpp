@@ -25,13 +25,10 @@
 #include <QPointF>
 #include <QSize>
 
-class TargetTrajectory : public QObject {
+class TargetTrajectory : public BaseTarget {
     Q_OBJECT
 private:
     TargetTrajectory(QObject *parent = 0);
-
-    QModelIndex parentIndex;
-    QAbstractItemModel *model;
 
 private slots:
     void storeInstant(int frame, const QPointF &p, const QPointF &s, const QPointF &a);
@@ -43,16 +40,11 @@ class TrajectoryCalcJob : public BaseJob
 {
     Q_OBJECT
 public:
-    explicit TrajectoryCalcJob(const QPointF &startPoint,
-                                     int startFrame,
-                                     int endFrame,
-                                     int videoRow,
-                                     const QSize &windowSize,
-                                     QAbstractItemModel *parent);
-    void setTarget(const QModelIndex &targetIndex);
+    explicit TrajectoryCalcJob(const QPointF& startPoint, int startFrame, int endFrame, int videoRow, QAbstractItemModel* parent);
     
 protected:
     void emitNewPoints(int frame, const QVector< QPointF >& points);
+    inline BaseTarget &target() { return _target; }
 
 signals:
     void instantGenerated(int frame, const QPointF &p, const QPointF &s, const QPointF &a);

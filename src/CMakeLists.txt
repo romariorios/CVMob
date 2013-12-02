@@ -32,6 +32,7 @@ set(CVMob_sources
     model/proxies/videolistproxymodel.cpp
     model/jobs/anglecalcjob.cpp
     model/jobs/basejob.cpp
+    model/jobs/jobhandler.cpp
     model/jobs/trajectorycalcjob.cpp
     view/playbar.cpp
     view/playslider.cpp

@@ -19,40 +19,50 @@
 #ifndef BASEJOB_HPP
 #define BASEJOB_HPP
 
-#include <QThread>
+#include <QObject>
 
 #include <QAbstractItemModel>
 #include <QVector>
 #include <QPointF>
 #include <QSize>
 
-class BaseJob : public QThread
+class BaseTarget : public QObject
+{
+protected:
+    explicit BaseTarget(QObject* parent = 0);
+    
+    QModelIndex parentIndex;
+    QAbstractItemModel *model;
+    
+    friend class BaseJob;
+};
+
+class JobHandler;
+
+class BaseJob : public QObject
 {
     Q_OBJECT
 public:
+    // TODO bring back individual search window size
     explicit BaseJob(const QVector<QPointF> &startPoints, int startFrame, int endFrame,
-                     int videoRow, const QSize &windowSize, QAbstractItemModel *parent);
+                     int videoRow, QAbstractItemModel *parent);
+    void setTarget(const QModelIndex &index);
+    virtual BaseTarget &target() = 0;
     
 protected:
     void run();
     virtual void emitNewPoints(int frame,
                                const QVector<QPointF> &points) = 0;
-
-signals:
-    void progressRangeChanged(int minimum, int maximum);
-    void progressChanged(int progress);
     
 private:
-    QVector<QPointF> trackPoints(const QVector<QPointF> &startPoints,
-                                 const QImage &startFrame,
-                                 const QImage &endFrame);
-    
-    QVector<QPointF> _startPoints;
+    QVector<QPointF> _currentPoints;
     int _startFrame;
     int _endFrame;
     int _videoRow;
-    QSize _windowSize;
+    int _currentFrame;
     QAbstractItemModel *_model;
+    
+    friend class JobHandler;
 };
 
 #endif

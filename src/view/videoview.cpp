@@ -18,6 +18,7 @@
 
 #include "videoview.hpp"
 
+#include <model/jobs/jobhandler.hpp>
 #include <model/videomodel.hpp>
 #include <QGraphicsItem>
 #include <QGraphicsLineItem>
@@ -217,6 +218,7 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
                           model()->data(
                               model()->index(_currentVideoRow,
                                              VideoModel::FrameDurationColumn)).toInt());
+    _status->setJobHandler(static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow));
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -429,12 +431,10 @@ void VideoView::angleEdge2(const QPointF& p)
         { guideAngleItem->center(), guideAngleItem->edge1(), guideAngleItem->edge2() },
         frame, _currentVideoRow
     );
-    _status->addJob(job);
+    static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow)->startJob(job);
     
     delete guideAngleItem;
     guideAngleItem = 0;
-    
-    job->start();
 }
 
 void VideoView::calculateTrajectory(const QPointF &p)
@@ -445,9 +445,5 @@ void VideoView::calculateTrajectory(const QPointF &p)
 
     TrajectoryCalcJob *job = static_cast<VideoModel *>(model())->calculateTrajectory
             (p, frame, _currentVideoRow);
-    _status->addJob(job);
-
-    connect(job, SIGNAL(finished()), job, SLOT(deleteLater()));
-
-    job->start();
+    static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow)->startJob(job);
 }
