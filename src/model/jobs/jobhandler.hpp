@@ -34,6 +34,7 @@ class JobHandler : public QThread
     Q_OBJECT
 public:
     explicit JobHandler(int videoRow, VideoModel* parent);
+    ~JobHandler();
     void startJob(BaseJob *j);
     void setWindowSize(const QSize &windowSize);
     

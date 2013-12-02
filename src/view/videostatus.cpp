@@ -59,6 +59,9 @@ void VideoStatus::setJobHandler(JobHandler* jh)
             _ui->progressWidget, &QWidget::hide);
     connect(_jobHandler, &QThread::finished,
             this, &VideoStatus::callItDone);
+    connect(_jobHandler, &QObject::destroyed, [&](){
+        _jobHandler = 0;
+    });
     
     connect(_jobHandler, &JobHandler::jobAmountChanged,
             [this](int amount){

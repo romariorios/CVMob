@@ -38,6 +38,11 @@ JobHandler::JobHandler(int videoRow, VideoModel* parent) :
     _videoRow(videoRow)
 {}
 
+JobHandler::~JobHandler()
+{
+    quit();
+}
+
 void JobHandler::startJob(BaseJob* j)
 {
     QMutexLocker l(&_lock);
