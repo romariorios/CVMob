@@ -19,12 +19,14 @@
 #include "plotitemview.hpp"
 
 #include <QBoxLayout>
+#include <QTimer>
 #include <view/qcustomplot.h>
 
 PlotItemView::PlotItemView(QWidget* parent) :
     QAbstractItemView(parent),
     _plot(new QCustomPlot(this)),
-    _title(new QCPPlotTitle(_plot, tr("(untitled)")))
+    _title(new QCPPlotTitle(_plot, tr("(untitled)"))),
+    _wantsUpdate(false)
 {
     _plot->setInteraction(QCP::iRangeDrag, true);
     _plot->setInteraction(QCP::iRangeZoom, true);
@@ -37,6 +39,8 @@ PlotItemView::PlotItemView(QWidget* parent) :
     
     new QBoxLayout(QBoxLayout::TopToBottom, viewport());
     viewport()->layout()->addWidget(_plot);
+    
+    _mainTimerId = startTimer(200);
 }
 
 QModelIndex PlotItemView::indexAt(const QPoint& point) const
@@ -128,6 +132,15 @@ void PlotItemView::reset()
     _plot->replot();
 }
 
+void PlotItemView::timerEvent(QTimerEvent* e)
+{
+    if (e->timerId() == _mainTimerId && _wantsUpdate) {
+        _plot->rescaleAxes();
+        _plot->replot();
+        _wantsUpdate = false;
+    }
+}
+
 void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , const QVector< int >& roles)
 {
     if (!topLeft.parent().isValid() || topLeft.column() != 1) {
@@ -143,8 +156,7 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
     graph->addData(model()->index(topLeft.row(), 0, graphIndex).data().toDouble(),
                    model()->index(topLeft.row(), 1, graphIndex).data().toDouble());
     
-    _plot->rescaleAxes();
-    _plot->replot();
+    _wantsUpdate = true;
 }
 
 void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)

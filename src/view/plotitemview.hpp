@@ -41,6 +41,7 @@ protected:
     int verticalOffset() const;
     int horizontalOffset() const;
     QModelIndex moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers);
+    void timerEvent(QTimerEvent *e);
     
 public slots:
     void reset();
@@ -54,6 +55,8 @@ protected slots:
 private:
     QCustomPlot *_plot;
     QCPPlotTitle *_title;
+    bool _wantsUpdate;
+    int _mainTimerId;
 
 };
 
