@@ -37,6 +37,8 @@ public:
     ~JobHandler();
     void startJob(BaseJob *j);
     void setWindowSize(const QSize &windowSize);
+    void setVideoFrame(int frame);
+    void setPlayStatus(bool playStatus);
     
 protected:
     void run();
@@ -52,6 +54,8 @@ private:
     QMutex _lock;
     VideoModel *_model;
     const int _videoRow;
+    int _videoFrame;
+    bool _playStatus;
 };
 
 #endif // JOBHANDLER_H

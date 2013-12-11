@@ -49,6 +49,7 @@ public:
         FrameDurationColumn,
         FrameSizeColumn,
         FramesColumn,
+        PlayStatusColumn,
         DistancesColumn,
         TrajectoriesColumn,
         AnglesColumn,
@@ -137,12 +138,14 @@ private:
     {
         Video() :
             streamFrame(-1),
+            playStatus(false),
             jobHandler(0)
         {}
         ~Video();
         
         QString fileName;
         int currentFrame, frameDuration, frameCount, streamFrame;
+        bool playStatus;
         QImage frameImage;
         QSizeF frameSize;
         cv::VideoCapture videoStream;

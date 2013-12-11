@@ -104,6 +104,8 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             return currentVideo.frameDuration;
         case FrameSizeColumn:
             return currentVideo.frameSize;
+        case PlayStatusColumn:
+            return currentVideo.playStatus;
         default:
             return QVariant();
         }
@@ -331,12 +333,19 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
             break;
         case CurrentFrameColumn:
             currentVideo.currentFrame = value.toInt();
+            if (currentVideo.jobHandler) {
+                currentVideo.jobHandler->setVideoFrame(value.toInt());
+            }
             break;
         case FrameDurationColumn:
             currentVideo.frameDuration = value.toInt();
             break;
         case FrameSizeColumn:
             currentVideo.frameSize = value.toSizeF();
+            break;
+        case PlayStatusColumn:
+            currentVideo.playStatus = value.toBool();
+            currentVideo.jobHandler->setPlayStatus(value.toBool());
             break;
         default:
             return false;

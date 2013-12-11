@@ -29,13 +29,15 @@
 #include <QSize>
 
 #include <vector>
-
+ 
 #include <QDebug>
 
 JobHandler::JobHandler(int videoRow, VideoModel* parent) :
     QThread(parent),
     _model(parent),
-    _videoRow(videoRow)
+    _videoRow(videoRow),
+    _videoFrame(-1),
+    _playStatus(false)
 {}
 
 JobHandler::~JobHandler()
@@ -119,6 +121,16 @@ void JobHandler::run()
     _lock.unlock();
     
     do {
+        _lock.lock();
+        int videoFrame = _videoFrame;
+        bool playing = _playStatus;
+        _lock.unlock();
+        
+        if (playing && videoFrame < currentFrame) {
+            yieldCurrentThread();
+            continue;
+        }
+        
         bool jobsWereAdded = false;
         while (!_newJobs.empty()) {
             _lock.lock();
@@ -222,4 +234,18 @@ void JobHandler::run()
 void JobHandler::setWindowSize(const QSize& windowSize)
 {
     _windowSize = windowSize;
+}
+
+void JobHandler::setVideoFrame(int frame)
+{
+    _lock.lock();
+    _videoFrame = frame;
+    _lock.unlock();
+}
+
+void JobHandler::setPlayStatus(bool playStatus)
+{
+    _lock.lock();
+    _playStatus = playStatus;
+    _lock.unlock();
 }

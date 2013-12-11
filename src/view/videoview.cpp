@@ -79,6 +79,17 @@ VideoView::VideoView(QWidget *parent) :
 
         model()->setData(currentFrameIndex, frame);
     });
+    
+    connect(_playBar, &PlayBar::playingChanged, [=](bool isPlaying) {
+        QModelIndex currentPlayStatusIndex = 
+            model()->index(_currentVideoRow, VideoModel::PlayStatusColumn);
+        
+        if (isPlaying == currentPlayStatusIndex.data().toBool()) {
+            return;
+        }
+        
+        model()->setData(currentPlayStatusIndex, isPlaying);
+    });
 
     connect(_playBar, &PlayBar::newTrajectoryRequested, [=]()
     {
