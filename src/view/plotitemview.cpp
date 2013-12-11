@@ -26,7 +26,8 @@ PlotItemView::PlotItemView(QWidget* parent) :
     QAbstractItemView(parent),
     _plot(new QCustomPlot(this)),
     _title(new QCPPlotTitle(_plot, tr("(untitled)"))),
-    _wantsUpdate(false)
+    _wantsUpdate(false),
+    _wasVisibleBefore(false)
 {
     _plot->setInteraction(QCP::iRangeDrag, true);
     _plot->setInteraction(QCP::iRangeZoom, true);
@@ -112,6 +113,10 @@ QModelIndex PlotItemView::moveCursor(QAbstractItemView::CursorAction cursorActio
 
 void PlotItemView::reset()
 {
+    if (!isVisible()) {
+        return;
+    }
+    
     _title->setText(model()->headerData(0, Qt::Horizontal).toString());
     _plot->xAxis->setLabel(model()->headerData(1, Qt::Horizontal).toString());
     _plot->yAxis->setLabel(model()->headerData(2, Qt::Vertical).toString());
@@ -141,8 +146,29 @@ void PlotItemView::timerEvent(QTimerEvent* e)
     }
 }
 
+void PlotItemView::hideEvent(QHideEvent* e)
+{
+    _wasVisibleBefore = false;
+    
+    QWidget::hideEvent(e);
+}
+
+void PlotItemView::showEvent(QShowEvent* e)
+{
+    if (!_wasVisibleBefore) {
+        reset();
+        _wasVisibleBefore = true;
+    }
+    
+    QWidget::showEvent(e);
+}
+
 void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , const QVector< int >& roles)
 {
+    if (!isVisible()) {
+        return;
+    }
+    
     if (!topLeft.parent().isValid() || topLeft.column() != 1) {
         return;
     }
@@ -161,6 +187,10 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
 
 void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
 {
+    if (!isVisible()) {
+        return;
+    }
+    
     for (int i = start; i <= end; ++i) {
         if (parent.isValid()) {
             continue;
