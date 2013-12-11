@@ -27,6 +27,7 @@
 #include <QImage>
 #include <QLineF>
 #include <QResizeEvent>
+#include <QSettings>
 #include <QVBoxLayout>
 #include <view/graphicsitems/angleitem.hpp>
 #include <view/graphicsitems/distanceitem.hpp>
@@ -51,7 +52,11 @@ VideoView::VideoView(QWidget *parent) :
     viewport()->layout()->setSpacing(0);
     _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    _view->setRenderHint(QPainter::Antialiasing);
+    
+    QSettings set;
+    
+    _view->setRenderHint(set.value("video/antiAlias", true).toBool()?
+        QPainter::Antialiasing : QPainter::NonCosmeticDefaultPen);
     viewport()->layout()->addWidget(_playBar);
 
     QImage bgImage(":/images/translucent-logo.png");
@@ -67,6 +72,7 @@ VideoView::VideoView(QWidget *parent) :
 
     connect(_playBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
     connect(_playBar, SIGNAL(newAngleRequested()), SLOT(beginAngleCreation()));
+    connect(_playBar, SIGNAL(settingsRequested()), SIGNAL(settingsRequested()));
 
     connect(_playBar, &PlayBar::frameChanged, [=](int frame)
     {

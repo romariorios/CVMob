@@ -31,6 +31,7 @@
 #include <QStandardItemModel>
 #include <QFileDialog>
 #include <view/plotitemview.hpp>
+#include <view/settings.hpp>
 #include <view/videoview.hpp>
 #include <view/videolistdelegate.hpp>
 
@@ -38,7 +39,8 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::CvMobMainWindow),
     _videoModel(new VideoModel),
-    _videoView(new VideoView)
+    _videoView(new VideoView),
+    _settingsWidget(new Settings(this))
 {
     _ui->setupUi(this);
 
@@ -123,6 +125,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _videoView->showMessage(tr("CVMob developer snapshot"));
 
     connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
+    connect(_videoView, SIGNAL(settingsRequested()), _settingsWidget, SLOT(exec()));
 }
 
 void CvMobMainWindow::openFile() {

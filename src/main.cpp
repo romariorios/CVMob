@@ -34,6 +34,10 @@
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+    
+    QCoreApplication::setOrganizationName("Universidade Federal da Bahia");
+    QCoreApplication::setOrganizationDomain("ufba.br");
+    QCoreApplication::setApplicationName("CVMob");
 
     QTranslator qtTranslator;
     qtTranslator.load(QLocale::system().name()+"_cvmob");

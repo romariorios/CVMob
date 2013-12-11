@@ -22,6 +22,7 @@
 #include <QMenu>
 
 #include <QPushButton>
+#include <QSettings>
 
 PlayBar::PlayBar(QWidget *parent) :
     QWidget(parent),
@@ -35,6 +36,7 @@ PlayBar::PlayBar(QWidget *parent) :
     _ui->progressSlide->setTracking(false);
     
     _ui->actionPlay->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
+    _ui->actionSettings->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
     
     QMenu *drawMenu = new QMenu(_ui->drawButton);
     drawMenu->addAction(_ui->actionMeasure_distance);
@@ -42,12 +44,15 @@ PlayBar::PlayBar(QWidget *parent) :
     drawMenu->addAction(_ui->actionTrack_angle);
     _ui->drawButton->setMenu(drawMenu);
     _ui->drawButton->setDefaultAction(_ui->actionMeasure_distance);
+    
+    _ui->settingsButton->setDefaultAction(_ui->actionSettings);
 
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
     connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
     connect(_ui->actionMeasure_distance, SIGNAL(triggered()), SIGNAL(newDistanceRequested()));
     connect(_ui->actionCalculate_trajectory, SIGNAL(triggered()), SIGNAL(newTrajectoryRequested()));
     connect(_ui->actionTrack_angle, SIGNAL(triggered(bool)), SIGNAL(newAngleRequested()));
+    connect(_ui->actionSettings, SIGNAL(triggered(bool)), SIGNAL(settingsRequested()));
 
     connect(_ui->progressSlide, &QSlider::valueChanged, [&](int frame)
     {
@@ -78,10 +83,17 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
 {
     _ui->progressSlide->setMaximum(frameCount);
     _ui->progressSlide->setValue(0);
-    setEnabled(frameCount);
-    _frameDuration = frameDuration;
+    
+    _ui->progressSlide->setEnabled(frameCount);
+    _ui->drawButton->setEnabled(frameCount);
+    
+    QSettings set;
+    
+    _frameDuration = set.value("video/respectFramerate", false).toBool()? frameDuration : 0;
     _frameCount = frameCount;
     setPlaying(false);
+    
+    _ui->playPauseButton->setEnabled(frameCount);
 
     emit playDataChanged(frameCount, frameDuration);
 }

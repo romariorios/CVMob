@@ -17,6 +17,7 @@ set(CVMob_sources
     view/cvmobmainwindow.cpp
     view/plotitemview.cpp
     view/qcustomplot.cpp
+    view/settings.cpp
     view/videographicsview.cpp
     view/videoview.cpp
     view/videolistdelegate.cpp
@@ -47,6 +48,7 @@ set(CVMob_forms
     view/aboutdialog.ui
     view/cvmobmainwindow.ui
     view/playbar.ui
+    view/settings.ui
     view/videostatus.ui
 )
 

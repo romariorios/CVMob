@@ -19,6 +19,7 @@
 #include "plotitemview.hpp"
 
 #include <QBoxLayout>
+#include <QSettings>
 #include <QTimer>
 #include <view/qcustomplot.h>
 
@@ -41,7 +42,9 @@ PlotItemView::PlotItemView(QWidget* parent) :
     new QBoxLayout(QBoxLayout::TopToBottom, viewport());
     viewport()->layout()->addWidget(_plot);
     
-    _mainTimerId = startTimer(200);
+    QSettings set;
+    
+    _mainTimerId = startTimer(set.value("plot/period", 200).toInt());
 }
 
 QModelIndex PlotItemView::indexAt(const QPoint& point) const

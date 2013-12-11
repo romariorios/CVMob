@@ -24,6 +24,7 @@
 #include <opencv/cv.h>
 #include <QList>
 
+class Settings;
 class VideoModel;
 class QStandardItemModel;
 class VideoView;
@@ -39,6 +40,7 @@ class CvMobMainWindow : public QMainWindow
     Ui::CvMobMainWindow *_ui;
     VideoModel *_videoModel;
     VideoView *_videoView;
+    Settings *_settingsWidget;
 
 protected slots:
 	void openFile();

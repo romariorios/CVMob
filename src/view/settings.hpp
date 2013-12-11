@@ -16,48 +16,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLAYERBAR_HPP
-#define PLAYERBAR_HPP
+#ifndef SETTINGS_HPP
+#define SETTINGS_HPP
 
-#include <QWidget>
+#include <QDialog>
 
 namespace Ui {
-class PlayBar;
+class Settings;
 }
 
-class QTimerEvent;
+class QAbstractButton;
 
-class PlayBar : public QWidget
+class Settings : public QDialog
 {
     Q_OBJECT
-    
+
 public:
-    explicit PlayBar(QWidget *parent = 0);
-    ~PlayBar();
-
-public slots:
-    void setPlaying(bool playing);
-    void setPlayData(int frames, int frameDuration);
-
-protected:
-    void timerEvent(QTimerEvent *);
-
-signals:
-    void playingChanged(bool playing);
-    void playDataChanged(int frames, int frameDuration);
-
-    void frameChanged(int frame);
-    void newAngleRequested();
-    void newDistanceRequested();
-    void newTrajectoryRequested();
-    void settingsRequested();
+    explicit Settings(QWidget* parent = 0);
+    ~Settings();
     
 private:
-    int _frameCount;
-    int _frameDuration;
-    int _currentTimer;
-    bool _playing;
-    Ui::PlayBar *_ui;
+    void saveSettings();
+    void loadSettings();
+    
+signals:
+    void settingsChanged();
+    
+private:
+    Ui::Settings *_ui;
+    
+private slots:
+    void onButtonBoxCliked(QAbstractButton* button);
 };
 
-#endif // PLAYERBAR_HPP
+#endif
