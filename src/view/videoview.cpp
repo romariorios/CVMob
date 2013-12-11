@@ -126,6 +126,15 @@ QRect VideoView::visualRect(const QModelIndex &index) const
                  index.model()->index(index.row(), 1).data().toPoint());
 }
 
+void VideoView::updateSettings()
+{
+    QSettings set;
+    
+    _view->setRenderHint(set.value("video/antiAlias", true).toBool()?
+        QPainter::Antialiasing : QPainter::NonCosmeticDefaultPen);
+    _playBar->updateSettings();
+}
+
 void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, const QVector<int> &)
 {
     const QModelIndex parent = topLeft.parent();

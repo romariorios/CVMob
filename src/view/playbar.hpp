@@ -38,6 +38,7 @@ public:
 public slots:
     void setPlaying(bool playing);
     void setPlayData(int frames, int frameDuration);
+    void updateSettings();
 
 protected:
     void timerEvent(QTimerEvent *);
@@ -55,9 +56,11 @@ signals:
 private:
     int _frameCount;
     int _frameDuration;
+    int _videoFrameDuration;
     int _currentTimer;
     bool _playing;
     Ui::PlayBar *_ui;
+    bool _playStatus;
 };
 
 #endif // PLAYERBAR_HPP

@@ -28,6 +28,7 @@ PlayBar::PlayBar(QWidget *parent) :
     QWidget(parent),
     _frameCount(0),
     _frameDuration(0),
+    _videoFrameDuration(0),
     _currentTimer(0),
     _ui(new Ui::PlayBar)
 {
@@ -89,6 +90,7 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
     
     QSettings set;
     
+    _videoFrameDuration = frameDuration;
     _frameDuration = set.value("video/respectFramerate", false).toBool()? frameDuration : 0;
     _frameCount = frameCount;
     setPlaying(false);
@@ -96,6 +98,17 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
     _ui->playPauseButton->setEnabled(frameCount);
 
     emit playDataChanged(frameCount, frameDuration);
+}
+
+void PlayBar::updateSettings()
+{
+    QSettings set;
+    
+    _frameDuration = set.value("video/respectFramerate", false).toBool()? _videoFrameDuration : 0;
+    if (_playing) {
+        killTimer(_currentTimer);
+        _currentTimer = startTimer(_frameDuration);
+    }
 }
 
 void PlayBar::timerEvent(QTimerEvent *)

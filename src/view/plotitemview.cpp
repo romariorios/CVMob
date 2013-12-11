@@ -70,6 +70,15 @@ QRect PlotItemView::visualRect(const QModelIndex& index) const
     return QRect();
 }
 
+void PlotItemView::updateSettings()
+{
+    killTimer(_mainTimerId);
+    
+    QSettings set;
+    
+    _mainTimerId = startTimer(set.value("plot/period", 200).toInt());
+}
+
 QRegion PlotItemView::visualRegionForSelection(const QItemSelection& selection) const
 {
     // TODO

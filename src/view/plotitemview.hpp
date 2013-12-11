@@ -47,6 +47,7 @@ protected:
     
 public slots:
     void reset();
+    void updateSettings();
     
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &, // Topleft always equals

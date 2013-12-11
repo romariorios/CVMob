@@ -79,6 +79,9 @@ private:
     int _currentVideoRow;
     PlayBar *_playBar;
     VideoStatus *_status;
+    
+public slots:
+    void updateSettings();
 
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &, // topLeft == bottomRight
