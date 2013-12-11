@@ -42,6 +42,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 {
     _ui->setupUi(this);
 
+    _ui->action_Open->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
     _ui->openButton->setDefaultAction(_ui->action_Open);
 
     VideoListProxyModel *videoNamesModel = new VideoListProxyModel(this);
