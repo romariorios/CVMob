@@ -80,9 +80,6 @@ private:
     int _currentFrame;
 
     QList<TrajectoryInstantItem *> _instants;
-    QList<QGraphicsLineItem *> _lines;
-    QGraphicsItemGroup *_linesBefore;
-    QGraphicsItemGroup *_linesAfter;
 
     QGraphicsItem *_currentInstant;
 };

@@ -26,9 +26,7 @@ class QGraphicsLineItem;
 class TrajectoryInstantItem : public QGraphicsRectItem
 {
 public:
-    TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF accel, QGraphicsItem *parent,
-                          QGraphicsLineItem *lineBefore = 0,
-                          TrajectoryInstantItem *instantAfter = 0);
+    TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF accel, QGraphicsItem* parent);
     TrajectoryInstantItem(QGraphicsItem *parent);
     ~TrajectoryInstantItem();
 
@@ -43,17 +41,12 @@ public:
     void setPos(const QPointF &pos);
     void setSpeed(const QPointF &speed);
     void setAccel(const QPointF &accel);
-    void setLineBefore(QGraphicsLineItem *lineBefore);
-    void setInstantAfter(TrajectoryInstantItem *instantAfter);
 
 private:
     QPointF _speed;
     QPointF _accel;
     QGraphicsLineItem *_speedLine;
     QGraphicsLineItem *_accelLine;
-
-    QGraphicsLineItem *_lineBefore;
-    TrajectoryInstantItem *_instantAfter;
 };
 
 #endif // TRAJECTORYINSTANTITEM_HPP

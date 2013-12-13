@@ -19,22 +19,21 @@
 #include "trajectoryinstantitem.hpp"
 
 #include <QGraphicsLineItem>
+#include <QBrush>
 
 const QPointF radius = QPointF(1, 1);
 
 TrajectoryInstantItem::TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF accel,
-                                             QGraphicsItem *parent,
-                                             QGraphicsLineItem *lineBefore,
-                                             TrajectoryInstantItem *instantAfter) :
+                                             QGraphicsItem *parent) :
     QGraphicsRectItem(pos.x() - radius.x(), pos.y() - radius.y(),
                       radius.x() * 2, radius.y() * 2, parent),
     _speed(speed),
     _accel(accel),
     _speedLine(new QGraphicsLineItem(QLineF(pos, pos + speed), this)),
-    _accelLine(new QGraphicsLineItem(QLineF(pos, pos + accel), this)),
-    _lineBefore(lineBefore),
-    _instantAfter(instantAfter)
+    _accelLine(new QGraphicsLineItem(QLineF(pos, pos + accel), this))
 {
+    setBrush(Qt::black);
+    
     hide();
 }
 
@@ -90,17 +89,6 @@ void TrajectoryInstantItem::setPos(const QPointF &pos)
     }
 
     setRect(newRect);
-
-    QLineF l;
-    if (_lineBefore) {
-        l = _lineBefore->line();
-        _lineBefore->setLine(QLineF(l.p1(), pos));
-    }
-
-    if (_instantAfter) {
-        l = _instantAfter->_lineBefore->line();
-        _instantAfter->_lineBefore->setLine(QLineF(pos, l.p2()));
-    }
 }
 
 void TrajectoryInstantItem::setSpeed(const QPointF &speed)
@@ -121,26 +109,4 @@ void TrajectoryInstantItem::setAccel(const QPointF &accel)
 
     _accelLine->setLine(QLineF(pos(), accel));
     _accel = accel;
-}
-
-void TrajectoryInstantItem::setLineBefore(QGraphicsLineItem *lineBefore)
-{
-    if (!_lineBefore) {
-        _lineBefore = lineBefore;
-    }
-}
-
-void TrajectoryInstantItem::setInstantAfter(TrajectoryInstantItem *instantAfter)
-{
-    if (_instantAfter) {
-        delete _instantAfter->_lineBefore;
-        _instantAfter->_lineBefore = 0;
-    }
-
-    _instantAfter = instantAfter;
-
-    if (!_instantAfter->_lineBefore) {
-        _instantAfter->_lineBefore = new QGraphicsLineItem(this);
-    }
-    _instantAfter->_lineBefore->setLine(QLineF(pos(), _instantAfter->pos()));
 }

@@ -29,13 +29,8 @@ TrajectoryItem::TrajectoryItem(QGraphicsItem *parent) :
     _showAccel(ShowInCurrentInstant),
     _startingFrame(0),
     _currentFrame(0),
-    _linesBefore(new QGraphicsItemGroup(this)),
-    _linesAfter(new QGraphicsItemGroup(this)),
     _currentInstant(0)
 {
-    addToGroup(_linesBefore);
-    addToGroup(_linesAfter);
-
     followDrawPolicy();
     followShowSpeedPolicy();
     followShowAccelPolicy();
@@ -43,8 +38,6 @@ TrajectoryItem::TrajectoryItem(QGraphicsItem *parent) :
 
 TrajectoryItem::~TrajectoryItem()
 {
-    delete _linesBefore;
-    delete _linesAfter;
 }
 
 TrajectoryItem::DrawingPolicy TrajectoryItem::drawTrajectory() const
@@ -110,41 +103,27 @@ void TrajectoryItem::setCurrentFrame(int frame)
     // Fast-forward
     for (; _currentFrame < frame; ++_currentFrame) {
         int curL = _currentFrame - _startingFrame;
-        if (curL < 0 || curL >= _lines.size()) {
+        if (curL < 0 || curL >= _instants.size()) {
             continue;
         }
         
-        _linesAfter->removeFromGroup(_lines[curL]);
-        _linesBefore->addToGroup(_lines[curL]);
+        _instants.at(curL)->show();
     }
     
     // Backwards
     for (; _currentFrame > frame; --_currentFrame) {
         int curL = _currentFrame - _startingFrame;
-        if (curL < 0 || curL >= _lines.size()) {
+        if (curL < 0 || curL >= _instants.size()) {
             continue;
         }
         
-        _linesBefore->removeFromGroup(_lines[curL]);
-        _linesAfter->addToGroup(_lines[curL]);
+        _instants.at(curL)->hide();
     }
 }
 
 void TrajectoryItem::appendInstant(QPointF pos, QPointF speed, QPointF accel)
 {
     TrajectoryInstantItem *instant = new TrajectoryInstantItem(pos, speed, accel, this);
-
-    QGraphicsLineItem *lineBefore = 0;
-    if (_lines.size() != 0) {
-        lineBefore = new QGraphicsLineItem(instant);
-    }
-    _lines << lineBefore;
-    _linesAfter->addToGroup(lineBefore);
-
-    instant->setLineBefore(lineBefore);
-    if (_instants.size() != 0) {
-        _instants.last()->setInstantAfter(instant);
-    }
 
     if (!_currentInstant) {
         _currentInstant = instant;
@@ -165,10 +144,10 @@ void TrajectoryItem::followDrawPolicy()
     case NoDraw:
         break;
     case DrawBefore:
-        _linesAfter->hide();
+        // TODO
         break;
     case DrawBeforeAndAfter:
-        _linesAfter->show();
+        // TODO
         break;
     }
 }
