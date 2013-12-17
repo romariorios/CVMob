@@ -27,6 +27,8 @@
 #include <QImage>
 #include <QMutexLocker>
 #include <QSize>
+#include <QTimer>
+#include <QTimerEvent>
 
 #include <vector>
  
@@ -37,7 +39,8 @@ JobHandler::JobHandler(int videoRow, VideoModel* parent) :
     _model(parent),
     _videoRow(videoRow),
     _videoFrame(-1),
-    _playStatus(false)
+    _playStatus(false),
+    _previousProgress(-1)
 {}
 
 JobHandler::~JobHandler()
@@ -120,6 +123,8 @@ void JobHandler::run()
     QModelIndex videoIndex = _model->index(_videoRow, VideoModel::FramesColumn);
     _lock.unlock();
     
+    startProgressTimer();
+    
     do {
         _lock.lock();
         int videoFrame = _videoFrame;
@@ -153,7 +158,9 @@ void JobHandler::run()
             emit rangeChanged(0, maximumProgress);
         }
         
-        emit progressChanged(curProgress);
+        _progressTimerLock.lock();
+        _progress = curProgress;
+        _progressTimerLock.unlock();
         
         _lock.lock();
         QModelIndex currentFrameIndex = _model->index(currentFrame, 0, videoIndex);
@@ -229,6 +236,30 @@ void JobHandler::run()
         previousFrameImage = currentFrameImage;
         ++currentFrame;
     } while (!jobs.empty());
+    
+    stopProgressTimer();
+}
+
+void JobHandler::timerEvent(QTimerEvent* e)
+{
+    _progressTimerLock.lock();
+    if (e->timerId() == _progressTimerId && _previousProgress != _progress) {
+        _previousProgress = _progress;
+        emit progressChanged(_progress);
+    }
+    _progressTimerLock.unlock();
+    
+    QObject::timerEvent(e);
+}
+
+void JobHandler::startProgressTimer()
+{
+    _progressTimerId = startTimer(100);
+}
+
+void JobHandler::stopProgressTimer()
+{
+    killTimer(_progressTimerId);
 }
 
 void JobHandler::setWindowSize(const QSize& windowSize)

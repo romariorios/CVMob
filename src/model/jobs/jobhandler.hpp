@@ -42,6 +42,7 @@ public:
     
 protected:
     void run();
+    void timerEvent(QTimerEvent *e);
 
 signals:
     void rangeChanged(int minimum, int maximum);
@@ -49,6 +50,9 @@ signals:
     void jobAmountChanged(int amount);
 
 private:
+    void startProgressTimer();
+    void stopProgressTimer();
+    
     QVector<BaseJob *> _newJobs;
     QSize _windowSize;
     QMutex _lock;
@@ -56,6 +60,10 @@ private:
     const int _videoRow;
     int _videoFrame;
     bool _playStatus;
+    int _progressTimerId;
+    QMutex _progressTimerLock;
+    int _progress;
+    int _previousProgress;
 };
 
 #endif // JOBHANDLER_H
