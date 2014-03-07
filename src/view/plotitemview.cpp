@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -151,7 +151,7 @@ void PlotItemView::reset()
 
 void PlotItemView::timerEvent(QTimerEvent* e)
 {
-    if (e->timerId() == _mainTimerId && _wantsUpdate) {
+    if (_wantsUpdate && e->timerId() == _mainTimerId) {
         _plot->rescaleAxes();
         _plot->replot();
         _wantsUpdate = false;
