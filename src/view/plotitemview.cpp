@@ -146,7 +146,7 @@ void PlotItemView::reset()
 void PlotItemView::timerEvent(QTimerEvent* e)
 {
     if (e->timerId() != _mainTimerId) {
-        return;
+        return QAbstractItemView::timerEvent(e);
     }
     
     if (_wantsUpdate) {
