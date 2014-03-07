@@ -1,0 +1,3 @@
+=== Performance improvements ===
+Make all timers be triggered only when necessary
+

@@ -41,10 +41,6 @@ PlotItemView::PlotItemView(QWidget* parent) :
     
     new QBoxLayout(QBoxLayout::TopToBottom, viewport());
     viewport()->layout()->addWidget(_plot);
-    
-    QSettings set;
-    
-    _mainTimerId = startTimer(set.value("plot/period", 200).toInt());
 }
 
 QModelIndex PlotItemView::indexAt(const QPoint& point) const
@@ -72,11 +68,9 @@ QRect PlotItemView::visualRect(const QModelIndex& index) const
 
 void PlotItemView::updateSettings()
 {
-    killTimer(_mainTimerId);
-    
-    QSettings set;
-    
-    _mainTimerId = startTimer(set.value("plot/period", 200).toInt());
+    if (_timerRunning) {
+        killTimer(_mainTimerId);
+    }
 }
 
 QRegion PlotItemView::visualRegionForSelection(const QItemSelection& selection) const
@@ -151,10 +145,15 @@ void PlotItemView::reset()
 
 void PlotItemView::timerEvent(QTimerEvent* e)
 {
-    if (_wantsUpdate && e->timerId() == _mainTimerId) {
-        _plot->rescaleAxes();
-        _plot->replot();
-        _wantsUpdate = false;
+    if (e->timerId() != _mainTimerId) {
+        return;
+    }
+    
+    if (_wantsUpdate) {
+        updatePlot();
+    } else {
+        killTimer(_mainTimerId);
+        _timerRunning = false;
     }
 }
 
@@ -194,7 +193,13 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
     graph->addData(model()->index(topLeft.row(), 0, graphIndex).data().toDouble(),
                    model()->index(topLeft.row(), 1, graphIndex).data().toDouble());
     
-    _wantsUpdate = true;
+    if (_timerRunning) {
+        _wantsUpdate = true;
+    } else {
+        updatePlot();
+        _mainTimerId = startMainTimer();
+        _timerRunning = true;
+    }
 }
 
 void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
@@ -210,4 +215,16 @@ void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
         
         _plot->addGraph();
     }
+}
+
+void PlotItemView::updatePlot()
+{
+    _plot->rescaleAxes();
+    _plot->replot();
+    _wantsUpdate = false;
+}
+
+int PlotItemView::startMainTimer()
+{
+    return startTimer(QSettings {}.value("plot/period", 200).toInt());
 }
