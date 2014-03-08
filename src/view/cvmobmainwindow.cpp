@@ -126,6 +126,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
     connect(_videoView, SIGNAL(settingsRequested()), _settingsWidget, SLOT(exec()));
+    connect(_settingsWidget, SIGNAL(settingsChanged()), _videoModel, SLOT(updateSettings()));
     connect(_settingsWidget, SIGNAL(settingsChanged()), _videoView, SLOT(updateSettings()));
     connect(_settingsWidget, SIGNAL(settingsChanged()), xPlot, SLOT(updateSettings()));
     connect(_settingsWidget, SIGNAL(settingsChanged()), yPlot, SLOT(updateSettings()));

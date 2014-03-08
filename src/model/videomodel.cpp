@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include <cmath>
 #include <QMutexLocker>
+#include <QSettings>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/video.hpp>
 
@@ -639,9 +640,12 @@ bool VideoModel::openVideo(const QString& path)
         )
     );
     
+    QSettings s;
+    const auto winSize = s.value("video/searchWindowSize", 21).toInt();
+    
     newVideo.frameCount = videoStream.get(CV_CAP_PROP_FRAME_COUNT);
     newVideo.jobHandler = new JobHandler(fileNameIndex.row(), this);
-    newVideo.jobHandler->setWindowSize(QSize(21, 21));
+    newVideo.jobHandler->setWindowSize(QSize { winSize, winSize });
     
     return true;
 }
@@ -732,6 +736,15 @@ TrajectoryCalcJob *VideoModel::calculateTrajectory(const QPointF &p, int frame,
     job->setTarget(currentTrajectoryIndex);
 
     return job;
+}
+
+void VideoModel::updateSettings()
+{
+    const auto winSize = QSettings {}.value("video/searchWindowSize", 21).toInt();
+    
+    for (auto &video : *_cvmobVideoData) {
+        video.jobHandler->setWindowSize(QSize { winSize, winSize });
+    }
 }
 
 VideoModel::Video::~Video()

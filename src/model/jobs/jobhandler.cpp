@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -264,7 +264,9 @@ void JobHandler::stopProgressTimer()
 
 void JobHandler::setWindowSize(const QSize& windowSize)
 {
+    _lock.lock();
     _windowSize = windowSize;
+    _lock.unlock();
 }
 
 void JobHandler::setVideoFrame(int frame)

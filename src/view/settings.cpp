@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ void Settings::saveSettings()
     
     settings.setValue("video/respectFramerate", _ui->videoFramerateBox->isChecked());
     settings.setValue("video/antiAlias", _ui->videoAntiAliasBox->isChecked());
+    settings.setValue("video/searchWindowSize", _ui->searchWindowSizeBox->value());
     settings.setValue("plot/period", _ui->plotPeriodBox->value());
 }
 
@@ -48,8 +49,8 @@ void Settings::loadSettings()
     
     _ui->videoFramerateBox->setChecked(settings.value("video/respectFramerate", false).toBool());
     _ui->videoAntiAliasBox->setChecked(settings.value("video/antiAlias", true).toBool());
+    _ui->searchWindowSizeBox->setValue(settings.value("video/searchWindowSize", 21).toInt());
     _ui->plotPeriodBox->setValue(settings.value("plot/period", 200).toInt());
-    
 }
 
 void Settings::onButtonBoxCliked(QAbstractButton *button)

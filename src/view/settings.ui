@@ -52,6 +52,32 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="searchWindowSizeBox">
+        <property name="suffix">
+         <string>px</string>
+        </property>
+        <property name="minimum">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <number>512</number>
+        </property>
+        <property name="value">
+         <number>21</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Search window: </string>
+        </property>
+        <property name="buddy">
+         <cstring>searchWindowSizeBox</cstring>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
