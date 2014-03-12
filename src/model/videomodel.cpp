@@ -650,7 +650,7 @@ bool VideoModel::openVideo(const QString& path)
     return true;
 }
 
-JobHandler* VideoModel::jobHandlerForVideo(int videoRow)
+JobHandler* VideoModel::jobHandlerForVideo(int videoRow) const
 {
     return _cvmobVideoData->at(videoRow).jobHandler;
 }

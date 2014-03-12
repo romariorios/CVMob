@@ -96,7 +96,6 @@ public:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
     
     bool openVideo(const QString &path);
-    JobHandler *jobHandlerForVideo(int videoRow);
     void createDistance(const QLineF& l, const QModelIndex &videoIndex);
     void createDistance(const QLineF &l, int videoRow);
     void createDistance(const QPointF& p1, const QPointF& p2, const QModelIndex& videoIndex);
@@ -108,6 +107,8 @@ public:
                                                        int videoRow,
                                                        const QSize &windowSize = QSize(21, 21),
                                                        CalculationFlags flags = FromHereOnwards);
+    
+    JobHandler *jobHandlerForVideo(int videoRow) const;
 
 public slots:
     void updateSettings();
