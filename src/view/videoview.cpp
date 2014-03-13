@@ -366,8 +366,14 @@ void VideoView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int e
         
         _view->setScene(_videos.empty()? _noVideoVideo.scene : _videos.first().scene);
     } else if (!parent.parent().isValid()) { // Level 1
-        if (parent.column() == VideoModel::DistancesColumn) {
-            auto &v = _videos[parent.row()];
+        auto &v = _videos[parent.row()];
+        
+        if (parent.column() == VideoModel::TrajectoriesColumn) {
+            for (; start <= end; --end) {
+                auto trajectory = v.trajectories.takeAt(start);
+                delete trajectory;
+            }
+        } else if (parent.column() == VideoModel::DistancesColumn) {
             for (; start <= end; --end) {
                 auto distance = v.distances.takeAt(start);
                 delete distance;

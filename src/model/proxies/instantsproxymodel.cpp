@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,9 +37,12 @@ QModelIndex InstantsProxyModel::mapFromSource(const QModelIndex &sourceIndex) co
 
 QModelIndex InstantsProxyModel::mapToSource(const QModelIndex &proxyIndex) const
 {
-    if (!_parentIndex.isValid() ||
-        !proxyIndex.isValid()) {
+    if (!_parentIndex.isValid()) {
         return QModelIndex();
+    }
+    
+    if (!proxyIndex.isValid()) {
+        return _parentIndex;
     }
 
     if (!proxyIndex.parent().isValid()) {

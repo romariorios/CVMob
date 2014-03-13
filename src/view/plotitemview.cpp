@@ -193,13 +193,7 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
     graph->addData(model()->index(topLeft.row(), 0, graphIndex).data().toDouble(),
                    model()->index(topLeft.row(), 1, graphIndex).data().toDouble());
     
-    if (_timerRunning) {
-        _wantsUpdate = true;
-    } else {
-        updatePlot();
-        _mainTimerId = startMainTimer();
-        _timerRunning = true;
-    }
+    requestUpdate();
 }
 
 void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
@@ -217,6 +211,17 @@ void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
     }
 }
 
+void PlotItemView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
+{
+    if (!parent.isValid()) {
+        for (; start <= end; --end) {
+            _plot->removeGraph(start);
+        }
+    }
+    
+    requestUpdate();
+}
+
 void PlotItemView::updatePlot()
 {
     _plot->rescaleAxes();
@@ -227,4 +232,15 @@ void PlotItemView::updatePlot()
 int PlotItemView::startMainTimer()
 {
     return startTimer(QSettings {}.value("plot/period", 200).toInt());
+}
+
+void PlotItemView::requestUpdate()
+{
+    if (_timerRunning) {
+        _wantsUpdate = true;
+    } else {
+        updatePlot();
+        _mainTimerId = startMainTimer();
+        _timerRunning = true;
+    }
 }

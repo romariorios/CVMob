@@ -36,6 +36,15 @@
 #include <view/videoview.hpp>
 #include <view/videolistdelegate.hpp>
 
+#define CREATE_CONTEXT_MENU(parent, point)\
+auto contextMenu = new QMenu { parent };\
+auto index = parent->indexAt(point);\
+connect(contextMenu, &QMenu::aboutToHide, contextMenu, &QObject::deleteLater);\
+\
+if (!index.isValid()) {\
+    return;\
+}
+
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::CvMobMainWindow),
@@ -67,12 +76,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _ui->distancesView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->distancesView, &QWidget::customContextMenuRequested, [=](const QPoint &p)
     {
-        auto contextMenu = new QMenu { _ui->distancesView };
-        auto index = _ui->distancesView->indexAt(p);
-        
-        if (!index.isValid()) {
-            return;
-        }
+        CREATE_CONTEXT_MENU(_ui->distancesView, p)
         
         auto deleteAction = new QAction {
             style()->standardIcon(QStyle::SP_TrashIcon),
@@ -86,7 +90,6 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
         contextMenu->addAction(deleteAction);
         
         contextMenu->popup(_ui->distancesView->mapToGlobal(p));
-        connect(contextMenu, &QMenu::aboutToHide, contextMenu, &QObject::deleteLater);
     });
 
     TrajectoriesProxyModel *trajectoriesModel =
@@ -94,6 +97,26 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     trajectoriesModel->setSourceModel(_videoModel);
     trajectoriesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->trajectoriesView->setModel(trajectoriesModel);
+    _ui->trajectoriesView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->trajectoriesView, &QWidget::customContextMenuRequested, [=](const QPoint &p)
+    {
+        CREATE_CONTEXT_MENU(_ui->trajectoriesView, p)
+        
+        if (!index.parent().isValid()) { // Trajectory
+            auto deleteAction = new QAction {
+                style()->standardIcon(QStyle::SP_TrashIcon),
+                tr("Delete trajectory"),
+                contextMenu
+            };
+            connect(deleteAction, &QAction::triggered, [=]()
+            {
+                trajectoriesModel->removeRow(index.row());
+            });
+            contextMenu->addAction(deleteAction);
+            
+            contextMenu->popup(_ui->trajectoriesTab->mapToGlobal(p));
+        }
+    });
     
     AnglesProxyModel *anglesModel = new AnglesProxyModel(this);
     anglesModel->setSourceModel(_videoModel);

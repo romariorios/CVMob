@@ -54,10 +54,12 @@ protected slots:
                                                                       // bottomright
                      const QVector<int> &roles = QVector<int>());
     void rowsInserted(const QModelIndex &parent, int start, int end);
+    void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
     
 private:
     void updatePlot();
     int startMainTimer();
+    void requestUpdate();
     
     QCustomPlot *_plot;
     QCPPlotTitle *_title;
