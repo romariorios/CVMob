@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ public:
     QModelIndex parent(const QModelIndex &child) const;
     void setSourceModel(QAbstractItemModel *sourceModel);
     void setSelectionModel(QItemSelectionModel *selectionModel);
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex {});
 
 protected:
     void setColumn(int column);

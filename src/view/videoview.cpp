@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -359,12 +359,20 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
 void VideoView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
 {
     if (!parent.isValid()) { // Level 0
-        for (int i = start; i <= end; ++i) {
-            Video v = _videos.takeAt(i);
+        for (; start <= end; --end) {
+            Video v = _videos.takeAt(start);
             delete v.scene;
         }
         
         _view->setScene(_videos.empty()? _noVideoVideo.scene : _videos.first().scene);
+    } else if (!parent.parent().isValid()) { // Level 1
+        if (parent.column() == VideoModel::DistancesColumn) {
+            auto &v = _videos[parent.row()];
+            for (; start <= end; --end) {
+                auto distance = v.distances.takeAt(start);
+                delete distance;
+            }
+        }
     }
 }
 

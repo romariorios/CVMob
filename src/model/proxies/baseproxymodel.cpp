@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -59,7 +59,12 @@ void BaseProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
         endInsertRows();
     });
     
-    // TODO rows removed
+    connect(sourceModel, &QAbstractItemModel::rowsAboutToBeRemoved, [=](const QModelIndex &parent,
+                                                                        int first, int last)
+    {
+        beginRemoveRows(mapFromSource(parent), first, last);
+        endRemoveRows();
+    });
 }
 
 void BaseProxyModel::setSelectionModel(QItemSelectionModel *selectionModel)
@@ -79,6 +84,15 @@ void BaseProxyModel::setSelectionModel(QItemSelectionModel *selectionModel)
 
         endResetModel();
     });
+}
+
+bool BaseProxyModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    beginRemoveRows(parent, row, row + count - 1);
+    
+    sourceModel()->removeRows(row, count, mapToSource(parent));
+    
+    endRemoveRows();
 }
 
 void BaseProxyModel::setColumn(int column)

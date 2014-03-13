@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include <model/proxies/plotproxies.hpp>
 #include <model/proxies/trajectoriesproxymodel.hpp>
 #include <model/proxies/videolistproxymodel.hpp>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPointF>
 #include <QStandardItemModel>
@@ -63,6 +64,30 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     distancesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->distancesView->setModel(distancesModel);
     _ui->distancesView->header()->setSectionResizeMode(QHeaderView::Stretch);
+    _ui->distancesView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->distancesView, &QWidget::customContextMenuRequested, [=](const QPoint &p)
+    {
+        auto contextMenu = new QMenu { _ui->distancesView };
+        auto index = _ui->distancesView->indexAt(p);
+        
+        if (!index.isValid()) {
+            return;
+        }
+        
+        auto deleteAction = new QAction {
+            style()->standardIcon(QStyle::SP_TrashIcon),
+            tr("Delete distance"),
+            contextMenu
+        };
+        connect(deleteAction, &QAction::triggered, [=]()
+        {
+            distancesModel->removeRow(index.row());
+        });
+        contextMenu->addAction(deleteAction);
+        
+        contextMenu->popup(_ui->distancesView->mapToGlobal(p));
+        connect(contextMenu, &QMenu::aboutToHide, contextMenu, &QObject::deleteLater);
+    });
 
     TrajectoriesProxyModel *trajectoriesModel =
             new TrajectoriesProxyModel(this);
