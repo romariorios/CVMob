@@ -378,6 +378,11 @@ void VideoView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int e
                 auto distance = v.distances.takeAt(start);
                 delete distance;
             }
+        } else if (parent.column() == VideoModel::AnglesColumn) {
+            for (; start <= end; --end) {
+                auto angle = v.angles.takeAt(start);
+                delete angle;
+            }
         }
     }
 }

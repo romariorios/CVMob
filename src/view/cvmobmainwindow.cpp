@@ -114,7 +114,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
             });
             contextMenu->addAction(deleteAction);
             
-            contextMenu->popup(_ui->trajectoriesTab->mapToGlobal(p));
+            contextMenu->popup(_ui->trajectoriesView->mapToGlobal(p));
         }
     });
     
@@ -122,6 +122,26 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     anglesModel->setSourceModel(_videoModel);
     anglesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->anglesView->setModel(anglesModel);
+    _ui->anglesView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->anglesView, &QWidget::customContextMenuRequested, [=](const QPoint &p)
+    {
+        CREATE_CONTEXT_MENU(_ui->anglesView, p)
+        
+        if (!index.parent().isValid()) { // Angle
+            auto deleteAction = new QAction {
+                style()->standardIcon(QStyle::SP_TrashIcon),
+                tr("Delete angle"),
+                contextMenu
+            };
+            connect(deleteAction, &QAction::triggered, [=]()
+            {
+                anglesModel->removeRow(index.row());
+            });
+            contextMenu->addAction(deleteAction);
+            
+            contextMenu->popup(_ui->anglesView->mapToGlobal(p));
+        }
+    });
     
     QLayout *l = _ui->graphsDockWidgetContents->layout();
     
