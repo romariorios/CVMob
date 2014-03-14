@@ -67,7 +67,7 @@ QModelIndex VideoModel::index(int row, int column, const QModelIndex &parent) co
     return createIndex(row, column, (*parentChildrenTable)[ind]);
 }
 
-QModelIndex VideoModel::index(const QModelIndex &parent, VideoModel::IndexPath path) const
+QModelIndex VideoModel::index(const QModelIndex &parent, const VideoModel::IndexPath &path) const
 {
     auto currentIndex = parent;
     
@@ -79,7 +79,7 @@ QModelIndex VideoModel::index(const QModelIndex &parent, VideoModel::IndexPath p
     return currentIndex;
 }
 
-QModelIndex VideoModel::index(VideoModel::IndexPath path) const
+QModelIndex VideoModel::index(const VideoModel::IndexPath &path) const
 {
     return index(QModelIndex {}, path);
 }
@@ -97,6 +97,21 @@ QModelIndex VideoModel::parent(const QModelIndex &child) const
     }
     
     return createIndex(childData->parent->row, childData->parent->column, childData->parent);
+}
+
+const VideoModel::IndexPath VideoModel::indexPath(const QModelIndex& index)
+{
+    if (!index.isValid()) {
+        return IndexPath {};
+    }
+    
+    IndexPathList pathList;
+    
+    for (auto i = index; i.parent().isValid(); i = i.parent()) {
+        pathList.prepend({ i.row(), i.column() });
+    }
+    
+    return pathList.toVector();
 }
 
 QVariant VideoModel::data(const QModelIndex &index, int role) const

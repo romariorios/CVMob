@@ -33,9 +33,6 @@
 #include <model/jobs/anglecalcjob.hpp>
 #include <model/jobs/trajectorycalcjob.hpp>
 
-#include <array>
-#include <initializer_list>
-
 class JobHandler;
 
 float angleFromPoints(const QPointF& c, const QPointF& e1, const QPointF& e2);
@@ -83,15 +80,16 @@ public:
         FromHereBackwards = 0x2
     };
     
-    typedef std::initializer_list<std::array<int, 2>> IndexPath;
+    typedef QVector<std::array<int, 2>> IndexPath;
 
     explicit VideoModel(QObject *parent = 0);
     ~VideoModel();
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-    QModelIndex index(const QModelIndex &parent, IndexPath path) const;
-    QModelIndex index(IndexPath path) const;
+    QModelIndex index(const QModelIndex &parent, const IndexPath &path) const;
+    QModelIndex index(const IndexPath &path) const;
     QModelIndex parent(const QModelIndex &child) const;
+    static const IndexPath indexPath(const QModelIndex &index);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -179,6 +177,8 @@ private:
             parent(parent)
         {}
     };
+    
+    typedef QList<std::array<int, 2>> IndexPathList;
     
     QHash<QPair<int, int>, InternalData *> *_indexesData;
 
