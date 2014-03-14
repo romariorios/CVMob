@@ -120,7 +120,6 @@ void JobHandler::run()
     
     _lock.lock();
     QSize winSize = _windowSize;
-    QModelIndex videoIndex = _model->index(_videoRow, VideoModel::FramesColumn);
     _lock.unlock();
     
     startProgressTimer();
@@ -163,7 +162,10 @@ void JobHandler::run()
         _progressTimerLock.unlock();
         
         _lock.lock();
-        QModelIndex currentFrameIndex = _model->index(currentFrame, 0, videoIndex);
+        QModelIndex currentFrameIndex = _model->index({
+            { _videoRow, VideoModel::FramesColumn },
+            { currentFrame, 0 }
+        });
         _lock.unlock();
         
         QImage currentFrameImage = _model->data(currentFrameIndex).value<QImage>();

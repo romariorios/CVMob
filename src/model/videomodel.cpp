@@ -67,6 +67,23 @@ QModelIndex VideoModel::index(int row, int column, const QModelIndex &parent) co
     return createIndex(row, column, (*parentChildrenTable)[ind]);
 }
 
+QModelIndex VideoModel::index(const QModelIndex &parent, VideoModel::IndexPath path) const
+{
+    auto currentIndex = parent;
+    
+    for (auto ind : path) {
+        auto currentParent = currentIndex;
+        currentIndex = index(ind[0], ind[1], currentParent);
+    }
+    
+    return currentIndex;
+}
+
+QModelIndex VideoModel::index(VideoModel::IndexPath path) const
+{
+    return index(QModelIndex {}, path);
+}
+
 QModelIndex VideoModel::parent(const QModelIndex &child) const
 {
     if (!child.isValid()) {

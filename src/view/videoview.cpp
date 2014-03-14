@@ -150,24 +150,36 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
         } else if (topLeft.column() == VideoModel::CurrentFrameColumn) {
             int frame = topLeft.data().toInt();
 
-            v.bgRect->setBrush(model()
-                               ->index(frame, 0, model()
-                                                 ->index(topLeft.row(),
-                                                         VideoModel::FramesColumn))
-                               .data().value<QImage>());
+            v.bgRect->setBrush(videoModel()->index({
+                { topLeft.row(), VideoModel::FramesColumn },
+                { frame, 0 }
+            }).data().value<QImage>());
 
             for (TrajectoryItem *traj : v.trajectories) {
                 traj->setCurrentFrame(frame);
             }
             
             for (int i = 0; i < v.angles.size(); ++i) {
-                QModelIndex anglesIndex = model()->index(topLeft.row(), VideoModel::AnglesColumn);
-                QModelIndex currentAngleIndex = model()->index(i, 0, anglesIndex);
-                int startFrame = model()->index(0, VideoModel::AFrameColumn, currentAngleIndex).data().toInt();
+                auto currentAngleIndex = videoModel()->index({
+                    { topLeft.row(), VideoModel::AnglesColumn },
+                    { i, 0 }
+                });
+                
+                auto startFrame = videoModel()->index(currentAngleIndex, {
+                    { 0, VideoModel::AFrameColumn }
+                }).data().toInt();
+                
                 frame -= startFrame;
-                QModelIndex centerIndex = model()->index(frame, VideoModel::CentralEdgeColumn, currentAngleIndex);
-                QModelIndex edge1Index = model()->index(frame, VideoModel::PeripheralEdge1Column, currentAngleIndex);
-                QModelIndex edge2Index = model()->index(frame, VideoModel::PeripheralEdge2Column, currentAngleIndex);
+                
+                auto centerIndex = videoModel()->index(currentAngleIndex, {
+                    { frame, VideoModel::CentralEdgeColumn }
+                });
+                auto edge1Index = videoModel()->index(currentAngleIndex, {
+                    { frame, VideoModel::PeripheralEdge1Column }
+                });
+                auto edge2Index = videoModel()->index(currentAngleIndex, {
+                    { frame, VideoModel::PeripheralEdge2Column }
+                });
                 
                 QPointF center = centerIndex.data().toPointF();
                 QPointF edge1 = edge1Index.data().toPointF();
@@ -303,6 +315,11 @@ QRegion VideoView::visualRegionForSelection(const QItemSelection &selection) con
     Q_UNUSED(selection)
 
     return QRegion();
+}
+
+VideoModel* VideoView::videoModel() const
+{
+    return static_cast<VideoModel *>(model());
 }
 
 void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)

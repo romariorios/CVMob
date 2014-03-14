@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ class QGraphicsScene;
 class TrajectoryItem;
 class VideoGraphicsView;
 class VideoStatus;
+class VideoModel;
 
 class VideoView : public QAbstractItemView
 {
@@ -79,6 +80,8 @@ private:
     int _currentVideoRow;
     PlayBar *_playBar;
     VideoStatus *_status;
+    
+    VideoModel *videoModel() const;
     
 public slots:
     void updateSettings();
