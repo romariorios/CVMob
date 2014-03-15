@@ -93,7 +93,7 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
-          <widget class="QTreeView" name="trajectoriesView">
+          <widget class="VideoDataView" name="trajectoriesView">
            <property name="toolTip">
             <string extracomment="Trajectory data"/>
            </property>
@@ -116,7 +116,7 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="QTreeView" name="distancesView">
+          <widget class="VideoDataView" name="distancesView">
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -133,7 +133,7 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="QTreeView" name="anglesView">
+          <widget class="VideoDataView" name="anglesView">
            <property name="toolTip">
             <string extracomment="Trajectory data"/>
            </property>
@@ -226,6 +226,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>VideoDataView</class>
+   <extends>QTreeView</extends>
+   <header location="global">view/videodataview.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

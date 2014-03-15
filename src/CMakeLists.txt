@@ -18,6 +18,7 @@ set(CVMob_sources
     view/plotitemview.cpp
     view/qcustomplot.cpp
     view/settings.cpp
+    view/videodataview.cpp
     view/videographicsview.cpp
     view/videoview.cpp
     view/videolistdelegate.cpp

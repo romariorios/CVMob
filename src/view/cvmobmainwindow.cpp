@@ -36,15 +36,6 @@
 #include <view/videoview.hpp>
 #include <view/videolistdelegate.hpp>
 
-#define CREATE_CONTEXT_MENU(parent, point)\
-auto contextMenu = new QMenu { parent };\
-auto index = parent->indexAt(point);\
-connect(contextMenu, &QMenu::aboutToHide, contextMenu, &QObject::deleteLater);\
-\
-if (!index.isValid()) {\
-    return;\
-}
-
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::CvMobMainWindow),
@@ -73,75 +64,17 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     distancesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->distancesView->setModel(distancesModel);
     _ui->distancesView->header()->setSectionResizeMode(QHeaderView::Stretch);
-    _ui->distancesView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_ui->distancesView, &QWidget::customContextMenuRequested, [=](const QPoint &p)
-    {
-        CREATE_CONTEXT_MENU(_ui->distancesView, p)
-        
-        auto deleteAction = new QAction {
-            style()->standardIcon(QStyle::SP_TrashIcon),
-            tr("Delete distance"),
-            contextMenu
-        };
-        connect(deleteAction, &QAction::triggered, [=]()
-        {
-            distancesModel->removeRow(index.row());
-        });
-        contextMenu->addAction(deleteAction);
-        
-        contextMenu->popup(_ui->distancesView->mapToGlobal(p));
-    });
 
     TrajectoriesProxyModel *trajectoriesModel =
             new TrajectoriesProxyModel(this);
     trajectoriesModel->setSourceModel(_videoModel);
     trajectoriesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->trajectoriesView->setModel(trajectoriesModel);
-    _ui->trajectoriesView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_ui->trajectoriesView, &QWidget::customContextMenuRequested, [=](const QPoint &p)
-    {
-        CREATE_CONTEXT_MENU(_ui->trajectoriesView, p)
-        
-        if (!index.parent().isValid()) { // Trajectory
-            auto deleteAction = new QAction {
-                style()->standardIcon(QStyle::SP_TrashIcon),
-                tr("Delete trajectory"),
-                contextMenu
-            };
-            connect(deleteAction, &QAction::triggered, [=]()
-            {
-                trajectoriesModel->removeRow(index.row());
-            });
-            contextMenu->addAction(deleteAction);
-            
-            contextMenu->popup(_ui->trajectoriesView->mapToGlobal(p));
-        }
-    });
     
     AnglesProxyModel *anglesModel = new AnglesProxyModel(this);
     anglesModel->setSourceModel(_videoModel);
     anglesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->anglesView->setModel(anglesModel);
-    _ui->anglesView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_ui->anglesView, &QWidget::customContextMenuRequested, [=](const QPoint &p)
-    {
-        CREATE_CONTEXT_MENU(_ui->anglesView, p)
-        
-        if (!index.parent().isValid()) { // Angle
-            auto deleteAction = new QAction {
-                style()->standardIcon(QStyle::SP_TrashIcon),
-                tr("Delete angle"),
-                contextMenu
-            };
-            connect(deleteAction, &QAction::triggered, [=]()
-            {
-                anglesModel->removeRow(index.row());
-            });
-            contextMenu->addAction(deleteAction);
-            
-            contextMenu->popup(_ui->anglesView->mapToGlobal(p));
-        }
-    });
     
     QLayout *l = _ui->graphsDockWidgetContents->layout();
     
