@@ -73,7 +73,7 @@ QModelIndex VideoModel::index(const QModelIndex &parent, const VideoModel::Index
     
     for (auto ind : path) {
         auto currentParent = currentIndex;
-        currentIndex = index(ind[0], ind[1], currentParent);
+        currentIndex = index(ind.row, ind.column, currentParent);
     }
     
     return currentIndex;

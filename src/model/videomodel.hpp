@@ -80,7 +80,20 @@ public:
         FromHereBackwards = 0x2
     };
     
-    typedef QVector<std::array<int, 2>> IndexPath;
+    struct IndexDir
+    {
+        IndexDir(int row, int column) :
+            row { row },
+            column { column }
+        {}
+        
+        IndexDir() = default;
+        
+        int row = -1;
+        int column = -1;
+    };
+    
+    typedef QVector<IndexDir> IndexPath;
 
     explicit VideoModel(QObject *parent = 0);
     ~VideoModel();
@@ -178,7 +191,7 @@ private:
         {}
     };
     
-    typedef QList<std::array<int, 2>> IndexPathList;
+    typedef QList<IndexDir> IndexPathList;
     
     QHash<QPair<int, int>, InternalData *> *_indexesData;
 
