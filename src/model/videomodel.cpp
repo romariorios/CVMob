@@ -107,7 +107,7 @@ const VideoModel::IndexPath VideoModel::indexPath(const QModelIndex& index)
     
     IndexPathList pathList;
     
-    for (auto i = index; i.parent().isValid(); i = i.parent()) {
+    for (auto i = index; i.isValid(); i = i.parent()) {
         pathList.prepend({ i.row(), i.column() });
     }
     
