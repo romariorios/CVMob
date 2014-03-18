@@ -1,3 +1,6 @@
+=== Refactoring ===
+Make context menu data come from the model
+
 === Performance improvements ===
 Make all timers be triggered only when necessary
 

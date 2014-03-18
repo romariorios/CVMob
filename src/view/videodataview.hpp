@@ -22,14 +22,20 @@
 
 #include <QTreeView>
 
+class QAction;
+
 class VideoDataView : public QTreeView
 {
     Q_OBJECT
     
-    using QTreeView::QTreeView;
+public:
+    explicit VideoDataView(QWidget* parent = 0);
     
 protected:
     void contextMenuEvent(QContextMenuEvent *e);
+    
+private:
+    QAction *_deleteAction;
 };
 
 #endif // VIDEODATAVIEW_H

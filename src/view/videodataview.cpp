@@ -24,7 +24,23 @@
 #include <QMenu>
 #include <model/videomodel.hpp>
 
-#include <QDebug>
+VideoDataView::VideoDataView(QWidget* parent) :
+    QTreeView { parent }
+{
+    _deleteAction = new QAction {
+        style()->standardIcon(QStyle::SP_TrashIcon),
+        tr("Delete"),
+        this
+    };
+    _deleteAction->setShortcut(tr("Delete"));
+    connect(_deleteAction, &QAction::triggered, [=]()
+    {
+        for (auto index : selectionModel()->selectedIndexes()) {
+            model()->removeRow(index.row(), index.parent());
+        }
+    });
+    addAction(_deleteAction);
+}
 
 void VideoDataView::contextMenuEvent(QContextMenuEvent* e)
 {
@@ -45,22 +61,29 @@ void VideoDataView::contextMenuEvent(QContextMenuEvent* e)
     auto contextMenu = new QMenu { this };
     connect(contextMenu, &QMenu::aboutToHide, contextMenu, &QObject::deleteLater);
     
-    auto deleteAction = new QAction {
-        style()->standardIcon(QStyle::SP_TrashIcon),
-        tr("Delete"),
-        contextMenu
-    };
-    connect(deleteAction, &QAction::triggered, [=]()
-    {
-        model()->removeRow(index.row(), index.parent());
-    });
+    // Delete
+    QString deleteString;
+    switch (path.at(0).column) {
+        case VideoModel::DistancesColumn:
+            deleteString = tr("Delete distance");
+            break;
+        case VideoModel::TrajectoriesColumn:
+            deleteString = tr("Delete trajectory");
+            break;
+        case VideoModel::AnglesColumn:
+            deleteString = tr("Delete angle");
+            break;
+        default:
+            deleteString = tr("Delete");
+    }
+    _deleteAction->setText(deleteString);
     
     if (path.size() == 2 &&
         (path.at(0).column == VideoModel::DistancesColumn ||
          path.at(0).column == VideoModel::TrajectoriesColumn ||
          path.at(0).column == VideoModel::AnglesColumn
         )) {
-        contextMenu->addAction(deleteAction);
+        contextMenu->addAction(_deleteAction);
     }
     
     if (contextMenu->actions().isEmpty()) {
