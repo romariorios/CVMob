@@ -26,12 +26,16 @@ TrajectoriesProxyModel::TrajectoriesProxyModel(QObject *parent) :
 
 QVariant TrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int role) const
 {
+    if (role == VideoModel::SourceDataRole) {
+        return mapToSource(proxyIndex).data();
+    }
+    
     if (role != Qt::DisplayRole ||
         !proxyIndex.isValid() ||
         !_parentIndex.isValid()) {
         return QVariant();
     }
-
+    
     if (!proxyIndex.parent().isValid()) {
         return proxyIndex.column() == 0? tr("Trajectory %1").arg(proxyIndex.row()) : QVariant();
     }

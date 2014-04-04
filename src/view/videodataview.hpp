@@ -23,6 +23,8 @@
 #include <QTreeView>
 
 class QAction;
+class QAbstractProxyModel;
+class QMenu;
 
 class VideoDataView : public QTreeView
 {
@@ -35,7 +37,13 @@ protected:
     void contextMenuEvent(QContextMenuEvent *e);
     
 private:
+    void copySelectionToClipboard();
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);    
+    QAbstractProxyModel *proxyModel();
+    
+    QMenu *_contextMenu;
     QAction *_deleteAction;
+    QAction *_copyAction;
 };
 
 #endif // VIDEODATAVIEW_H
