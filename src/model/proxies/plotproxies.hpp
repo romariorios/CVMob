@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ protected:
     virtual QVariant xData(const QModelIndex &index) const { return index.data(); }
     virtual QVariant yData(const QModelIndex &index) const { return index.data(); }
     virtual QString graphTitle() const = 0;
-    virtual QString xTitle() const { return tr("Time (pxl)"); }
+    virtual QString xTitle() const { return tr("Frame"); }
     virtual QString yTitle() const = 0;
     virtual int xColumn() const = 0;
     virtual int yColumn() const = 0;
