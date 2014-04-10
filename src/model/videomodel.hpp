@@ -80,10 +80,6 @@ public:
         FromHereBackwards = 0x2
     };
     
-    enum DataRole {
-        SourceDataRole = Qt::UserRole + 1
-    };
-    
     struct IndexDir
     {
         IndexDir(int row, int column) :

@@ -50,7 +50,7 @@ QModelIndex InstantsProxyModel::mapToSource(const QModelIndex &proxyIndex) const
     }
 
     QModelIndex parent = sourceModel()->index(proxyIndex.parent().row(), 0, _parentIndex);
-    return sourceModel()->index(proxyIndex.row(), proxyIndex.column(), parent);
+    return sourceModel()->index(proxyIndex.row(), mapColumnToSource(proxyIndex.column()), parent);
 }
 
 QModelIndex InstantsProxyModel::index(int row, int column, const QModelIndex &parent) const

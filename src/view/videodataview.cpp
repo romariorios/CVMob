@@ -106,57 +106,26 @@ void VideoDataView::copySelectionToClipboard()
         
         if (path.size() == 2 && path.at(0).column == VideoModel::TrajectoriesColumn) {
             clipboardText += index.data().toString() + "\n";
-            clipboardText +=
-                tr("Frame") + "\t" +
-                tr("Position (x)") + "\t" +
-                tr("Position (y)") + "\t" +
-                tr("Speed (abs)") + "\t" +
-                tr("Speed (x)") + "\t" +
-                tr("Speed (y)") + "\t" +
-                tr("Acceleration (abs)") + "\t" +
-                tr("Acceleration (x)") + "\t" +
-                tr("Acceleration (y)") + "\n";
+            int section = 0;
+            for (
+                auto header = model()->headerData(section, Qt::Horizontal);
+                header.isValid();
+                ++section, header = model()->headerData(section, Qt::Horizontal)
+            ) {
+                clipboardText += header.toString() + "\t";
+            }
+            clipboardText += "\n";
             
             for (int i = 0; i < model()->rowCount(index); ++i) {
-                auto speed = model()->index(
-                    i, VideoModel::LSpeedColumn, index
-                ).data(VideoModel::SourceDataRole).toPointF();
-                auto absSpeed = sqrt(speed.x() * speed.x() + speed.y() * speed.y());
-                auto acceleration =
-                    model()->index(
-                        i, VideoModel::LAccelerationColumn, index
-                    ).data(VideoModel::SourceDataRole).toPointF();
-                auto absAcceleration = sqrt(
-                    acceleration.x() * acceleration.x() +
-                    acceleration.y() * acceleration.y()
-                );
-                
-                clipboardText +=
-                    QString::number(
-                        model()->index(
-                            i, VideoModel::LFrameColumn, index
-                        ).data(VideoModel::SourceDataRole).toInt()
-                    ) + "\t" + QString::number(
-                        model()->index(
-                            i, VideoModel::PositionColumn, index
-                        ).data(VideoModel::SourceDataRole).toPointF().x()
-                    ) + "\t" + QString::number(
-                        model()->index(
-                            i, VideoModel::PositionColumn, index
-                        ).data(VideoModel::SourceDataRole).toPointF().y()
-                    ) + "\t" + QString::number(
-                        absSpeed
-                    ) + "\t" + QString::number(
-                        speed.x()
-                    ) + "\t" + QString::number(
-                        speed.y()
-                    ) + "\t" + QString::number(
-                        absAcceleration
-                    ) + "\t" + QString::number(
-                        acceleration.x()
-                    ) + "\t" + QString::number(
-                        acceleration.y()
-                    ) + "\n";
+                int col = 0;
+                for (
+                    auto clipData = model()->index(i, col, index).data();
+                    clipData.isValid();
+                    ++col, clipData = model()->index(i, col, index).data()
+                ) {
+                    clipboardText += clipData.toString() + "\t";
+                }
+                clipboardText += "\n";
             }
         }
         
