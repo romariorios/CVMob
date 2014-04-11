@@ -50,15 +50,15 @@ class XTrajectoryPlotProxyModel : public BasePlotProxyModel
 public:
     inline explicit XTrajectoryPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
     {
-        setColumn(VideoModel::TrajectoriesColumn);
+        setColumn(VideoModel::AllTrajectoriesCol);
     }
     
 protected:
     inline QVariant yData(const QModelIndex& index) const { return index.data().toPointF().x(); }
     inline QString graphTitle() const { return tr("X (Trajectory)"); }
     inline QString yTitle() const { return tr("X"); }
-    inline int xColumn() const { return VideoModel::LFrameColumn; }
-    inline int yColumn() const { return VideoModel::PositionColumn; }
+    inline int xColumn() const { return VideoModel::LFrameCol; }
+    inline int yColumn() const { return VideoModel::PositionCol; }
 };
 
 class YTrajectoryPlotProxyModel : public BasePlotProxyModel
@@ -68,15 +68,15 @@ class YTrajectoryPlotProxyModel : public BasePlotProxyModel
 public:
     inline explicit YTrajectoryPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
     {
-        setColumn(VideoModel::TrajectoriesColumn);
+        setColumn(VideoModel::AllTrajectoriesCol);
     }
     
 protected:
     inline QVariant yData(const QModelIndex& index) const { return index.data().toPointF().y(); }
     inline QString graphTitle() const { return tr("Y (Trajectory)"); }
     inline QString yTitle() const { return tr("Y"); }
-    inline int xColumn() const { return VideoModel::LFrameColumn; }
-    inline int yColumn() const { return VideoModel::PositionColumn; }
+    inline int xColumn() const { return VideoModel::LFrameCol; }
+    inline int yColumn() const { return VideoModel::PositionCol; }
 };
 
 class TrajectorySpeedPlotProxyModel : public BasePlotProxyModel
@@ -84,15 +84,15 @@ class TrajectorySpeedPlotProxyModel : public BasePlotProxyModel
 public:
     inline explicit TrajectorySpeedPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
     {
-        setColumn(VideoModel::TrajectoriesColumn);
+        setColumn(VideoModel::AllTrajectoriesCol);
     }
     
 protected:
     inline QVariant yData(const QModelIndex& index) const { return QLineF(QPointF(0, 0), index.data().toPointF()).length(); }
     inline QString graphTitle() const { return tr("Speed"); }
     inline QString yTitle() const { return tr("Speed (pxl/frame)"); }
-    inline int xColumn() const { return VideoModel::LFrameColumn; }
-    inline int yColumn() const { return VideoModel::LSpeedColumn; }
+    inline int xColumn() const { return VideoModel::LFrameCol; }
+    inline int yColumn() const { return VideoModel::LSpeedCol; }
 };
 
 class TrajectoryAccelPlotProxyModel : public BasePlotProxyModel
@@ -100,15 +100,15 @@ class TrajectoryAccelPlotProxyModel : public BasePlotProxyModel
 public:
     inline explicit TrajectoryAccelPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
     {
-        setColumn(VideoModel::TrajectoriesColumn);
+        setColumn(VideoModel::AllTrajectoriesCol);
     }
     
 protected:
     inline QVariant yData(const QModelIndex& index) const { return QLineF(QPointF(0, 0), index.data().toPointF()).length(); }
     inline QString graphTitle() const { return tr("Acceleration"); }
     inline QString yTitle() const { return tr("Acceleration (pxl/frame^2)"); }
-    inline int xColumn() const { return VideoModel::LFrameColumn; }
-    inline int yColumn() const { return VideoModel::LAccelerationColumn; }
+    inline int xColumn() const { return VideoModel::LFrameCol; }
+    inline int yColumn() const { return VideoModel::LAccelCol; }
 };
 
 class AnglePlotProxyModel : public BasePlotProxyModel
@@ -116,14 +116,14 @@ class AnglePlotProxyModel : public BasePlotProxyModel
 public:
     inline explicit AnglePlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
     {
-        setColumn(VideoModel::AnglesColumn);
+        setColumn(VideoModel::AllAnglesCol);
     }
     
 protected:
     inline QString graphTitle() const { return tr("Angle"); }
     inline QString yTitle() const { return tr("Angle (radians)"); }
-    inline int xColumn() const { return VideoModel::AFrameColumn; }
-    inline int yColumn() const { return VideoModel::AngleColumn; }
+    inline int xColumn() const { return VideoModel::AFrameCol; }
+    inline int yColumn() const { return VideoModel::AngleCol; }
 };
 
 #endif // PLOTPROXIES_H

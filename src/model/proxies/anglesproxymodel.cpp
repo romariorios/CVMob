@@ -21,7 +21,7 @@
 AnglesProxyModel::AnglesProxyModel(QObject* parent) :
     InstantsProxyModel(parent)
 {
-    setColumn(VideoModel::AnglesColumn);
+    setColumn(VideoModel::AllAnglesCol);
 }
 
 QVariant AnglesProxyModel::data(const QModelIndex& proxyIndex, int role) const
@@ -44,13 +44,13 @@ QVariant AnglesProxyModel::headerData(int section, Qt::Orientation orientation, 
     }
     
     switch (section) {
-    case VideoModel::AFrameColumn:
+    case VideoModel::AFrameCol:
         return tr("Frame");
-    case VideoModel::AngleColumn:
+    case VideoModel::AngleCol:
         return tr("Angle (radians)");
-    case VideoModel::ASpeedColumn:
+    case VideoModel::ASpeedCol:
         return tr("Angular speed");
-    case VideoModel::AAccelerationColumn:
+    case VideoModel::AAccelCol:
         return tr("Angular acceleration");
     }
     

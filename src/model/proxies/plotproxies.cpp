@@ -57,7 +57,7 @@ QModelIndex BasePlotProxyModel::mapFromSource(const QModelIndex& sourceIndex) co
     if (_parentIndex.isValid() && !sourceIndex.parent().isValid()) {
         auto path = VideoModel::indexPath(_parentIndex);
         
-        if (path[0].row != sourceIndex.row() || sourceIndex.column() != VideoModel::CurrentFrameColumn) {
+        if (path[0].row != sourceIndex.row() || sourceIndex.column() != VideoModel::CurrentFrameCol) {
             return QModelIndex {};
         }
         
@@ -88,7 +88,7 @@ QModelIndex BasePlotProxyModel::mapToSource(const QModelIndex& proxyIndex) const
         if (proxyIndex.column() == 1) {
             auto path = VideoModel::indexPath(_parentIndex);
             
-            return sourceModel()->index(path[0].row, VideoModel::CurrentFrameColumn);
+            return sourceModel()->index(path[0].row, VideoModel::CurrentFrameCol);
         }
     }
     

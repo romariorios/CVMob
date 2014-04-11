@@ -34,7 +34,7 @@ enum {
 TrajectoriesProxyModel::TrajectoriesProxyModel(QObject *parent) :
     InstantsProxyModel(parent)
 {
-    setColumn(VideoModel::TrajectoriesColumn);
+    setColumn(VideoModel::AllTrajectoriesCol);
 }
 
 QVariant TrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int role) const
@@ -114,18 +114,18 @@ int TrajectoriesProxyModel::mapColumnToSource(int column, const QModelIndex& par
 {
     switch (column) {
     case ClipboardFrameColumn:
-        return VideoModel::LFrameColumn;
+        return VideoModel::LFrameCol;
     case ClipboardPositionXColumn:
     case ClipboardPositionYColumn:
-        return VideoModel::PositionColumn;
+        return VideoModel::PositionCol;
     case ClipboardSpeedAbsColumn:
     case ClipboardSpeedXColumn:
     case ClipboardSpeedYColumn:
-        return VideoModel::LSpeedColumn;
+        return VideoModel::LSpeedCol;
     case ClipboardAccelerationAbsColumn:
     case ClipboardAccelerationXColumn:
     case ClipboardAccelerationYColumn:
-        return VideoModel::LAccelerationColumn;
+        return VideoModel::LAccelCol;
     default:
         return -1; // Invalid
     }

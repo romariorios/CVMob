@@ -163,7 +163,7 @@ void JobHandler::run()
         
         _lock.lock();
         QModelIndex currentFrameIndex = _model->index({
-            { _videoRow, VideoModel::FramesColumn },
+            { _videoRow, VideoModel::AllFramesCol },
             { currentFrame, 0 }
         });
         _lock.unlock();

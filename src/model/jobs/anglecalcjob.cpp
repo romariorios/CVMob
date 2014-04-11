@@ -61,16 +61,16 @@ void TargetAngle::storeInstant(int frame, float aSpeed, float aAccel, const QPoi
     model->insertRow(currentRow, parentIndex);
 
     if (currentRow == 0) {
-        model->insertColumns(0, VideoModel::AngleInstantColumnCount, parentIndex);
+        model->insertColumns(0, VideoModel::AngleInstantColCount, parentIndex);
     }
 
-    model->setData(model->index(currentRow, VideoModel::AFrameColumn, parentIndex), frame);
-    model->setData(model->index(currentRow, VideoModel::ASpeedColumn, parentIndex), aSpeed);
-    model->setData(model->index(currentRow, VideoModel::AAccelerationColumn, parentIndex), aAccel);
-    model->setData(model->index(currentRow, VideoModel::CentralEdgeColumn, parentIndex),
+    model->setData(model->index(currentRow, VideoModel::AFrameCol, parentIndex), frame);
+    model->setData(model->index(currentRow, VideoModel::ASpeedCol, parentIndex), aSpeed);
+    model->setData(model->index(currentRow, VideoModel::AAccelCol, parentIndex), aAccel);
+    model->setData(model->index(currentRow, VideoModel::ACenterCol, parentIndex),
                    centralEdge);
-    model->setData(model->index(currentRow, VideoModel::PeripheralEdge1Column, parentIndex),
+    model->setData(model->index(currentRow, VideoModel::AEdge1Col, parentIndex),
                    pEdge1);
-    model->setData(model->index(currentRow, VideoModel::PeripheralEdge2Column, parentIndex),
+    model->setData(model->index(currentRow, VideoModel::AEdge2Col, parentIndex),
                    pEdge2);
 }

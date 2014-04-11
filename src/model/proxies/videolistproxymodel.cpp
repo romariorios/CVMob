@@ -29,7 +29,7 @@ QVariant VideoListProxyModel::data(const QModelIndex& index, int role) const
 {
     if (role != Qt::DisplayRole ||
         !index.isValid() ||
-        index.column() != VideoModel::FileNameColumn) {
+        index.column() != VideoModel::FileNameCol) {
         return QVariant();
     }
     

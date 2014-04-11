@@ -43,36 +43,36 @@ class VideoModel : public QAbstractItemModel
 
 public:
     enum VideoColumn {
-        InvalidColumn = -1,
-        FileNameColumn = 0,
-        CurrentFrameColumn,
-        FrameDurationColumn,
-        FrameSizeColumn,
-        FramesColumn,
-        PlayStatusColumn,
-        DistancesColumn,
-        TrajectoriesColumn,
-        AnglesColumn,
-        VideoColumnCount
+        InvalidCol = -1,
+        FileNameCol = 0,
+        CurrentFrameCol,
+        FrameDurationCol,
+        FrameSizeCol,
+        AllFramesCol,
+        PlayStatusCol,
+        AllDistancesCol,
+        AllTrajectoriesCol,
+        AllAnglesCol,
+        VideoColCount
     };
 
     enum TrajectoryInstantColumn {
-        LFrameColumn = 0,
-        PositionColumn,
-        LSpeedColumn,
-        LAccelerationColumn,
-        TrajectoryInstantColumnCount
+        LFrameCol = 0,
+        PositionCol,
+        LSpeedCol,
+        LAccelCol,
+        TrajectoryInstantColCount
     };
 
     enum AngleInstantColumn {
-        AFrameColumn = 0,
-        AngleColumn,
-        ASpeedColumn,
-        AAccelerationColumn,
-        CentralEdgeColumn,
-        PeripheralEdge1Column,
-        PeripheralEdge2Column,
-        AngleInstantColumnCount
+        AFrameCol = 0,
+        AngleCol,
+        ASpeedCol,
+        AAccelCol,
+        ACenterCol,
+        AEdge1Col,
+        AEdge2Col,
+        AngleInstantColCount
     };
 
     enum CalculationFlags {

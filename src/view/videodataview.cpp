@@ -81,13 +81,13 @@ void VideoDataView::contextMenuEvent(QContextMenuEvent* e)
     // Delete
     QString deleteString;
     switch (path.at(0).column) {
-    case VideoModel::DistancesColumn:
+    case VideoModel::AllDistancesCol:
         deleteString = tr("Delete distance");
         break;
-    case VideoModel::TrajectoriesColumn:
+    case VideoModel::AllTrajectoriesCol:
         deleteString = tr("Delete trajectory");
         break;
-    case VideoModel::AnglesColumn:
+    case VideoModel::AllAnglesCol:
         deleteString = tr("Delete angle");
         break;
     default:
@@ -104,7 +104,7 @@ void VideoDataView::copySelectionToClipboard()
         auto path = VideoModel::indexPath(proxyModel()->mapToSource(index));
         QString clipboardText;
         
-        if (path.size() == 2 && path.at(0).column == VideoModel::TrajectoriesColumn) {
+        if (path.size() == 2 && path.at(0).column == VideoModel::AllTrajectoriesCol) {
             clipboardText += index.data().toString() + "\n";
             int section = 0;
             for (
@@ -144,9 +144,9 @@ void VideoDataView::selectionChanged(const QItemSelection& selected, const QItem
         const auto path = VideoModel::indexPath(proxyModel()->mapToSource(index));
         const auto indexIsValid =
             path.size() == 2 && (
-                path.at(0).column == VideoModel::DistancesColumn ||
-                path.at(0).column == VideoModel::TrajectoriesColumn ||
-                path.at(0).column == VideoModel::AnglesColumn
+                path.at(0).column == VideoModel::AllDistancesCol ||
+                path.at(0).column == VideoModel::AllTrajectoriesCol ||
+                path.at(0).column == VideoModel::AllAnglesCol
             );
         
         if (!indexIsValid) {

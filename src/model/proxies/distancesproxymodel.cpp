@@ -23,7 +23,7 @@
 DistancesProxyModel::DistancesProxyModel(QObject *parent) :
     BaseProxyModel(parent)
 {
-    setColumn(VideoModel::DistancesColumn);
+    setColumn(VideoModel::AllDistancesCol);
 }
 
 QVariant DistancesProxyModel::data(const QModelIndex &proxyIndex, int role) const
@@ -82,7 +82,7 @@ QModelIndex DistancesProxyModel::mapFromSource(const QModelIndex &sourceIndex) c
 {
     if (!_parentIndex.isValid() ||
         !sourceIndex.parent().isValid() ||
-        !sourceIndex.parent().column() != VideoModel::DistancesColumn ||
+        !sourceIndex.parent().column() != VideoModel::AllDistancesCol ||
         !sourceIndex.parent().row() != _parentIndex.row()) {
         return QModelIndex();
     }

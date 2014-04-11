@@ -23,7 +23,7 @@
 
 BaseProxyModel::BaseProxyModel(QObject *parent) :
     QAbstractProxyModel(parent),
-    _column(VideoModel::InvalidColumn)
+    _column(VideoModel::InvalidCol)
 {
 }
 
@@ -76,7 +76,7 @@ void BaseProxyModel::setSelectionModel(QItemSelectionModel *selectionModel)
 
         if (selected.size() != 1 ||
             selected.at(0).indexes().size() != 1 ||
-            _column == VideoModel::InvalidColumn) {
+            _column == VideoModel::InvalidCol) {
             _parentIndex = QModelIndex();
         } else {
             _parentIndex = sourceModel()->index(selected.at(0).indexes().at(0).row(), _column);

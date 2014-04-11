@@ -2,27 +2,27 @@ The VideoModel class is slightly inspired in a relational database model. There'
 hierarchy and each column either has a value, or it has one or more child columns.
 
 Root
-0| FileNameColumn (QString)
-1| CurrentFrameColumn (int): Current frame the video is in
-2| FrameDurationColumn (int): The duration of each frame in msec
-3| FrameSizeColumn (QSizeF)
-4| FramesColumn: The frames of this video
+0| FileNameCol (QString)
+1| CurrentFrameCol (int): Current frame the video is in
+2| FrameDurationCol (int): The duration of each frame in msec
+3| FrameSizeCol (QSizeF)
+4| AllFramesCol: The frames of this video
 4~>0| (QImage): A frame
-5| PlayStatusColumn: True if the video is playing; false otherwise
-6| DistancesColumn
+5| PlayStatusCol: True if the video is playing; false otherwise
+6| AllDistancesCol
 6~>0| (QLineF): A line between two points
-7| LinearTrajectoriesColumn
+7| AllTrajectoriesCol
 7~>0| : The instants of a linear trajectory
-7~>0~>0| LFrameColumn (int)
-7~>0~>1| PositionColumn (QPointF)
-7~>0~>2| LSpeedColumn (QPointF)
-7~>0~>3| LAccelerationColumn (QPointF)
-8| AngularTrajectoriesColumn
+7~>0~>0| LFrameCol (int)
+7~>0~>1| PositionCol (QPointF)
+7~>0~>2| LSpeedCol (QPointF)
+7~>0~>3| LAccelCol (QPointF)
+8| AllAnglesCol
 8~>0| : The instants of an angular trajectory
-8~>0~>0| AFrameColumn (int)
-8~>0~>1| AngleColumn (float): Angle in radians
-8~>0~>2| ASpeedColumn (float)
-8~>0~>3| AAccelerationColumn (float)
-8~>0~>4| CentralEdgeColumn (QPointF)
-8~>0~>5| PeripheralEdge1Column (QPointF)
-8~>0~>6| PeripheralEdge2Column (QPointF)
+8~>0~>0| AFrameCol (int)
+8~>0~>1| AngleCol (float): Angle in radians
+8~>0~>2| ASpeedCol (float)
+8~>0~>3| AAccelCol (float)
+8~>0~>4| ACenterCol (QPointF)
+8~>0~>5| AEdge1Col (QPointF)
+8~>0~>6| AEdge2Col (QPointF)
