@@ -48,6 +48,6 @@ void VideoGraphicsView::mouseMoveEvent(QMouseEvent *event)
 void VideoGraphicsView::resizeEvent(QResizeEvent* event)
 {
     fitInView(sceneRect(), Qt::KeepAspectRatio);
-    
+
     QGraphicsView::resizeEvent(event);
 }

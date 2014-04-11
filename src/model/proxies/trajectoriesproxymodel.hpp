@@ -26,7 +26,7 @@ class TrajectoriesProxyModel : public InstantsProxyModel
     Q_OBJECT
 public:
     explicit TrajectoriesProxyModel(QObject *parent = 0);
-    
+
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;

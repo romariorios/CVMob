@@ -40,7 +40,7 @@ QModelIndex InstantsProxyModel::mapToSource(const QModelIndex &proxyIndex) const
     if (!_parentIndex.isValid()) {
         return QModelIndex();
     }
-    
+
     if (!proxyIndex.isValid()) {
         return _parentIndex;
     }

@@ -58,7 +58,7 @@ void BaseProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
         beginInsertRows(mapFromSource(parent), first, last);
         endInsertRows();
     });
-    
+
     connect(sourceModel, &QAbstractItemModel::rowsAboutToBeRemoved, [=](const QModelIndex &parent,
                                                                         int first, int last)
     {
@@ -89,9 +89,9 @@ void BaseProxyModel::setSelectionModel(QItemSelectionModel *selectionModel)
 bool BaseProxyModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     beginRemoveRows(parent, row, row + count - 1);
-    
+
     sourceModel()->removeRows(row, count, mapToSource(parent));
-    
+
     endRemoveRows();
 }
 

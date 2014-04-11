@@ -26,9 +26,9 @@ Settings::Settings(QWidget* parent) :
     _ui(new Ui::Settings)
 {
     _ui->setupUi(this);
-    
+
     loadSettings();
-    
+
     connect(_ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
             this, SLOT(onButtonBoxCliked(QAbstractButton*)));
 }
@@ -36,7 +36,7 @@ Settings::Settings(QWidget* parent) :
 void Settings::saveSettings()
 {
     QSettings settings;
-    
+
     settings.setValue("video/respectFramerate", _ui->videoFramerateBox->isChecked());
     settings.setValue("video/antiAlias", _ui->videoAntiAliasBox->isChecked());
     settings.setValue("video/searchWindowSize", _ui->searchWindowSizeBox->value());
@@ -46,7 +46,7 @@ void Settings::saveSettings()
 void Settings::loadSettings()
 {
     QSettings settings;
-    
+
     _ui->videoFramerateBox->setChecked(settings.value("video/respectFramerate", false).toBool());
     _ui->videoAntiAliasBox->setChecked(settings.value("video/antiAlias", true).toBool());
     _ui->searchWindowSizeBox->setValue(settings.value("video/searchWindowSize", 21).toInt());

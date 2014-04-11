@@ -29,23 +29,23 @@ class AngleItem : public QGraphicsItemGroup
 public:
     explicit AngleItem(QGraphicsItem* parent = 0);
     AngleItem(const QPointF &center, const QPointF &edge1, const QPointF &edge2, QGraphicsItem* parent = 0);
-    
+
     void setPoints(const QPointF &center, const QPointF &edge1, const QPointF &edge2);
     void setCenter(const QPointF &center);
     void setEdge1(const QPointF &edge1);
     void setEdge2(const QPointF &edge2);
-    
+
     inline const QPointF center() { return _centerPoint; }
     inline const QPointF edge1() { return _edge1Point; }
     inline const QPointF edge2() { return _edge2Point; }
-    
+
 private:
     QGraphicsRectItem *_center;
     QGraphicsRectItem *_edge1;
     QGraphicsRectItem *_edge2;
     QGraphicsLineItem *_line1;
     QGraphicsLineItem *_line2;
-    
+
     QPointF _centerPoint;
     QPointF _edge1Point;
     QPointF _edge2Point;

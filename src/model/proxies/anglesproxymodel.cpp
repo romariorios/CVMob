@@ -29,11 +29,11 @@ QVariant AnglesProxyModel::data(const QModelIndex& proxyIndex, int role) const
     if (!proxyIndex.isValid() || role != Qt::DisplayRole || !_parentIndex.isValid()) {
         return QVariant();
     }
-    
+
     if (!proxyIndex.parent().isValid()) {
         return proxyIndex.column() == 0? tr("Angle %1").arg(proxyIndex.row()) : QVariant();
     }
-    
+
     return mapToSource(proxyIndex).data();
 }
 
@@ -42,7 +42,7 @@ QVariant AnglesProxyModel::headerData(int section, Qt::Orientation orientation, 
     if (role != Qt::DisplayRole || orientation != Qt::Horizontal) {
         return QVariant();
     }
-    
+
     switch (section) {
     case VideoModel::AFrameCol:
         return tr("Frame");
@@ -53,7 +53,7 @@ QVariant AnglesProxyModel::headerData(int section, Qt::Orientation orientation, 
     case VideoModel::AAccelCol:
         return tr("Angular acceleration");
     }
-    
+
     return QVariant();
 }
 

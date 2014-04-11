@@ -34,17 +34,17 @@ class Settings : public QDialog
 public:
     explicit Settings(QWidget* parent = 0);
     ~Settings();
-    
+
 private:
     void saveSettings();
     void loadSettings();
-    
+
 signals:
     void settingsChanged();
-    
+
 private:
     Ui::Settings *_ui;
-    
+
 private slots:
     void onButtonBoxCliked(QAbstractButton* button);
 };

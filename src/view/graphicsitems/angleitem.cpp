@@ -35,13 +35,13 @@ AngleItem::AngleItem(QGraphicsItem* parent) :
     addToGroup(_center);
     addToGroup(_edge1);
     addToGroup(_edge2);
-    
+
     _edge1->setPen(Qt::NoPen);
     _edge1->setBrush(Qt::red);
-    
+
     _edge2->setPen(Qt::NoPen);
     _edge2->setBrush(Qt::red);
-    
+
     _center->setPen(Qt::NoPen);
     _center->setBrush(Qt::red);
 }
@@ -62,11 +62,11 @@ void AngleItem::setPoints(const QPointF& center, const QPointF& edge1, const QPo
     _centerPoint = center;
     _edge1Point = edge1;
     _edge2Point = edge2;
-    
+
     _center->setRect(rectFromPoint(center));
     _edge1->setRect(rectFromPoint(edge1));
     _edge2->setRect(rectFromPoint(edge2));
-    
+
     _line1->setLine(QLineF(center, edge1));
     _line2->setLine(QLineF(center, edge2));
 }

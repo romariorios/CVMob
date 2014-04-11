@@ -79,20 +79,20 @@ public:
         FromHereOnwards = 0x1,
         FromHereBackwards = 0x2
     };
-    
+
     struct IndexDir
     {
         IndexDir(int row, int column) :
             row { row },
             column { column }
         {}
-        
+
         IndexDir() = default;
-        
+
         int row = -1;
         int column = -1;
     };
-    
+
     typedef QVector<IndexDir> IndexPath;
 
     explicit VideoModel(QObject *parent = 0);
@@ -112,7 +112,7 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
-    
+
     bool openVideo(const QString &path);
     void createDistance(const QLineF& l, const QModelIndex &videoIndex);
     void createDistance(const QLineF &l, int videoRow);
@@ -125,12 +125,12 @@ public:
                                                        int videoRow,
                                                        const QSize &windowSize = QSize(21, 21),
                                                        CalculationFlags flags = FromHereOnwards);
-    
+
     JobHandler *jobHandlerForVideo(int videoRow) const;
 
 public slots:
     void updateSettings();
-    
+
 private:
     struct TrajectoryInstant
     {
@@ -164,7 +164,7 @@ private:
             jobHandler(0)
         {}
         ~Video();
-        
+
         QString fileName;
         int currentFrame, frameDuration, frameCount, streamFrame;
         bool playStatus;
@@ -183,16 +183,16 @@ private:
         InternalData *parent;
         int row, column;
         QHash<QPair<int, int>, InternalData *> children;
-        
+
         InternalData(int row, int column, InternalData *parent = 0) :
             row(row),
             column(column),
             parent(parent)
         {}
     };
-    
+
     typedef QList<IndexDir> IndexPathList;
-    
+
     QHash<QPair<int, int>, InternalData *> *_indexesData;
 
     QList<Video> *_cvmobVideoData;

@@ -27,7 +27,7 @@ QVariant BasePlotProxyModel::data(const QModelIndex& proxyIndex, int role) const
     if (!proxyIndex.parent().isValid() && proxyIndex.column() == 1) {
         return mapToSource(proxyIndex).data();
     }
-    
+
     switch (proxyIndex.column()) {
     case 0:
         return xData(mapToSource(proxyIndex));
@@ -56,42 +56,42 @@ QModelIndex BasePlotProxyModel::mapFromSource(const QModelIndex& sourceIndex) co
 {
     if (_parentIndex.isValid() && !sourceIndex.parent().isValid()) {
         auto path = VideoModel::indexPath(_parentIndex);
-        
+
         if (path[0].row != sourceIndex.row() || sourceIndex.column() != VideoModel::CurrentFrameCol) {
             return QModelIndex {};
         }
-        
+
         return index(0, 1);
     }
-    
+
     QModelIndex instantsSourceIndex = InstantsProxyModel::mapFromSource(sourceIndex);
     if (!instantsSourceIndex.parent().isValid()) {
         return instantsSourceIndex;
     }
-    
+
     if (instantsSourceIndex.column() == xColumn()) {
         return index(instantsSourceIndex.row(), 0, instantsSourceIndex.parent());
     }
-    
+
     if (instantsSourceIndex.column() == yColumn()) {
         return index(instantsSourceIndex.row(), 1, instantsSourceIndex.parent());
     }
-    
+
     return QModelIndex();
 }
 
 QModelIndex BasePlotProxyModel::mapToSource(const QModelIndex& proxyIndex) const
 {
     int column;
-    
+
     if (!proxyIndex.parent().isValid()) {
         if (proxyIndex.column() == 1) {
             auto path = VideoModel::indexPath(_parentIndex);
-            
+
             return sourceModel()->index(path[0].row, VideoModel::CurrentFrameCol);
         }
     }
-    
+
     switch (proxyIndex.column()) {
     case 0:
         column = xColumn();
@@ -102,7 +102,7 @@ QModelIndex BasePlotProxyModel::mapToSource(const QModelIndex& proxyIndex) const
     default:
         return QModelIndex();
     }
-    
+
     return InstantsProxyModel::mapToSource(index(proxyIndex.row(), column, proxyIndex.parent()));
 }
 

@@ -30,7 +30,7 @@ class QTimerEvent;
 class PlayBar : public QWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit PlayBar(QWidget *parent = 0);
     ~PlayBar();
@@ -52,7 +52,7 @@ signals:
     void newDistanceRequested();
     void newTrajectoryRequested();
     void settingsRequested();
-    
+
 private:
     int _frameCount;
     int _frameDuration;

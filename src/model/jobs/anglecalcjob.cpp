@@ -38,9 +38,9 @@ void AngleCalcJob::emitNewPoints(int frame, const QVector< QPointF >& points)
     float newAngle = angleFromPoints(points[0], points[1], points[2]);
     float newASpeed = newAngle - _previousAngle;
     float newAAccel = newASpeed - _previousASpeed;
-    
+
     emit instantGenerated(frame, newASpeed, newAAccel, points[0], points[1], points[2]);
-    
+
     _previousAngle = newAngle;
     _previousASpeed = newASpeed;
 }

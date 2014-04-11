@@ -26,9 +26,9 @@ class VideoListProxyModel : public QIdentityProxyModel
     Q_OBJECT
 public:
     explicit VideoListProxyModel(QObject* parent = 0);
-    
+
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    
+
     inline int columnCount(const QModelIndex & = QModelIndex()) const { return 1; }
 };
 

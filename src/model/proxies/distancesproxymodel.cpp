@@ -95,7 +95,7 @@ QModelIndex DistancesProxyModel::mapToSource(const QModelIndex &proxyIndex) cons
     if (!_parentIndex.isValid()) {
         return QModelIndex();
     }
-    
+
     if (!proxyIndex.isValid()) {
         return _parentIndex;
     }

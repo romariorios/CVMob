@@ -36,15 +36,15 @@ void PlaySlider::mousePressEvent(QMouseEvent* e)
     if (e->button() == Qt::LeftButton &&
         sr.contains(e->pos()) == false) {
         int newVal;
-    
+
         if (orientation() == Qt::Vertical) {
-            double halfHandleWidth = (0.5 * sr.width()) + 0.5; // Correct rounding       
+            double halfHandleWidth = (0.5 * sr.width()) + 0.5; // Correct rounding
             int adaptedPosX = e->x();
-            
+
             if (adaptedPosX < halfHandleWidth) {
                 adaptedPosX = halfHandleWidth;
             }
-            
+
             if (adaptedPosX > width() - halfHandleWidth) {
                 adaptedPosX = width() - halfHandleWidth;
             }
@@ -65,6 +65,6 @@ void PlaySlider::mousePressEvent(QMouseEvent* e)
 
         e->accept();
     }
-    
+
     QSlider::mousePressEvent(e);
 }

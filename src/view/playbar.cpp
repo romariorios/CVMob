@@ -35,17 +35,17 @@ PlayBar::PlayBar(QWidget *parent) :
     _ui->setupUi(this);
     _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
     _ui->progressSlide->setTracking(false);
-    
+
     _ui->actionPlay->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
     _ui->actionSettings->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
-    
+
     QMenu *drawMenu = new QMenu(_ui->drawButton);
     drawMenu->addAction(_ui->actionMeasure_distance);
     drawMenu->addAction(_ui->actionCalculate_trajectory);
     drawMenu->addAction(_ui->actionTrack_angle);
     _ui->drawButton->setMenu(drawMenu);
     _ui->drawButton->setDefaultAction(_ui->actionMeasure_distance);
-    
+
     _ui->settingsButton->setDefaultAction(_ui->actionSettings);
 
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
@@ -62,11 +62,11 @@ PlayBar::PlayBar(QWidget *parent) :
             _ui->progressSlide->setValue(0);
         }
     });
-    
+
     connect(_ui->progressSlide, &QSlider::sliderPressed, [&](){
         killTimer(_currentTimer);
     });
-    
+
     connect(_ui->progressSlide, &QSlider::sliderReleased, [&](){
         setPlaying(_playing);
     });
@@ -84,17 +84,17 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
 {
     _ui->progressSlide->setMaximum(frameCount);
     _ui->progressSlide->setValue(0);
-    
+
     _ui->progressSlide->setEnabled(frameCount);
     _ui->drawButton->setEnabled(frameCount);
-    
+
     QSettings set;
-    
+
     _videoFrameDuration = frameDuration;
     _frameDuration = set.value("video/respectFramerate", false).toBool()? frameDuration : 0;
     _frameCount = frameCount;
     setPlaying(false);
-    
+
     _ui->playPauseButton->setEnabled(frameCount);
 
     emit playDataChanged(frameCount, frameDuration);
@@ -103,7 +103,7 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
 void PlayBar::updateSettings()
 {
     QSettings set;
-    
+
     _frameDuration = set.value("video/respectFramerate", false).toBool()? _videoFrameDuration : 0;
     if (_playing) {
         killTimer(_currentTimer);
@@ -119,18 +119,18 @@ void PlayBar::timerEvent(QTimerEvent *)
 void PlayBar::setPlaying(bool playing)
 {
     _playing = playing;
-    
+
     if (playing) {
         _currentTimer = startTimer(_frameDuration);
     } else {
         killTimer(_currentTimer);
     }
-    
+
     _ui->actionPlay->setText(playing? tr("Pause") : tr("Play"));
     _ui->actionPlay->setToolTip(playing? tr("Pause playback") : tr("Start playback"));
     _ui->actionPlay->setIcon(playing? QApplication::style()->standardIcon(QStyle::SP_MediaPause) :
                                       QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
-    
+
     disconnect(_ui->actionPlay, SIGNAL(toggled(bool)), this, SLOT(setPlaying(bool)));
     _ui->actionPlay->setChecked(playing);
     connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));

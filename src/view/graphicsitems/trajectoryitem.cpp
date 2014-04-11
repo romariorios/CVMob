@@ -96,27 +96,27 @@ void TrajectoryItem::setCurrentFrame(int frame)
 {
     QGraphicsItem *prevInstant = _currentInstant;
     _currentInstant = instantAt(frame - _startingFrame);
-    
+
     _currentInstant? _currentInstant->show() : void();
     prevInstant? prevInstant->hide() : void();
-    
+
     // Fast-forward
     for (; _currentFrame < frame; ++_currentFrame) {
         int curL = _currentFrame - _startingFrame;
         if (curL < 0 || curL >= _instants.size()) {
             continue;
         }
-        
+
         _instants.at(curL)->show();
     }
-    
+
     // Backwards
     for (; _currentFrame > frame; --_currentFrame) {
         int curL = _currentFrame - _startingFrame;
         if (curL < 0 || curL >= _instants.size()) {
             continue;
         }
-        
+
         _instants.at(curL)->hide();
     }
 }

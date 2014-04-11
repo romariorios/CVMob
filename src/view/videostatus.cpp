@@ -44,13 +44,13 @@ void VideoStatus::setJobHandler(JobHandler* jh)
     if (_jobHandler) {
         _jobHandler->disconnect();
     }
-    
+
     _jobHandler = jh;
-    
+
     if (!_jobHandler) {
         return;
     }
-    
+
     connect(_jobHandler, &JobHandler::rangeChanged,
             _ui->progressBar, &QProgressBar::setRange);
     connect(_jobHandler, &JobHandler::progressChanged,
@@ -62,7 +62,7 @@ void VideoStatus::setJobHandler(JobHandler* jh)
     connect(_jobHandler, &QObject::destroyed, [&](){
         _jobHandler = 0;
     });
-    
+
     connect(_jobHandler, &JobHandler::jobAmountChanged,
             [this](int amount){
                 _ui->progressText->setText(tr("Calculating (%n jobs remain)", "",

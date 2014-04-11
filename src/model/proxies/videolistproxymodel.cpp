@@ -32,9 +32,9 @@ QVariant VideoListProxyModel::data(const QModelIndex& index, int role) const
         index.column() != VideoModel::FileNameCol) {
         return QVariant();
     }
-    
+
     QString filePath = mapToSource(index).data().toString();
     QString fileName = filePath.split("/").last();
-    
+
     return fileName;
 }

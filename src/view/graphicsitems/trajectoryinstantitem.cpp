@@ -33,7 +33,7 @@ TrajectoryInstantItem::TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF
     _accelLine(new QGraphicsLineItem(QLineF(pos, pos + accel), this))
 {
     setBrush(Qt::black);
-    
+
     hide();
 }
 

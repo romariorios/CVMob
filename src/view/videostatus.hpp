@@ -37,17 +37,17 @@ class JobHandler;
 class VideoStatus : public QWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit VideoStatus(QWidget *parent = 0);
     ~VideoStatus();
     void setJobHandler(JobHandler *jh);
 
     friend class Status::Base;
-    
+
 private slots:
     void callItDone();
-    
+
 private:
     Ui::VideoStatus *_ui;
     QList<Status::Base *> _statusQueue;
@@ -66,7 +66,7 @@ protected:
     VideoStatus *_parent;
 
     Base(VideoStatus *parent, QString message);
-    
+
     inline QList<Status::Base *> &statusQueue() const { return _parent->_statusQueue; }
 
 private:

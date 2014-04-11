@@ -28,7 +28,7 @@ class QCustomPlot;
 class PlotItemView : public QAbstractItemView
 {
     Q_OBJECT
-    
+
 public:
     explicit PlotItemView(QWidget* parent = 0);
     QModelIndex indexAt(const QPoint& point) const;
@@ -45,23 +45,23 @@ protected:
     void timerEvent(QTimerEvent *e);
     void hideEvent(QHideEvent *e);
     void showEvent(QShowEvent *e);
-    
+
 public slots:
     void reset();
     void updateSettings();
-    
+
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &, // Topleft always equals
                                                                       // bottomright
                      const QVector<int> &roles = QVector<int>());
     void rowsInserted(const QModelIndex &parent, int start, int end);
     void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
-    
+
 private:
     void updatePlot();
     int startMainTimer();
     void requestUpdate();
-    
+
     QCustomPlot *_plot;
     QCPPlotTitle *_title;
     QCPItemLine *_timeLine;

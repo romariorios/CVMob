@@ -24,7 +24,7 @@
 class BasePlotProxyModel : public InstantsProxyModel
 {
     Q_OBJECT
-    
+
 public:
     explicit BasePlotProxyModel(QObject* parent = 0);
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
@@ -32,7 +32,7 @@ public:
     QModelIndex mapFromSource(const QModelIndex &sourceIndex) const;
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
     int columnCount(const QModelIndex &p = QModelIndex()) const;
-    
+
 protected:
     virtual QVariant xData(const QModelIndex &index) const { return index.data(); }
     virtual QVariant yData(const QModelIndex &index) const { return index.data(); }
@@ -46,13 +46,13 @@ protected:
 class XTrajectoryPlotProxyModel : public BasePlotProxyModel
 {
     Q_OBJECT
-    
+
 public:
     inline explicit XTrajectoryPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
     {
         setColumn(VideoModel::AllTrajectoriesCol);
     }
-    
+
 protected:
     inline QVariant yData(const QModelIndex& index) const { return index.data().toPointF().x(); }
     inline QString graphTitle() const { return tr("X (Trajectory)"); }
@@ -64,13 +64,13 @@ protected:
 class YTrajectoryPlotProxyModel : public BasePlotProxyModel
 {
     Q_OBJECT
-    
+
 public:
     inline explicit YTrajectoryPlotProxyModel(QObject *parent = 0) : BasePlotProxyModel(parent)
     {
         setColumn(VideoModel::AllTrajectoriesCol);
     }
-    
+
 protected:
     inline QVariant yData(const QModelIndex& index) const { return index.data().toPointF().y(); }
     inline QString graphTitle() const { return tr("Y (Trajectory)"); }
@@ -86,7 +86,7 @@ public:
     {
         setColumn(VideoModel::AllTrajectoriesCol);
     }
-    
+
 protected:
     inline QVariant yData(const QModelIndex& index) const { return QLineF(QPointF(0, 0), index.data().toPointF()).length(); }
     inline QString graphTitle() const { return tr("Speed"); }
@@ -102,7 +102,7 @@ public:
     {
         setColumn(VideoModel::AllTrajectoriesCol);
     }
-    
+
 protected:
     inline QVariant yData(const QModelIndex& index) const { return QLineF(QPointF(0, 0), index.data().toPointF()).length(); }
     inline QString graphTitle() const { return tr("Acceleration"); }
@@ -118,7 +118,7 @@ public:
     {
         setColumn(VideoModel::AllAnglesCol);
     }
-    
+
 protected:
     inline QString graphTitle() const { return tr("Angle"); }
     inline QString yTitle() const { return tr("Angle (radians)"); }

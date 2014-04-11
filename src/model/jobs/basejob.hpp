@@ -30,10 +30,10 @@ class BaseTarget : public QObject
 {
 protected:
     explicit BaseTarget(QObject* parent = 0);
-    
+
     QModelIndex parentIndex;
     QAbstractItemModel *model;
-    
+
     friend class BaseJob;
 };
 
@@ -48,12 +48,12 @@ public:
                      int videoRow, QAbstractItemModel *parent);
     void setTarget(const QModelIndex &index);
     virtual BaseTarget &target() = 0;
-    
+
 protected:
     void run();
     virtual void emitNewPoints(int frame,
                                const QVector<QPointF> &points) = 0;
-    
+
 private:
     QVector<QPointF> _currentPoints;
     int _startFrame;
@@ -61,7 +61,7 @@ private:
     int _videoRow;
     int _currentFrame;
     QAbstractItemModel *_model;
-    
+
     friend class JobHandler;
 };
 

@@ -50,11 +50,11 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     VideoListProxyModel *videoNamesModel = new VideoListProxyModel(this);
     videoNamesModel->setSourceModel(_videoModel);
-    
+
     _ui->openedVideosList->setModel(videoNamesModel);
     _ui->openedVideosList->setItemDelegate(new VideoListDelegate(this));
     _videoView->setModel(_videoModel);
-    
+
     KLinkItemSelectionModel *selectionModel =
         new KLinkItemSelectionModel(_videoModel, _ui->openedVideosList->selectionModel());
     _videoView->setSelectionModel(selectionModel);
@@ -70,14 +70,14 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     trajectoriesModel->setSourceModel(_videoModel);
     trajectoriesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->trajectoriesView->setModel(trajectoriesModel);
-    
+
     AnglesProxyModel *anglesModel = new AnglesProxyModel(this);
     anglesModel->setSourceModel(_videoModel);
     anglesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
     _ui->anglesView->setModel(anglesModel);
-    
+
     QLayout *l = _ui->graphsDockWidgetContents->layout();
-    
+
     PlotItemView *xPlot = new PlotItemView(this);
     auto xModel = new XTrajectoryPlotProxyModel(this);
     xModel->setSourceModel(_videoModel);
@@ -85,7 +85,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     xPlot->setModel(xModel);
     l->addWidget(xPlot);
     connect(_ui->xGraphCheckBox, &QCheckBox::toggled, xPlot, &QWidget::setVisible);
-    
+
     PlotItemView *yPlot = new PlotItemView(this);
     auto yModel = new YTrajectoryPlotProxyModel(this);
     yModel->setSourceModel(_videoModel);
@@ -93,7 +93,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     yPlot->setModel(yModel);
     l->addWidget(yPlot);
     connect(_ui->yGraphCheckBox, &QCheckBox::toggled, yPlot, &QWidget::setVisible);
-    
+
     PlotItemView *speedPlot = new PlotItemView(this);
     auto speedModel = new TrajectorySpeedPlotProxyModel(this);
     speedModel->setSourceModel(_videoModel);
@@ -102,7 +102,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     l->addWidget(speedPlot);
     speedPlot->hide();
     connect(_ui->speedCheckBox, &QCheckBox::toggled, speedPlot, &QWidget::setVisible);
-    
+
     PlotItemView *accelPlot = new PlotItemView(this);
     auto accelModel = new TrajectoryAccelPlotProxyModel(this);
     accelModel->setSourceModel(_videoModel);
@@ -111,7 +111,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     l->addWidget(accelPlot);
     accelPlot->hide();
     connect(_ui->accelerationCheckBox, &QCheckBox::toggled, accelPlot, &QWidget::setVisible);
-    
+
     PlotItemView *anglePlot = new PlotItemView(this);
     auto angleModel = new AnglePlotProxyModel(this);
     angleModel->setSourceModel(_videoModel);

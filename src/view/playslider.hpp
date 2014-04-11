@@ -26,7 +26,7 @@ class PlaySlider : public QSlider
     Q_OBJECT
 public:
     explicit PlaySlider(QWidget* parent = 0);
-    
+
 protected:
     void mousePressEvent(QMouseEvent *e);
 };

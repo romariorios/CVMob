@@ -44,7 +44,7 @@ QVariant TrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int role) c
         !_parentIndex.isValid()) {
         return QVariant();
     }
-    
+
     if (!proxyIndex.parent().isValid()) {
         return proxyIndex.column() == 0? tr("Trajectory %1").arg(proxyIndex.row()) : QVariant();
     }
@@ -68,7 +68,7 @@ QVariant TrajectoriesProxyModel::data(const QModelIndex &proxyIndex, int role) c
     default:
         return QVariant();
     }
-    
+
     return QVariant {};
 }
 
@@ -101,7 +101,7 @@ QVariant TrajectoriesProxyModel::headerData(int section, Qt::Orientation orienta
     default:
         return QVariant();
     }
-    
+
     return QVariant {};
 }
 

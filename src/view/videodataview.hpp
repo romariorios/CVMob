@@ -29,18 +29,18 @@ class QMenu;
 class VideoDataView : public QTreeView
 {
     Q_OBJECT
-    
+
 public:
     explicit VideoDataView(QWidget* parent = 0);
-    
+
 protected:
     void contextMenuEvent(QContextMenuEvent *e);
-    
+
 private:
     void copySelectionToClipboard();
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);    
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     QAbstractProxyModel *proxyModel();
-    
+
     QMenu *_contextMenu;
     QAction *_deleteAction;
     QAction *_copyAction;

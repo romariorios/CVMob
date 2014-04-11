@@ -41,7 +41,7 @@ class TrajectoryCalcJob : public BaseJob
     Q_OBJECT
 public:
     explicit TrajectoryCalcJob(const QPointF& startPoint, int startFrame, int endFrame, int videoRow, QAbstractItemModel* parent);
-    
+
 protected:
     void emitNewPoints(int frame, const QVector< QPointF >& points);
     inline BaseTarget &target() { return _target; }

@@ -26,11 +26,11 @@ class TargetAngle : public BaseTarget
     Q_OBJECT
 private:
     explicit TargetAngle(QObject* parent = 0);
-    
+
 private:
     void storeInstant(int frame, float aSpeed, float aAccel, const QPointF &centralEdge,
                       const QPointF &pEdge1, const QPointF &pEdge2);
-    
+
     friend class AngleCalcJob;
 };
 
@@ -40,15 +40,15 @@ class AngleCalcJob : public BaseJob
 public:
     explicit AngleCalcJob(const QVector< QPointF >& startAngle, int startFrame, int endFrame,
                           int videoRow, QAbstractItemModel* parent);
-    
+
 protected:
     void emitNewPoints(int frame, const QVector<QPointF> &points);
     inline BaseTarget &target() { return _target; }
-    
+
 signals:
     void instantGenerated(int frame, float aSpeed, float aAccel, const QPointF &centralEdge,
                           const QPointF &pEdge1, const QPointF &pEdge2);
-    
+
 private:
     TargetAngle _target;
     float _previousAngle;

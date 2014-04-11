@@ -36,30 +36,30 @@ VideoDataView::VideoDataView(QWidget* parent) :
         tr("Delete"),
         this
     };
-    
+
     _deleteAction->setShortcut(tr("Delete"));
-    
+
     connect(_deleteAction, &QAction::triggered, [=]()
     {
         for (auto index : selectionModel()->selectedIndexes()) {
             model()->removeRow(index.row(), index.parent());
         }
     });
-    
+
     addAction(_deleteAction);
     _contextMenu->addAction(_deleteAction);
-    
+
     // Copy
     _copyAction = new QAction {
         style()->standardIcon(QStyle::SP_FileIcon),
         tr("Copy data to clipboard"),
         this
     };
-    
+
     _copyAction->setShortcut(tr("Ctrl+C"));
-    
+
     connect(_copyAction, &QAction::triggered, this, &VideoDataView::copySelectionToClipboard);
-    
+
     addAction(_copyAction);
     _contextMenu->addAction(_copyAction);
 }
@@ -69,15 +69,15 @@ void VideoDataView::contextMenuEvent(QContextMenuEvent* e)
     if (!proxyModel()) {
         return;
     }
-    
+
     auto index = indexAt(e->pos());
     auto sourceIndex = proxyModel()->mapToSource(index);
     auto path = VideoModel::indexPath(sourceIndex);
-    
+
     if (path.isEmpty()) {
         return;
     }
-    
+
     // Delete
     QString deleteString;
     switch (path.at(0).column) {
@@ -94,7 +94,7 @@ void VideoDataView::contextMenuEvent(QContextMenuEvent* e)
         deleteString = tr("Delete");
     }
     _deleteAction->setText(deleteString);
-    
+
     _contextMenu->popup(e->globalPos());
 }
 
@@ -103,7 +103,7 @@ void VideoDataView::copySelectionToClipboard()
     for (auto index : selectionModel()->selectedRows()) {
         auto path = VideoModel::indexPath(proxyModel()->mapToSource(index));
         QString clipboardText;
-        
+
         if (path.size() == 2 && path.at(0).column == VideoModel::AllTrajectoriesCol) {
             clipboardText += index.data().toString() + "\n";
             int section = 0;
@@ -115,7 +115,7 @@ void VideoDataView::copySelectionToClipboard()
                 clipboardText += header.toString() + "\t";
             }
             clipboardText += "\n";
-            
+
             for (int i = 0; i < model()->rowCount(index); ++i) {
                 int col = 0;
                 for (
@@ -128,7 +128,7 @@ void VideoDataView::copySelectionToClipboard()
                 clipboardText += "\n";
             }
         }
-        
+
         QApplication::clipboard()->setText(clipboardText);
     }
 }
@@ -138,7 +138,7 @@ void VideoDataView::selectionChanged(const QItemSelection& selected, const QItem
     if (!proxyModel()) {
         return QTreeView::selectionChanged(selected, deselected);
     }
-    
+
     auto enableActions = true;
     for (auto index : selected.indexes()) {
         const auto path = VideoModel::indexPath(proxyModel()->mapToSource(index));
@@ -148,16 +148,16 @@ void VideoDataView::selectionChanged(const QItemSelection& selected, const QItem
                 path.at(0).column == VideoModel::AllTrajectoriesCol ||
                 path.at(0).column == VideoModel::AllAnglesCol
             );
-        
+
         if (!indexIsValid) {
             enableActions = false;
             break;
         }
     }
-    
+
     _deleteAction->setEnabled(enableActions);
     _copyAction->setEnabled(enableActions);
-    
+
     QTreeView::selectionChanged(selected, deselected);
 }
 

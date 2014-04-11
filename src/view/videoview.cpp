@@ -52,9 +52,9 @@ VideoView::VideoView(QWidget *parent) :
     viewport()->layout()->setSpacing(0);
     _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    
+
     QSettings set;
-    
+
     _view->setRenderHint(set.value("video/antiAlias", true).toBool()?
         QPainter::Antialiasing : QPainter::NonCosmeticDefaultPen);
     viewport()->layout()->addWidget(_playBar);
@@ -85,15 +85,15 @@ VideoView::VideoView(QWidget *parent) :
 
         model()->setData(currentFrameIndex, frame);
     });
-    
+
     connect(_playBar, &PlayBar::playingChanged, [=](bool isPlaying) {
-        QModelIndex currentPlayStatusIndex = 
+        QModelIndex currentPlayStatusIndex =
             model()->index(_currentVideoRow, VideoModel::PlayStatusCol);
-        
+
         if (isPlaying == currentPlayStatusIndex.data().toBool()) {
             return;
         }
-        
+
         model()->setData(currentPlayStatusIndex, isPlaying);
     });
 
@@ -129,7 +129,7 @@ QRect VideoView::visualRect(const QModelIndex &index) const
 void VideoView::updateSettings()
 {
     QSettings set;
-    
+
     _view->setRenderHint(set.value("video/antiAlias", true).toBool()?
         QPainter::Antialiasing : QPainter::NonCosmeticDefaultPen);
     _playBar->updateSettings();
@@ -158,19 +158,19 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
             for (TrajectoryItem *traj : v.trajectories) {
                 traj->setCurrentFrame(frame);
             }
-            
+
             for (int i = 0; i < v.angles.size(); ++i) {
                 auto currentAngleIndex = videoModel()->index({
                     { topLeft.row(), VideoModel::AllAnglesCol },
                     { i, 0 }
                 });
-                
+
                 auto startFrame = videoModel()->index(currentAngleIndex, {
                     { 0, VideoModel::AFrameCol }
                 }).data().toInt();
-                
+
                 frame -= startFrame;
-                
+
                 auto centerIndex = videoModel()->index(currentAngleIndex, {
                     { frame, VideoModel::ACenterCol }
                 });
@@ -180,11 +180,11 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
                 auto edge2Index = videoModel()->index(currentAngleIndex, {
                     { frame, VideoModel::AEdge2Col }
                 });
-                
+
                 QPointF center = centerIndex.data().toPointF();
                 QPointF edge1 = edge1Index.data().toPointF();
                 QPointF edge2 = edge2Index.data().toPointF();
-                
+
                 AngleItem *ang = v.angles.at(i);
                 ang->setPoints(center, edge1, edge2);
             }
@@ -199,7 +199,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
             QPointF pos = topLeft.data().toPointF();
             TrajectoryItem *trajectory = _videos.at(parent.parent().row()).trajectories.at(parent.row());
             TrajectoryInstantItem *instant;
-            
+
             switch (topLeft.column()) {
             case VideoModel::PositionCol:
                 instant = trajectory->instantAt(topLeft.row());
@@ -216,7 +216,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
         } else if (parent.parent().column() == VideoModel::AllAnglesCol) {
             int frame = model()->index(_currentVideoRow, VideoModel::CurrentFrameCol)
                 .data().toInt();
-                
+
             if (frame == topLeft.row()) {
                 AngleItem *angle = _videos[parent.parent().row()].angles[parent.row()];
                 switch (topLeft.column()) {
@@ -356,7 +356,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
     } else if (!parent.parent().parent().isValid()) { // Level 2
         Video &v = _videos[parent.parent().row()];
         TrajectoryItem *trajectory;
-        
+
         switch (parent.parent().column()) {
         case VideoModel::AllTrajectoriesCol:
             trajectory = v.trajectories[parent.row()];
@@ -380,11 +380,11 @@ void VideoView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int e
             Video v = _videos.takeAt(start);
             delete v.scene;
         }
-        
+
         _view->setScene(_videos.empty()? _noVideoVideo.scene : _videos.first().scene);
     } else if (!parent.parent().isValid()) { // Level 1
         auto &v = _videos[parent.row()];
-        
+
         if (parent.column() == VideoModel::AllTrajectoriesCol) {
             for (; start <= end; --end) {
                 auto trajectory = v.trajectories.takeAt(start);
@@ -450,7 +450,7 @@ void VideoView::distanceEndCreation(const QPointF &p)
 void VideoView::beginAngleCreation()
 {
     auto status = new Status::Persistent(_status, tr("Click on the center of the angle"));
-    
+
     connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleCenter(QPointF)));
     connect(_view, SIGNAL(mousePressed(QPointF)), status, SLOT(deleteLater()));
 }
@@ -460,11 +460,11 @@ static AngleItem *guideAngleItem = 0;
 void VideoView::angleCenter(const QPointF& p)
 {
     disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleCenter(QPointF)));
-    
+
     guideAngleItem = new AngleItem(p, p, p, _videos[_currentVideoRow].bgRect);
-    
+
     auto status = new Status::Persistent(_status, tr("Now click on the first peripheral edge"));
-    
+
     connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge1(QPointF)));
     connect(_view, SIGNAL(mousePressed(QPointF)), status, SLOT(deleteLater()));
 }
@@ -472,11 +472,11 @@ void VideoView::angleCenter(const QPointF& p)
 void VideoView::angleEdge1(const QPointF& p)
 {
     disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleEdge1(QPointF)));
-    
+
     guideAngleItem->setEdge1(p);
-    
+
     auto status = new Status::Persistent(_status, tr("Now click on the second peripheral edge"));
-    
+
     connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge2(QPointF)));
     connect(_view, SIGNAL(mousePressed(QPointF)),  status, SLOT(deleteLater()));
 }
@@ -484,17 +484,17 @@ void VideoView::angleEdge1(const QPointF& p)
 void VideoView::angleEdge2(const QPointF& p)
 {
     disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleEdge2(QPointF)));
-    
+
     guideAngleItem->setEdge2(p);
-    
+
     int frame = model()->index(_currentVideoRow, VideoModel::CurrentFrameCol).data().toInt();
-    
+
     auto job = static_cast<VideoModel *>(model())->calculateAngle(
         { guideAngleItem->center(), guideAngleItem->edge1(), guideAngleItem->edge2() },
         frame, _currentVideoRow
     );
     static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow)->startJob(job);
-    
+
     delete guideAngleItem;
     guideAngleItem = 0;
 }

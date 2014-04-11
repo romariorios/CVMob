@@ -39,11 +39,11 @@ PlotItemView::PlotItemView(QWidget* parent) :
     _plot->setInteraction(QCP::iSelectOther, true);
     _plot->plotLayout()->insertRow(0);
     _plot->plotLayout()->addElement(0, 0, _title);
-    
+
     _timeLine->start->setCoords(0, -10);
     _timeLine->end->setCoords(0, 10);
     _plot->addItem(_timeLine);
-    
+
     new QBoxLayout(QBoxLayout::TopToBottom, viewport());
     viewport()->layout()->addWidget(_plot);
 }
@@ -52,7 +52,7 @@ QModelIndex PlotItemView::indexAt(const QPoint& point) const
 {
     // TODO
     Q_UNUSED(point)
-    
+
     return QModelIndex();
 }
 
@@ -67,7 +67,7 @@ QRect PlotItemView::visualRect(const QModelIndex& index) const
 {
     // TODO
     Q_UNUSED(index)
-    
+
     return QRect();
 }
 
@@ -82,7 +82,7 @@ QRegion PlotItemView::visualRegionForSelection(const QItemSelection& selection) 
 {
     // TODO
     Q_UNUSED(selection)
-    
+
     return QRegion();
 }
 
@@ -97,7 +97,7 @@ bool PlotItemView::isIndexHidden(const QModelIndex& index) const
 {
     // TODO
     Q_UNUSED(index)
-    
+
     return false;
 }
 
@@ -118,7 +118,7 @@ QModelIndex PlotItemView::moveCursor(QAbstractItemView::CursorAction cursorActio
     // TODO
     Q_UNUSED(cursorAction)
     Q_UNUSED(modifiers)
-    
+
     return QModelIndex();
 }
 
@@ -127,23 +127,23 @@ void PlotItemView::reset()
     if (!isVisible()) {
         return;
     }
-    
+
     _title->setText(model()->headerData(0, Qt::Horizontal).toString());
     _plot->xAxis->setLabel(model()->headerData(1, Qt::Horizontal).toString());
     _plot->yAxis->setLabel(model()->headerData(2, Qt::Vertical).toString());
-    
+
     _plot->clearGraphs();
-    
+
     for (int i = 0; i < model()->rowCount(); ++i) {
         _plot->addGraph();
-        
+
         QModelIndex iIndex = model()->index(i, 0);
         for (int j = 0; j < model()->rowCount(iIndex); ++j) {
             _plot->graph(i)->addData(model()->index(j, 0, iIndex).data().toDouble(),
                                      model()->index(j, 1, iIndex).data().toDouble());
         }
     }
-    
+
     _plot->rescaleAxes();
     _plot->replot();
 }
@@ -153,7 +153,7 @@ void PlotItemView::timerEvent(QTimerEvent* e)
     if (e->timerId() != _mainTimerId) {
         return QAbstractItemView::timerEvent(e);
     }
-    
+
     if (_wantsUpdate) {
         updatePlot();
     } else {
@@ -165,7 +165,7 @@ void PlotItemView::timerEvent(QTimerEvent* e)
 void PlotItemView::hideEvent(QHideEvent* e)
 {
     _wasVisibleBefore = false;
-    
+
     QWidget::hideEvent(e);
 }
 
@@ -175,7 +175,7 @@ void PlotItemView::showEvent(QShowEvent* e)
         reset();
         _wasVisibleBefore = true;
     }
-    
+
     QWidget::showEvent(e);
 }
 
@@ -184,31 +184,31 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
     if (!isVisible()) {
         return;
     }
-    
+
     if (!topLeft.parent().isValid()) {
         if (topLeft.column() == 1) {
             auto x = topLeft.data().toInt();
-            
+
             _timeLine->start->setCoords(x, -10000);
             _timeLine->end->setCoords(x, 10000);
         }
-        
+
         return requestUpdate();
     }
-    
+
     if (topLeft.column() != 1) {
         return;
     }
-    
+
     int graphRow = topLeft.parent().row();
     QModelIndex graphIndex = model()->index(topLeft.parent().row(), 0);
     double key = model()->index(topLeft.row(), 0, graphIndex).data().toDouble();
     QCPGraph *graph = _plot->graph(graphRow);
-    
+
     graph->removeData(key);
     graph->addData(model()->index(topLeft.row(), 0, graphIndex).data().toDouble(),
                    model()->index(topLeft.row(), 1, graphIndex).data().toDouble());
-    
+
     requestUpdate();
 }
 
@@ -217,12 +217,12 @@ void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
     if (!isVisible()) {
         return;
     }
-    
+
     for (int i = start; i <= end; ++i) {
         if (parent.isValid()) {
             continue;
         }
-        
+
         _plot->addGraph();
     }
 }
@@ -234,7 +234,7 @@ void PlotItemView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, in
             _plot->removeGraph(start);
         }
     }
-    
+
     requestUpdate();
 }
 

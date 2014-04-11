@@ -41,9 +41,9 @@ void TrajectoryCalcJob::emitNewPoints(int frame,
     QPointF newPoint = points.at(0);
     QPointF newSpeed = newPoint - _previousPoint;
     QPointF newAccel = newSpeed - _previousSpeed;
-    
+
     emit instantGenerated(frame, newPoint, newSpeed, newAccel);
-    
+
     _previousPoint = newPoint;
     _previousSpeed = newSpeed;
 }

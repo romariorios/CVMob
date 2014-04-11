@@ -55,7 +55,7 @@ protected:
     bool isIndexHidden(const QModelIndex &index) const;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command);
     QRegion visualRegionForSelection(const QItemSelection &selection) const;
-    
+
 signals:
     void settingsRequested();
 
@@ -80,9 +80,9 @@ private:
     int _currentVideoRow;
     PlayBar *_playBar;
     VideoStatus *_status;
-    
+
     VideoModel *videoModel() const;
-    
+
 public slots:
     void updateSettings();
 
@@ -99,9 +99,9 @@ private slots:
     void distanceFirstPoint(const QPointF &p);
     void distanceUpdateSecondPoint(const QPointF &p);
     void distanceEndCreation(const QPointF &p);
-    
+
     void beginAngleCreation();
-    
+
     void angleCenter(const QPointF &p);
     void angleEdge1(const QPointF &p);
     void angleEdge2(const QPointF &p);

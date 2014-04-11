@@ -39,7 +39,7 @@ public:
     void setWindowSize(const QSize &windowSize);
     void setVideoFrame(int frame);
     void setPlayStatus(bool playStatus);
-    
+
 protected:
     void run();
     void timerEvent(QTimerEvent *e);
@@ -52,7 +52,7 @@ signals:
 private:
     void startProgressTimer();
     void stopProgressTimer();
-    
+
     QVector<BaseJob *> _newJobs;
     QSize _windowSize;
     QMutex _lock;

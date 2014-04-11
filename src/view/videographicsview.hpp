@@ -38,7 +38,7 @@ protected:
 
 private:
     bool _pressed;
-    
+
 signals:
     void mousePressed(const QPointF &p);
     void mouseReleased(const QPointF &p);
