@@ -21,6 +21,7 @@
 
 #include <QAbstractItemView>
 
+class QCPItemLine;
 class QCPPlotTitle;
 class QCustomPlot;
 
@@ -63,6 +64,7 @@ private:
     
     QCustomPlot *_plot;
     QCPPlotTitle *_title;
+    QCPItemLine *_timeLine;
     bool _wantsUpdate;
     bool _timerRunning = false;
     int _mainTimerId;

@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,6 +24,10 @@ BasePlotProxyModel::BasePlotProxyModel(QObject* parent) :
 
 QVariant BasePlotProxyModel::data(const QModelIndex& proxyIndex, int role) const
 {
+    if (!proxyIndex.parent().isValid() && proxyIndex.column() == 1) {
+        return mapToSource(proxyIndex).data();
+    }
+    
     switch (proxyIndex.column()) {
     case 0:
         return xData(mapToSource(proxyIndex));
@@ -50,6 +54,16 @@ QVariant BasePlotProxyModel::headerData(int section, Qt::Orientation orientation
 
 QModelIndex BasePlotProxyModel::mapFromSource(const QModelIndex& sourceIndex) const
 {
+    if (_parentIndex.isValid() && !sourceIndex.parent().isValid()) {
+        auto path = VideoModel::indexPath(_parentIndex);
+        
+        if (path[0].row != sourceIndex.row() || sourceIndex.column() != VideoModel::CurrentFrameColumn) {
+            return QModelIndex {};
+        }
+        
+        return index(0, 1);
+    }
+    
     QModelIndex instantsSourceIndex = InstantsProxyModel::mapFromSource(sourceIndex);
     if (!instantsSourceIndex.parent().isValid()) {
         return instantsSourceIndex;
@@ -69,6 +83,14 @@ QModelIndex BasePlotProxyModel::mapFromSource(const QModelIndex& sourceIndex) co
 QModelIndex BasePlotProxyModel::mapToSource(const QModelIndex& proxyIndex) const
 {
     int column;
+    
+    if (!proxyIndex.parent().isValid()) {
+        if (proxyIndex.column() == 1) {
+            auto path = VideoModel::indexPath(_parentIndex);
+            
+            return sourceModel()->index(path[0].row, VideoModel::CurrentFrameColumn);
+        }
+    }
     
     switch (proxyIndex.column()) {
     case 0:

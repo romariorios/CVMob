@@ -27,6 +27,7 @@ PlotItemView::PlotItemView(QWidget* parent) :
     QAbstractItemView(parent),
     _plot(new QCustomPlot(this)),
     _title(new QCPPlotTitle(_plot, tr("(untitled)"))),
+    _timeLine { new QCPItemLine { _plot } },
     _wantsUpdate(false),
     _wasVisibleBefore(false)
 {
@@ -38,6 +39,10 @@ PlotItemView::PlotItemView(QWidget* parent) :
     _plot->setInteraction(QCP::iSelectOther, true);
     _plot->plotLayout()->insertRow(0);
     _plot->plotLayout()->addElement(0, 0, _title);
+    
+    _timeLine->start->setCoords(0, -10);
+    _timeLine->end->setCoords(0, 10);
+    _plot->addItem(_timeLine);
     
     new QBoxLayout(QBoxLayout::TopToBottom, viewport());
     viewport()->layout()->addWidget(_plot);
@@ -180,7 +185,18 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
         return;
     }
     
-    if (!topLeft.parent().isValid() || topLeft.column() != 1) {
+    if (!topLeft.parent().isValid()) {
+        if (topLeft.column() == 1) {
+            auto x = topLeft.data().toInt();
+            
+            _timeLine->start->setCoords(x, -10000);
+            _timeLine->end->setCoords(x, 10000);
+        }
+        
+        return requestUpdate();
+    }
+    
+    if (topLeft.column() != 1) {
         return;
     }
     
