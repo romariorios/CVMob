@@ -9,20 +9,21 @@ Root
 4| AllFramesCol: The frames of this video
 4~>0| (QImage): A frame
 5| PlayStatusCol: True if the video is playing; false otherwise
-6| AllDistancesCol
-6~>0| (QLineF): A line between two points
-7| AllTrajectoriesCol
-7~>0| : The instants of a linear trajectory
-7~>0~>0| LFrameCol (int)
-7~>0~>1| PositionCol (QPointF)
-7~>0~>2| LSpeedCol (QPointF)
-7~>0~>3| LAccelCol (QPointF)
-8| AllAnglesCol
-8~>0| : The instants of an angular trajectory
-8~>0~>0| AFrameCol (int)
-8~>0~>1| AngleCol (float): Angle in radians
-8~>0~>2| ASpeedCol (float)
-8~>0~>3| AAccelCol (float)
-8~>0~>4| ACenterCol (QPointF)
-8~>0~>5| AEdge1Col (QPointF)
-8~>0~>6| AEdge2Col (QPointF)
+6| SizeCalibrationRatioCol (double): m/pixel. Invalid if the video wasn't calibrated
+7| AllDistancesCol
+7~>0| (QLineF): A line between two points
+8| AllTrajectoriesCol
+8~>0| : The instants of a linear trajectory
+8~>0~>0| LFrameCol (int)
+8~>0~>1| PositionCol (QPointF)
+8~>0~>2| LSpeedCol (QPointF)
+8~>0~>3| LAccelCol (QPointF)
+9| AllAnglesCol
+9~>0| : The instants of an angular trajectory
+9~>0~>0| AFrameCol (int)
+9~>0~>1| AngleCol (float): Angle in radians
+9~>0~>2| ASpeedCol (float)
+9~>0~>3| AAccelCol (float)
+9~>0~>4| ACenterCol (QPointF)
+9~>0~>5| AEdge1Col (QPointF)
+9~>0~>6| AEdge2Col (QPointF)

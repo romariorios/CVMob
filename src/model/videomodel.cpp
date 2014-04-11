@@ -139,6 +139,9 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             return currentVideo.frameSize;
         case PlayStatusCol:
             return currentVideo.playStatus;
+        case CalibrationRatioCol:
+            return currentVideo.calibration?
+                *currentVideo.calibration : QVariant {};
         default:
             return QVariant();
         }
@@ -222,11 +225,11 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             case LFrameCol:
                 return currentInstant.frame;
             case PositionCol:
-                return currentInstant.position;
+                return currentInstant.position * currentVideo.calibrationRatio();
             case LSpeedCol:
-                return currentInstant.speed;
+                return currentInstant.speed * currentVideo.calibrationRatio();
             case LAccelCol:
-                return currentInstant.acceleration;
+                return currentInstant.acceleration * currentVideo.calibrationRatio();
             }
         } else if (index.parent().parent().column() == AllAnglesCol) {
             if (index.parent().row() >= currentVideo.angles.size()) {
@@ -253,11 +256,11 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             case AAccelCol:
                 return currentInstant.acceleration;
             case ACenterCol:
-                return currentInstant.centralEdge;
+                return currentInstant.centralEdge * currentVideo.calibrationRatio();
             case AEdge1Col:
-                return currentInstant.peripheralEdges.first;
+                return currentInstant.peripheralEdges.first * currentVideo.calibrationRatio();
             case AEdge2Col:
-                return currentInstant.peripheralEdges.second;
+                return currentInstant.peripheralEdges.second * currentVideo.calibrationRatio();
             }
         }
     }
@@ -380,6 +383,12 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
             currentVideo.playStatus = value.toBool();
             currentVideo.jobHandler->setPlayStatus(value.toBool());
             break;
+        case CalibrationRatioCol:
+            if (value.isValid()) {
+                currentVideo.setCalibrationRatio(value.toDouble());
+            } else {
+                currentVideo.unsetCalibration();
+            }
         default:
             return false;
         }
@@ -422,13 +431,13 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 currentInstant.frame = value.toInt();
                 break;
             case PositionCol:
-                currentInstant.position = value.toPointF();
+                currentInstant.position = value.toPointF() / currentVideo.calibrationRatio();
                 break;
             case LSpeedCol:
-                currentInstant.speed = value.toPointF();
+                currentInstant.speed = value.toPointF() / currentVideo.calibrationRatio();
                 break;
             case LAccelCol:
-                currentInstant.acceleration = value.toPointF();
+                currentInstant.acceleration = value.toPointF() / currentVideo.calibrationRatio();
                 break;
             default:
                 return false;
@@ -459,15 +468,15 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 currentInstant.acceleration = value.toFloat();
                 break;
             case ACenterCol:
-                currentInstant.centralEdge = value.toPointF();
+                currentInstant.centralEdge = value.toPointF() / currentVideo.calibrationRatio();
                 emit dataChanged(angleIndex, angleIndex);
                 break;
             case AEdge1Col:
-                currentInstant.peripheralEdges.first = value.toPointF();
+                currentInstant.peripheralEdges.first = value.toPointF() / currentVideo.calibrationRatio();
                 emit dataChanged(angleIndex, angleIndex);
                 break;
             case AEdge2Col:
-                currentInstant.peripheralEdges.second = value.toPointF();
+                currentInstant.peripheralEdges.second = value.toPointF() / currentVideo.calibrationRatio();
                 emit dataChanged(angleIndex, angleIndex);
                 break;
             default:

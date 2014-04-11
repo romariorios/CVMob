@@ -50,6 +50,7 @@ public:
         FrameSizeCol,
         AllFramesCol,
         PlayStatusCol,
+        CalibrationRatioCol,
         AllDistancesCol,
         AllTrajectoriesCol,
         AllAnglesCol,
@@ -165,8 +166,29 @@ private:
         {}
         ~Video();
 
+        inline void setCalibrationRatio(double ratioValue)
+        {
+            if (!calibration) {
+                calibration = new double;
+            }
+
+            *calibration = ratioValue;
+        }
+
+        inline void unsetCalibration()
+        {
+            delete calibration;
+            calibration = nullptr;
+        }
+
+        inline double calibrationRatio() const
+        {
+            return calibration? *calibration : 1;
+        }
+
         QString fileName;
         int currentFrame, frameDuration, frameCount, streamFrame;
+        double *calibration = nullptr;
         bool playStatus;
         QImage frameImage;
         QSizeF frameSize;
