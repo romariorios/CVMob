@@ -116,7 +116,8 @@ const VideoModel::IndexPath VideoModel::indexPath(const QModelIndex& index)
 
 QVariant VideoModel::data(const QModelIndex &index, int role) const
 {
-    if (role != Qt::DisplayRole ||
+    if ((role != Qt::DisplayRole &&
+        role != VideoDataRole) ||
         !index.isValid()) {
         return QVariant();
     }
@@ -194,11 +195,16 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
                 return QVariant();
             }
 
-            switch (index.column()) {
-            case 0:
-                return currentVideo.distances.at(index.row());
-            default:
-                return QVariant();
+            if (index.column() == 0) {
+                auto distance = currentVideo.distances[index.row()];
+                if (role == Qt::DisplayRole) {
+                    distance = QLineF {
+                        distance.p1() * currentVideo.calibrationRatio(),
+                        distance.p2() * currentVideo.calibrationRatio()
+                    };
+                }
+
+                return distance;
             }
         }
     } else if (!index.parent().parent().parent().isValid()) { // Level 2
@@ -225,11 +231,17 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             case LFrameCol:
                 return currentInstant.frame;
             case PositionCol:
-                return currentInstant.position * currentVideo.calibrationRatio();
+                return role == VideoDataRole?
+                    currentInstant.position :
+                    currentInstant.position * currentVideo.calibrationRatio();
             case LSpeedCol:
-                return currentInstant.speed * currentVideo.calibrationRatio();
+                return role == VideoDataRole?
+                    currentInstant.speed :
+                    currentInstant.speed * currentVideo.calibrationRatio();
             case LAccelCol:
-                return currentInstant.acceleration * currentVideo.calibrationRatio();
+                return role == VideoDataRole?
+                    currentInstant.acceleration :
+                    currentInstant.acceleration * currentVideo.calibrationRatio();
             }
         } else if (index.parent().parent().column() == AllAnglesCol) {
             if (index.parent().row() >= currentVideo.angles.size()) {
@@ -256,11 +268,17 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             case AAccelCol:
                 return currentInstant.acceleration;
             case ACenterCol:
-                return currentInstant.centralEdge * currentVideo.calibrationRatio();
+                return role == VideoDataRole?
+                    currentInstant.centralEdge :
+                    currentInstant.centralEdge * currentVideo.calibrationRatio();
             case AEdge1Col:
-                return currentInstant.peripheralEdges.first * currentVideo.calibrationRatio();
+                return role == VideoDataRole?
+                    currentInstant.peripheralEdges.first :
+                    currentInstant.peripheralEdges.first * currentVideo.calibrationRatio();
             case AEdge2Col:
-                return currentInstant.peripheralEdges.second * currentVideo.calibrationRatio();
+                return role == VideoDataRole?
+                    currentInstant.peripheralEdges.second :
+                    currentInstant.peripheralEdges.second * currentVideo.calibrationRatio();
             }
         }
     }
@@ -389,6 +407,7 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
             } else {
                 currentVideo.unsetCalibration();
             }
+            break;
         default:
             return false;
         }
@@ -431,13 +450,13 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 currentInstant.frame = value.toInt();
                 break;
             case PositionCol:
-                currentInstant.position = value.toPointF() / currentVideo.calibrationRatio();
+                currentInstant.position = value.toPointF();
                 break;
             case LSpeedCol:
-                currentInstant.speed = value.toPointF() / currentVideo.calibrationRatio();
+                currentInstant.speed = value.toPointF();
                 break;
             case LAccelCol:
-                currentInstant.acceleration = value.toPointF() / currentVideo.calibrationRatio();
+                currentInstant.acceleration = value.toPointF();
                 break;
             default:
                 return false;
@@ -468,15 +487,15 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 currentInstant.acceleration = value.toFloat();
                 break;
             case ACenterCol:
-                currentInstant.centralEdge = value.toPointF() / currentVideo.calibrationRatio();
+                currentInstant.centralEdge = value.toPointF();
                 emit dataChanged(angleIndex, angleIndex);
                 break;
             case AEdge1Col:
-                currentInstant.peripheralEdges.first = value.toPointF() / currentVideo.calibrationRatio();
+                currentInstant.peripheralEdges.first = value.toPointF();
                 emit dataChanged(angleIndex, angleIndex);
                 break;
             case AEdge2Col:
-                currentInstant.peripheralEdges.second = value.toPointF() / currentVideo.calibrationRatio();
+                currentInstant.peripheralEdges.second = value.toPointF();
                 emit dataChanged(angleIndex, angleIndex);
                 break;
             default:

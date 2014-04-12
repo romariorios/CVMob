@@ -72,6 +72,14 @@ VideoView::VideoView(QWidget *parent) :
 
     connect(_playBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
     connect(_playBar, SIGNAL(newAngleRequested()), SLOT(beginAngleCreation()));
+
+    connect(_playBar, &PlayBar::scaleCalibrationRequested, [=]()
+    {
+        auto calibrationRatioIndex = model()->index(_currentVideoRow, VideoModel::CalibrationRatioCol);
+
+        model()->setData(calibrationRatioIndex, 0.5);
+    });
+
     connect(_playBar, SIGNAL(settingsRequested()), SIGNAL(settingsRequested()));
 
     connect(_playBar, &PlayBar::frameChanged, [=](int frame)
@@ -181,9 +189,9 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
                     { frame, VideoModel::AEdge2Col }
                 });
 
-                QPointF center = centerIndex.data().toPointF();
-                QPointF edge1 = edge1Index.data().toPointF();
-                QPointF edge2 = edge2Index.data().toPointF();
+                QPointF center = centerIndex.data(VideoModel::VideoDataRole).toPointF();
+                QPointF edge1 = edge1Index.data(VideoModel::VideoDataRole).toPointF();
+                QPointF edge2 = edge2Index.data(VideoModel::VideoDataRole).toPointF();
 
                 AngleItem *ang = v.angles.at(i);
                 ang->setPoints(center, edge1, edge2);
@@ -192,11 +200,11 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
     } else if (!parent.parent().isValid()) { // Level 1
         if (parent.column() == VideoModel::AllDistancesCol) {
             DistanceItem *line = _videos.at(parent.row()).distances.at(topLeft.row());
-            line->setLine(topLeft.data().toLineF());
+            line->setLine(topLeft.data(VideoModel::VideoDataRole).toLineF());
         }
     } else if (!parent.parent().parent().isValid()) { // Level 2
         if (parent.parent().column() == VideoModel::AllTrajectoriesCol) {
-            QPointF pos = topLeft.data().toPointF();
+            QPointF pos = topLeft.data(VideoModel::VideoDataRole).toPointF();
             TrajectoryItem *trajectory = _videos.at(parent.parent().row()).trajectories.at(parent.row());
             TrajectoryInstantItem *instant;
 
@@ -221,13 +229,13 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
                 AngleItem *angle = _videos[parent.parent().row()].angles[parent.row()];
                 switch (topLeft.column()) {
                 case VideoModel::ACenterCol:
-                    angle->setCenter(topLeft.data().toPointF());
+                    angle->setCenter(topLeft.data(VideoModel::VideoDataRole).toPointF());
                     break;
                 case VideoModel::AEdge1Col:
-                    angle->setEdge1(topLeft.data().toPointF());
+                    angle->setEdge1(topLeft.data(VideoModel::VideoDataRole).toPointF());
                     break;
                 case VideoModel::AEdge2Col:
-                    angle->setEdge2(topLeft.data().toPointF());
+                    angle->setEdge2(topLeft.data(VideoModel::VideoDataRole).toPointF());
                     break;
                 default:
                     break;

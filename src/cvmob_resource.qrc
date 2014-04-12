@@ -1,9 +1,10 @@
 <RCC>
-    <qresource prefix="/images">
-        <file>icons/trajectory.png</file>
-        <file>icons/draw-distance.png</file>
-        <file>logo.png</file>
-        <file>translucent-logo.png</file>
-        <file>icons/angle.png</file>
-    </qresource>
+  <qresource prefix="/images">
+    <file>icons/calibrate-scale.png</file>
+    <file>icons/trajectory.png</file>
+    <file>icons/draw-distance.png</file>
+    <file>logo.png</file>
+    <file>translucent-logo.png</file>
+    <file>icons/angle.png</file>
+  </qresource>
 </RCC>

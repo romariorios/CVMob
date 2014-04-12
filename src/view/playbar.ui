@@ -60,6 +60,19 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="calibrateButton">
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::InstantPopup</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -154,6 +167,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionCalibrate_scale">
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/calibrate-scale.png</normaloff>:/images/icons/calibrate-scale.png</iconset>
+   </property>
+   <property name="text">
+    <string>Calibrate scale</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,6 +46,11 @@ PlayBar::PlayBar(QWidget *parent) :
     _ui->drawButton->setMenu(drawMenu);
     _ui->drawButton->setDefaultAction(_ui->actionMeasure_distance);
 
+    QMenu *calibrateMenu = new QMenu { _ui->calibrateButton };
+    calibrateMenu->addAction(_ui->actionCalibrate_scale);
+    _ui->calibrateButton->setMenu(calibrateMenu);
+    _ui->calibrateButton->setDefaultAction(_ui->actionCalibrate_scale);
+
     _ui->settingsButton->setDefaultAction(_ui->actionSettings);
 
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
@@ -53,6 +58,7 @@ PlayBar::PlayBar(QWidget *parent) :
     connect(_ui->actionMeasure_distance, SIGNAL(triggered()), SIGNAL(newDistanceRequested()));
     connect(_ui->actionCalculate_trajectory, SIGNAL(triggered()), SIGNAL(newTrajectoryRequested()));
     connect(_ui->actionTrack_angle, SIGNAL(triggered(bool)), SIGNAL(newAngleRequested()));
+    connect(_ui->actionCalibrate_scale, SIGNAL(triggered(bool)), SIGNAL(scaleCalibrationRequested()));
     connect(_ui->actionSettings, SIGNAL(triggered(bool)), SIGNAL(settingsRequested()));
 
     connect(_ui->progressSlide, &QSlider::valueChanged, [&](int frame)
@@ -87,6 +93,7 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
 
     _ui->progressSlide->setEnabled(frameCount);
     _ui->drawButton->setEnabled(frameCount);
+    _ui->calibrateButton->setEnabled(frameCount);
 
     QSettings set;
 

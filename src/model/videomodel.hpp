@@ -81,6 +81,10 @@ public:
         FromHereBackwards = 0x2
     };
 
+    enum {
+        VideoDataRole = Qt::UserRole + 2
+    };
+
     struct IndexDir
     {
         IndexDir(int row, int column) :
