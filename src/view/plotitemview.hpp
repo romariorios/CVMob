@@ -57,6 +57,9 @@ protected slots:
     void rowsInserted(const QModelIndex &parent, int start, int end);
     void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
 
+private slots:
+    void onPlotMousePress(QMouseEvent* e);
+
 private:
     void updatePlot();
     int startMainTimer();

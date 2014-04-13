@@ -19,6 +19,10 @@
 #include "plotitemview.hpp"
 
 #include <QBoxLayout>
+#include <QDialog>
+#include <QLineEdit>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QPen>
 #include <QSettings>
 #include <QTimer>
 #include <view/qcustomplot.h>
@@ -43,6 +47,8 @@ PlotItemView::PlotItemView(QWidget* parent) :
     _timeLine->start->setCoords(0, -10);
     _timeLine->end->setCoords(0, 10);
     _plot->addItem(_timeLine);
+
+    connect(_plot, &QCustomPlot::mousePress, this, &PlotItemView::onPlotMousePress);
 
     new QBoxLayout(QBoxLayout::TopToBottom, viewport());
     viewport()->layout()->addWidget(_plot);
@@ -135,7 +141,7 @@ void PlotItemView::reset()
     _plot->clearGraphs();
 
     for (int i = 0; i < model()->rowCount(); ++i) {
-        _plot->addGraph();
+        _plot->addGraph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 5));
 
         QModelIndex iIndex = model()->index(i, 0);
         for (int j = 0; j < model()->rowCount(iIndex); ++j) {
@@ -223,7 +229,7 @@ void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
             continue;
         }
 
-        _plot->addGraph();
+        _plot->addGraph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 5));
     }
 }
 
@@ -235,6 +241,55 @@ void PlotItemView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, in
         }
     }
 
+    requestUpdate();
+}
+
+void PlotItemView::onPlotMousePress(QMouseEvent* e)
+{
+    int i = _plot->graphCount();
+
+    if (e->button() != Qt::RightButton || i <= 0) {
+        return;
+    }
+
+    double ax = e->pos().x();
+    double ay = e->pos().y();
+    ax = _plot->xAxis->pixelToCoord(ax);
+    ay = _plot->yAxis->pixelToCoord(ay);
+    double dMin = 999999999;
+    double xMin, yMin;
+
+    for (int j = 0; j < i; j++) {
+        QCPData b = _plot->graph(j)->data()->lowerBound(ax).value();
+        double dx = ax-b.key;
+        double dy = ay-b.value;
+        double d = sqrt(dx * dx + dy * dy); // calcs distance
+
+        if (d < dMin) {
+            dMin = d;
+            xMin = b.key;
+            yMin = b.value;
+        }
+    }
+
+    _plot->addGraph();
+    _plot->graph(i)->setPen(QPen { QColor { 255, 0, 0 } });
+    _plot->graph(i)->setScatterStyle(QCPScatterStyle { QCPScatterStyle::ssCircle, 10 });
+    _plot->graph(i)->addData(xMin, yMin);
+
+    QDialog coordinatesDialog { this };
+    coordinatesDialog.setWindowTitle(tr("Point"));
+    QVBoxLayout l { &coordinatesDialog };
+    QLineEdit coordinates { tr("(%1, %2)").arg(xMin).arg(yMin), &coordinatesDialog };
+    coordinates.setReadOnly(true);
+    l.addWidget(&coordinates);
+    coordinatesDialog.layout()->setSizeConstraint(QLayout::SetFixedSize);
+
+    requestUpdate();
+    coordinatesDialog.exec();
+
+    _plot->graph(i)->clearData();
+    _plot->removeGraph(i);
     requestUpdate();
 }
 
