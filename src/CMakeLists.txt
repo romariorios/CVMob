@@ -49,6 +49,7 @@ set(CVMob_forms
     view/aboutdialog.ui
     view/cvmobmainwindow.ui
     view/playbar.ui
+    view/scalecalibrationdialog.ui
     view/settings.ui
     view/videostatus.ui
 )

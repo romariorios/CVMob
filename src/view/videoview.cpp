@@ -20,6 +20,7 @@
 
 #include <model/jobs/jobhandler.hpp>
 #include <model/videomodel.hpp>
+#include <QDialog>
 #include <QGraphicsItem>
 #include <QGraphicsLineItem>
 #include <QGraphicsRectItem>
@@ -36,6 +37,8 @@
 #include <view/playbar.hpp>
 #include <view/videographicsview.hpp>
 #include <view/videostatus.hpp>
+
+#include "ui_scalecalibrationdialog.h"
 
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
@@ -72,13 +75,7 @@ VideoView::VideoView(QWidget *parent) :
 
     connect(_playBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
     connect(_playBar, SIGNAL(newAngleRequested()), SLOT(beginAngleCreation()));
-
-    connect(_playBar, &PlayBar::scaleCalibrationRequested, [=]()
-    {
-        auto calibrationRatioIndex = model()->index(_currentVideoRow, VideoModel::CalibrationRatioCol);
-
-        model()->setData(calibrationRatioIndex, 0.5);
-    });
+    connect(_playBar, SIGNAL(scaleCalibrationRequested()), SLOT(beginScaleCalibration()));
 
     connect(_playBar, SIGNAL(settingsRequested()), SIGNAL(settingsRequested()));
 
@@ -421,6 +418,7 @@ void VideoView::beginDistanceCreation()
 }
 
 static QGraphicsLineItem *guideLine = 0;
+static bool calibration = false;
 
 void VideoView::distanceFirstPoint(const QPointF &p)
 {
@@ -445,7 +443,12 @@ void VideoView::distanceUpdateSecondPoint(const QPointF &p)
 
 void VideoView::distanceEndCreation(const QPointF &p)
 {
-    static_cast<VideoModel *>(model())->createDistance(guideLine->line(), _currentVideoRow);
+    if (!calibration) {
+        static_cast<VideoModel *>(model())->createDistance(guideLine->line(), _currentVideoRow);
+    } else {
+        endScaleCalibration();
+    }
+
     delete guideLine;
     guideLine = 0;
 
@@ -516,4 +519,26 @@ void VideoView::calculateTrajectory(const QPointF &p)
     TrajectoryCalcJob *job = static_cast<VideoModel *>(model())->calculateTrajectory
             (p, frame, _currentVideoRow);
     static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow)->startJob(job);
+}
+
+void VideoView::beginScaleCalibration()
+{
+    calibration = true;
+    beginDistanceCreation();
+}
+
+void VideoView::endScaleCalibration()
+{
+    QDialog d { this };
+    Ui_ScaleCalibrationDialog d_ui {};
+
+    d_ui.setupUi(&d);
+    if (d.exec() == QDialog::Accepted) {
+        auto calibrationIndex = model()->index(_currentVideoRow, VideoModel::CalibrationRatioCol);
+
+        auto ratio = d_ui.lineSizeBox->value() / guideLine->line().length();
+        model()->setData(calibrationIndex, ratio);
+    }
+
+    calibration = false;
 }

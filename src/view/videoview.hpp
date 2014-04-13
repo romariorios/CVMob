@@ -107,6 +107,9 @@ private slots:
     void angleEdge2(const QPointF &p);
 
     void calculateTrajectory(const QPointF &p);
+
+    void beginScaleCalibration();
+    void endScaleCalibration();
 };
 
 #endif // VIDEOVIEW_H
