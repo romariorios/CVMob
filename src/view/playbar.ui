@@ -181,6 +181,18 @@
     <string>Ctrl+S</string>
    </property>
   </action>
+  <action name="actionCalibrate_framerate">
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/calibrate-frame-duration.png</normaloff>:/images/icons/calibrate-frame-duration.png</iconset>
+   </property>
+   <property name="text">
+    <string>Calibrate framerate</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

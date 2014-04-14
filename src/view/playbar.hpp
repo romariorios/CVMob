@@ -52,6 +52,7 @@ signals:
     void newDistanceRequested();
     void newTrajectoryRequested();
     void scaleCalibrationRequested();
+    void framerateCalibrationRequested();
     void settingsRequested();
 
 private:

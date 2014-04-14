@@ -38,6 +38,7 @@
 #include <view/videographicsview.hpp>
 #include <view/videostatus.hpp>
 
+#include "ui_recordingframeratedialog.h"
 #include "ui_scalecalibrationdialog.h"
 
 VideoView::VideoView(QWidget *parent) :
@@ -76,6 +77,21 @@ VideoView::VideoView(QWidget *parent) :
     connect(_playBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
     connect(_playBar, SIGNAL(newAngleRequested()), SLOT(beginAngleCreation()));
     connect(_playBar, SIGNAL(scaleCalibrationRequested()), SLOT(beginScaleCalibration()));
+
+    connect(_playBar, &PlayBar::framerateCalibrationRequested, [=]()
+    {
+        auto frameDurationIndex = model()->index(_currentVideoRow, VideoModel::FrameDurationCol);
+
+        QDialog d { this };
+        Ui_RecordingFramerateDialog d_ui;
+        d_ui.setupUi(&d);
+
+        if (d.exec() == QDialog::Accepted) {
+            auto frameDuration = 1000 / d_ui.recordingFramerate->value();
+
+            model()->setData(frameDurationIndex, frameDuration);
+        }
+    });
 
     connect(_playBar, SIGNAL(settingsRequested()), SIGNAL(settingsRequested()));
 

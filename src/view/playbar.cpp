@@ -48,6 +48,7 @@ PlayBar::PlayBar(QWidget *parent) :
 
     QMenu *calibrateMenu = new QMenu { _ui->calibrateButton };
     calibrateMenu->addAction(_ui->actionCalibrate_scale);
+    calibrateMenu->addAction(_ui->actionCalibrate_framerate);
     _ui->calibrateButton->setMenu(calibrateMenu);
     _ui->calibrateButton->setDefaultAction(_ui->actionCalibrate_scale);
 
@@ -59,6 +60,8 @@ PlayBar::PlayBar(QWidget *parent) :
     connect(_ui->actionCalculate_trajectory, SIGNAL(triggered()), SIGNAL(newTrajectoryRequested()));
     connect(_ui->actionTrack_angle, SIGNAL(triggered(bool)), SIGNAL(newAngleRequested()));
     connect(_ui->actionCalibrate_scale, SIGNAL(triggered(bool)), SIGNAL(scaleCalibrationRequested()));
+    connect(_ui->actionCalibrate_framerate, SIGNAL(triggered(bool)),
+            SIGNAL(framerateCalibrationRequested()));
     connect(_ui->actionSettings, SIGNAL(triggered(bool)), SIGNAL(settingsRequested()));
 
     connect(_ui->progressSlide, &QSlider::valueChanged, [&](int frame)

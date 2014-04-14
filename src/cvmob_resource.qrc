@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/images">
+    <file>icons/calibrate-frame-duration.png</file>
     <file>icons/calibrate-scale.png</file>
     <file>icons/trajectory.png</file>
     <file>icons/draw-distance.png</file>
