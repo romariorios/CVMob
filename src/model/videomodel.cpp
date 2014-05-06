@@ -670,7 +670,7 @@ bool VideoModel::removeRows(int row, int count, const QModelIndex &parent)
     return false;
 }
 
-bool VideoModel::openVideo(const QString& path)
+int VideoModel::openVideo(const QString &path)
 {
     insertRow(rowCount());
     Video &newVideo = _cvmobVideoData->last();
@@ -679,7 +679,7 @@ bool VideoModel::openVideo(const QString& path)
     if (!videoStream.open(path.toUtf8().constData()) ||
         videoStream.get(CV_CAP_PROP_FRAME_COUNT) == 0) {
         removeRow(rowCount() - 1);
-        return false;
+        return -1;
     }
 
     QModelIndex fileNameIndex = index(rowCount() - 1, FileNameCol);
@@ -707,7 +707,7 @@ bool VideoModel::openVideo(const QString& path)
     newVideo.jobHandler = new JobHandler(fileNameIndex.row(), this);
     newVideo.jobHandler->setWindowSize(QSize { winSize, winSize });
 
-    return true;
+    return fileNameIndex.row();
 }
 
 JobHandler* VideoModel::jobHandlerForVideo(int videoRow) const

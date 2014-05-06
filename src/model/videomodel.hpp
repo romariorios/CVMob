@@ -118,7 +118,7 @@ public:
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
-    bool openVideo(const QString &path);
+    int openVideo(const QString &path);
     void createDistance(const QLineF& l, const QModelIndex &videoIndex);
     void createDistance(const QLineF &l, int videoRow);
     void createDistance(const QPointF& p1, const QPointF& p2, const QModelIndex& videoIndex);

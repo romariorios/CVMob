@@ -144,8 +144,13 @@ void CvMobMainWindow::openFile() {
         return;
     }
 
-    if (_videoModel->openVideo(pathName)) {
+    auto videoRow = _videoModel->openVideo(pathName);
+    if (videoRow >= 0) {
         _videoView->showMessage(tr("%1 opened").arg(pathName));
+        _ui->openedVideosList->selectionModel()->select(
+            _ui->openedVideosList->model()->index(videoRow, 0),
+            QItemSelectionModel::ClearAndSelect
+        );
     } else {
         QMessageBox::critical(this, tr("Error"), tr("Could not open %1").arg(pathName));
     }
