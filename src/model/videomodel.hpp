@@ -21,6 +21,7 @@
 
 #include <QAbstractItemModel>
 
+#include <QColor>
 #include <QImage>
 #include <QList>
 #include <QLineF>
@@ -55,6 +56,18 @@ public:
         AllTrajectoriesCol,
         AllAnglesCol,
         VideoColCount
+    };
+
+    enum TrajectoryColumn {
+        AllTrajectoryInstantsCol = 0,
+        TrajectoryColorCol,
+        TrajectoryColCount
+    };
+
+    enum AngleColumn {
+        AllAngleInstantsCol = 0,
+        AngleColorCol,
+        AngleColCount
     };
 
     enum TrajectoryInstantColumn {
@@ -145,6 +158,11 @@ private:
 
     struct Trajectory
     {
+        Trajectory() :
+            color { rand() % 255, rand() % 255, rand() % 255 }
+        {}
+
+        QColor color;
         QList<TrajectoryInstant> instants;
     };
 
@@ -158,6 +176,11 @@ private:
 
     struct Angle
     {
+        Angle() :
+            color { rand() % 255, rand() % 255, rand() % 255 }
+        {}
+
+        QColor color;
         QList<AngleInstant> instants;
     };
 

@@ -206,6 +206,16 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
 
                 return distance;
             }
+        } else if (
+            index.parent().column() == AllTrajectoriesCol &&
+            index.column() == TrajectoryColorCol
+        ) {
+            return currentVideo.trajectories[index.row()].color;
+        } else if (
+            index.parent().column() == AllAnglesCol &&
+            index.column() == TrajectoryColorCol
+        ) {
+            return currentVideo.angles[index.row()].color;
         }
     } else if (!index.parent().parent().parent().isValid()) { // Level 2
         if (index.parent().parent().row() >= _cvmobVideoData->size()) {
@@ -299,9 +309,11 @@ int VideoModel::columnCount(const QModelIndex &parent) const
         switch (parent.column()) {
         case AllFramesCol:
         case AllDistancesCol:
-        case AllTrajectoriesCol:
-        case AllAnglesCol:
             return 1;
+        case AllTrajectoriesCol:
+            return TrajectoryColCount;
+        case AllAnglesCol:
+            return AngleColCount;
         default:
             break;
         }
