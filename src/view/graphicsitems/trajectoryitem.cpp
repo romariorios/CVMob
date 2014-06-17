@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,16 +20,19 @@
 
 #include "trajectoryinstantitem.hpp"
 
+#include <QBrush>
 #include <QGraphicsLineItem>
+#include <QPen>
 
-TrajectoryItem::TrajectoryItem(QGraphicsItem *parent) :
+TrajectoryItem::TrajectoryItem(const QColor &color, QGraphicsItem* parent) :
     QGraphicsItemGroup(parent),
     _drawTrajectory(DrawBefore),
     _showSpeed(ShowInCurrentInstant),
     _showAccel(ShowInCurrentInstant),
     _startingFrame(0),
     _currentFrame(0),
-    _currentInstant(0)
+    _currentInstant(0),
+    _color { color }
 {
     followDrawPolicy();
     followShowSpeedPolicy();
@@ -124,6 +127,8 @@ void TrajectoryItem::setCurrentFrame(int frame)
 void TrajectoryItem::appendInstant(QPointF pos, QPointF speed, QPointF accel)
 {
     TrajectoryInstantItem *instant = new TrajectoryInstantItem(pos, speed, accel, this);
+    instant->setBrush(_color);
+    instant->setPen(QPen { Qt::black, 0.5 });
 
     if (!_currentInstant) {
         _currentInstant = instant;

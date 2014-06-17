@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class TrajectoryInstantItem;
 class TrajectoryItem : public QGraphicsItemGroup
 {
 public:
-    TrajectoryItem(QGraphicsItem *parent = 0);
+    TrajectoryItem(const QColor &color, QGraphicsItem *parent = 0);
     ~TrajectoryItem();
 
     enum DrawingPolicy
@@ -82,6 +82,7 @@ private:
     QList<TrajectoryInstantItem *> _instants;
 
     QGraphicsItem *_currentInstant;
+    QColor _color;
 };
 
 #endif // TRAJECTORYITEM_HPP

@@ -105,6 +105,10 @@ public:
             column { column }
         {}
 
+        IndexDir(const QModelIndex &ind) :
+            IndexDir { ind.row(), ind.column() }
+        {}
+
         IndexDir() = default;
 
         int row = -1;
