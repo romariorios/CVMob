@@ -25,7 +25,13 @@
 #include <QtGui/QPen>
 #include <QSettings>
 #include <QTimer>
+
+#include <model/videomodel.hpp>
 #include <view/qcustomplot.h>
+
+enum {
+    __HACKCurrentFrameCol = 2
+};
 
 PlotItemView::PlotItemView(QWidget* parent) :
     QAbstractItemView(parent),
@@ -192,11 +198,15 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
     }
 
     if (!topLeft.parent().isValid()) {
-        if (topLeft.column() == 1) {
+        if (topLeft.column() == __HACKCurrentFrameCol) {
             auto x = topLeft.data().toInt();
 
             _timeLine->start->setCoords(x, -10000);
             _timeLine->end->setCoords(x, 10000);
+        }
+
+        if (topLeft.column() == VideoModel::TrajectoryColorCol) {
+            _plot->graph(topLeft.row())->setPen(topLeft.data().value<QColor>());
         }
 
         return requestUpdate();

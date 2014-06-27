@@ -18,13 +18,19 @@
 
 #include "plotproxies.hpp"
 
+enum {
+    __HACKCurrentFrameCol = 2
+};
+
 BasePlotProxyModel::BasePlotProxyModel(QObject* parent) :
     InstantsProxyModel(parent)
 {}
 
 QVariant BasePlotProxyModel::data(const QModelIndex& proxyIndex, int role) const
 {
-    if (!proxyIndex.parent().isValid() && proxyIndex.column() == 1) {
+    if (!proxyIndex.parent().isValid() && (
+            proxyIndex.column() == __HACKCurrentFrameCol ||
+            proxyIndex.column() == VideoModel::TrajectoryColorCol)) {
         return mapToSource(proxyIndex).data();
     }
 
@@ -61,7 +67,7 @@ QModelIndex BasePlotProxyModel::mapFromSource(const QModelIndex& sourceIndex) co
             return QModelIndex {};
         }
 
-        return index(0, 1);
+        return index(0, __HACKCurrentFrameCol);
     }
 
     QModelIndex instantsSourceIndex = InstantsProxyModel::mapFromSource(sourceIndex);
@@ -82,13 +88,19 @@ QModelIndex BasePlotProxyModel::mapFromSource(const QModelIndex& sourceIndex) co
 
 QModelIndex BasePlotProxyModel::mapToSource(const QModelIndex& proxyIndex) const
 {
+    if (!_parentIndex.isValid()) {
+        return QModelIndex {};
+    }
+
     int column;
 
     if (!proxyIndex.parent().isValid()) {
-        if (proxyIndex.column() == 1) {
+        if (proxyIndex.column() == __HACKCurrentFrameCol) {
             auto path = VideoModel::indexPath(_parentIndex);
 
             return sourceModel()->index(path[0].row, VideoModel::CurrentFrameCol);
+        } else {
+            return InstantsProxyModel::mapToSource(proxyIndex);
         }
     }
 

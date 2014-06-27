@@ -556,13 +556,26 @@ bool VideoModel::insertRows(int row, int count, const QModelIndex &parent)
 
         Video &currentVideo = (*_cvmobVideoData)[parent.row()];
 
+        // To be used at "case AllTrajectoriesCol:" down there
+        // Any better way to do this?
+        // ("switch" kind of sucks)
+        auto startingIndex = index(row, TrajectoryColorCol, parent);
+        auto endingIndex = index(row + count - 1, TrajectoryColorCol, parent);
+        bool insertSuccessful;
+
         switch (parent.column()) {
         case AllFramesCol:
             return false; // Inserting frames is not possible
         case AllDistancesCol:
             return checkAndInsertRowsIn(currentVideo.distances, row, count, parent);
         case AllTrajectoriesCol:
-            return checkAndInsertRowsIn(currentVideo.trajectories, row, count, parent);
+            insertSuccessful = checkAndInsertRowsIn(currentVideo.trajectories, row, count, parent);
+
+            if (insertSuccessful) {
+                emit dataChanged(startingIndex, endingIndex);
+            }
+
+            return insertSuccessful;
         case AllAnglesCol:
             return checkAndInsertRowsIn(currentVideo.angles, row, count, parent);
         default:

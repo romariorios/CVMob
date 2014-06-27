@@ -25,7 +25,7 @@ InstantsProxyModel::InstantsProxyModel(QObject* parent) :
 QModelIndex InstantsProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
     if (sourceIndex.parent() == _parentIndex) {
-        return index(sourceIndex.row(), 0);
+        return index(sourceIndex.row(), sourceIndex.column());
     }
 
     if (sourceIndex.parent().parent() == _parentIndex) {
@@ -46,7 +46,7 @@ QModelIndex InstantsProxyModel::mapToSource(const QModelIndex &proxyIndex) const
     }
 
     if (!proxyIndex.parent().isValid()) {
-        return sourceModel()->index(proxyIndex.row(), 0, _parentIndex);
+        return sourceModel()->index(proxyIndex.row(), proxyIndex.column(), _parentIndex);
     }
 
     QModelIndex parent = sourceModel()->index(proxyIndex.parent().row(), 0, _parentIndex);
