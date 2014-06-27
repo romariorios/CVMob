@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@ class QGraphicsLineItem;
 class TrajectoryInstantItem : public QGraphicsRectItem
 {
 public:
-    TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF accel, QGraphicsItem* parent);
+    TrajectoryInstantItem(const QPointF &pos, const QPointF &speed, const QPointF &accel,
+                          double scaleFactor, QGraphicsItem* parent);
     TrajectoryInstantItem(QGraphicsItem *parent);
     ~TrajectoryInstantItem();
 
@@ -45,6 +46,7 @@ public:
 private:
     QPointF _speed;
     QPointF _accel;
+    QPointF _radius;
     QGraphicsLineItem *_speedLine;
     QGraphicsLineItem *_accelLine;
 };

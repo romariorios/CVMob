@@ -366,9 +366,13 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
                 v.distances << new DistanceItem(v.bgRect);
                 break;
             case VideoModel::AllTrajectoriesCol:
-                traj = new TrajectoryItem(videoModel()->index(parent, {
-                    { i, VideoModel::TrajectoryColorCol }
-                }).data().value<QColor>(), v.bgRect);
+                traj = new TrajectoryItem {
+                    videoModel()->index(parent, {
+                        { i, VideoModel::TrajectoryColorCol }
+                    }).data().value<QColor>(),
+                    v.bgRect->rect().size(),
+                    v.bgRect
+                };
                 traj->setDrawTrajectory(TrajectoryItem::DrawBefore);
                 v.trajectories << traj;
                 break;

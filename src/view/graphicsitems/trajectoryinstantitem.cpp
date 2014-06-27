@@ -21,24 +21,23 @@
 #include <QGraphicsLineItem>
 #include <QBrush>
 
-const QPointF radius = QPointF(2, 2);
-
-TrajectoryInstantItem::TrajectoryInstantItem(QPointF pos, QPointF speed, QPointF accel,
+TrajectoryInstantItem::TrajectoryInstantItem(const QPointF &pos, const QPointF &speed,
+                                             const QPointF &accel, double scaleFactor,
                                              QGraphicsItem *parent) :
-    QGraphicsRectItem(pos.x() - radius.x(), pos.y() - radius.y(),
-                      radius.x() * 2, radius.y() * 2, parent),
+    QGraphicsRectItem { parent },
     _speed(speed),
     _accel(accel),
+    _radius { 2 * scaleFactor, 2 * scaleFactor },
     _speedLine(new QGraphicsLineItem(QLineF(pos, pos + speed), this)),
     _accelLine(new QGraphicsLineItem(QLineF(pos, pos + accel), this))
 {
-    setBrush(Qt::black);
+    setRect(pos.x() - _radius.x(), pos.y() - _radius.y(), _radius.x() * 2, _radius.y() * 2);
 
     hide();
 }
 
 TrajectoryInstantItem::TrajectoryInstantItem(QGraphicsItem *parent) :
-    TrajectoryInstantItem(QPointF(0, 0), QPointF(0, 0), QPointF(0, 0), parent)
+    TrajectoryInstantItem { QPointF { 0, 0 }, QPointF { 0, 0 }, QPointF { 0, 0 }, 1, parent }
 {}
 
 TrajectoryInstantItem::~TrajectoryInstantItem()
@@ -59,7 +58,7 @@ bool TrajectoryInstantItem::isAccelVisible() const
 
 const QPointF TrajectoryInstantItem::pos() const
 {
-    return rect().topLeft() + radius;
+    return rect().topLeft() + _radius;
 }
 
 void TrajectoryInstantItem::setSpeedVisible(bool visible)
@@ -82,7 +81,7 @@ void TrajectoryInstantItem::setAccelVisible(bool visible)
 
 void TrajectoryInstantItem::setPos(const QPointF &pos)
 {
-    QRectF newRect(pos - radius, pos + radius);
+    QRectF newRect { pos - _radius, pos + _radius };
 
     if (newRect == rect()) {
         return;

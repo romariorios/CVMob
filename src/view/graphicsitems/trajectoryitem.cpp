@@ -24,7 +24,7 @@
 #include <QGraphicsLineItem>
 #include <QPen>
 
-TrajectoryItem::TrajectoryItem(const QColor &color, QGraphicsItem* parent) :
+TrajectoryItem::TrajectoryItem(const QColor &color, const QSizeF &videoSize, QGraphicsItem* parent) :
     QGraphicsItemGroup(parent),
     _drawTrajectory(DrawBefore),
     _showSpeed(ShowInCurrentInstant),
@@ -32,7 +32,8 @@ TrajectoryItem::TrajectoryItem(const QColor &color, QGraphicsItem* parent) :
     _startingFrame(0),
     _currentFrame(0),
     _currentInstant(0),
-    _color { color }
+    _color { color },
+    _instantsScaleFactor { videoSize.height() / 300. }
 {
     followDrawPolicy();
     followShowSpeedPolicy();
@@ -126,9 +127,9 @@ void TrajectoryItem::setCurrentFrame(int frame)
 
 void TrajectoryItem::appendInstant(QPointF pos, QPointF speed, QPointF accel)
 {
-    TrajectoryInstantItem *instant = new TrajectoryInstantItem(pos, speed, accel, this);
+    auto instant = new TrajectoryInstantItem { pos, speed, accel, _instantsScaleFactor, this };
     instant->setBrush(_color);
-    instant->setPen(QPen { Qt::black, 0.5 });
+    instant->setPen(QPen { Qt::black, 0.5 * _instantsScaleFactor });
 
     if (!_currentInstant) {
         _currentInstant = instant;

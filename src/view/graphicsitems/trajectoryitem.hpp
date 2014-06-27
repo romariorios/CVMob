@@ -31,7 +31,7 @@ class TrajectoryInstantItem;
 class TrajectoryItem : public QGraphicsItemGroup
 {
 public:
-    TrajectoryItem(const QColor &color, QGraphicsItem *parent = 0);
+    TrajectoryItem(const QColor &color, const QSizeF &videoSize, QGraphicsItem *parent = 0);
     ~TrajectoryItem();
 
     enum DrawingPolicy
@@ -83,6 +83,7 @@ private:
 
     QGraphicsItem *_currentInstant;
     QColor _color;
+    double _instantsScaleFactor;
 };
 
 #endif // TRAJECTORYITEM_HPP
