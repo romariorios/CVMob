@@ -1,10 +1,11 @@
 project(CVMob)
 
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 2.8.12)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
+find_package(KF5 REQUIRED COMPONENTS ItemModels)
 find_package(OpenCV 2 REQUIRED)
 
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
@@ -23,8 +24,6 @@ set(CVMob_sources
     view/videoview.cpp
     view/videolistdelegate.cpp
     model/videomodel.cpp
-    model/itemmodels/klinkitemselectionmodel.cpp
-    model/itemmodels/kmodelindexproxymapper.cpp
     model/proxies/anglesproxymodel.cpp
     model/proxies/baseproxymodel.cpp
     model/proxies/distancesproxymodel.cpp
@@ -81,4 +80,5 @@ add_executable(cvmob
 
 set_target_properties(cvmob PROPERTIES AUTOMOC TRUE)
 
-target_link_libraries(cvmob ${Qt5Widgets_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(cvmob ${Qt5Widgets_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${OpenCV_LIBS}
+                      KF5::ItemModels)

@@ -19,8 +19,8 @@
 #include "cvmobmainwindow.hpp"
 #include "ui_cvmobmainwindow.h"
 
+#include <KItemModels/KLinkItemSelectionModel>
 #include <model/videomodel.hpp>
-#include <model/itemmodels/klinkitemselectionmodel.h>
 #include <model/proxies/anglesproxymodel.hpp>
 #include <model/proxies/distancesproxymodel.hpp>
 #include <model/proxies/plotproxies.hpp>
