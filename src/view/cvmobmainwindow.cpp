@@ -126,6 +126,29 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _videoView->showMessage(tr("CVMob developer snapshot"));
 
     connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
+
+    connect(_ui->actionShow_opened_videos, SIGNAL(triggered(bool)),
+            _ui->openedVideosDockWidget, SLOT(setVisible(bool)));
+    connect(_ui->actionShow_data_tables, SIGNAL(triggered(bool)),
+            _ui->dataTablesDockWidget, SLOT(setVisible(bool)));
+    connect(_ui->actionShow_graphs, SIGNAL(triggered(bool)),
+            _ui->graphsDockWidget, SLOT(setVisible(bool)));
+
+    connect(_ui->openedVideosDockWidget, &CVMDockWidget::closed, _ui->actionShow_opened_videos, [=]()
+    {
+        _ui->actionShow_opened_videos->setChecked(false);
+    });
+
+    connect(_ui->dataTablesDockWidget, &CVMDockWidget::closed, _ui->actionShow_opened_videos, [=]()
+    {
+        _ui->actionShow_data_tables->setChecked(false);
+    });
+
+    connect(_ui->graphsDockWidget, &CVMDockWidget::closed, _ui->actionShow_opened_videos, [=]()
+    {
+        _ui->actionShow_graphs->setChecked(false);
+    });
+
     connect(_videoView, SIGNAL(settingsRequested()), _settingsWidget, SLOT(exec()));
     connect(_settingsWidget, SIGNAL(settingsChanged()), _videoModel, SLOT(updateSettings()));
     connect(_settingsWidget, SIGNAL(settingsChanged()), _videoView, SLOT(updateSettings()));

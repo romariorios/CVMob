@@ -14,6 +14,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} -
 set(CVMob_sources
     main.cpp
     view/aboutdialog.cpp
+    view/cvmdockwidget.cpp
     view/cvmobmainwindow.cpp
     view/plotitemview.cpp
     view/qcustomplot.cpp

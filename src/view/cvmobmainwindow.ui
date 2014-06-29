@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="centralLayout"/>
   </widget>
-  <widget class="QDockWidget" name="openVideos">
+  <widget class="CVMDockWidget" name="openedVideosDockWidget">
    <property name="windowTitle">
     <string>Opened videos</string>
    </property>
@@ -55,7 +55,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_2">
+  <widget class="CVMDockWidget" name="dataTablesDockWidget">
    <property name="windowTitle">
     <string>Data tables</string>
    </property>
@@ -155,7 +155,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="graphsDockWidget">
+  <widget class="CVMDockWidget" name="graphsDockWidget">
    <property name="windowTitle">
     <string>Graphs</string>
    </property>
@@ -217,6 +217,20 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionShow_opened_videos"/>
+   <addaction name="actionShow_data_tables"/>
+   <addaction name="actionShow_graphs"/>
+  </widget>
   <action name="action_Open">
    <property name="text">
     <string>&amp;Open</string>
@@ -225,12 +239,51 @@
     <string>Open a new video</string>
    </property>
   </action>
+  <action name="actionShow_opened_videos">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Opened videos</string>
+   </property>
+  </action>
+  <action name="actionShow_data_tables">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Data tables</string>
+   </property>
+  </action>
+  <action name="actionShow_graphs">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Graphs</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>VideoDataView</class>
    <extends>QTreeView</extends>
    <header location="global">view/videodataview.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>CVMDockWidget</class>
+   <extends>QDockWidget</extends>
+   <header location="global">view/cvmdockwidget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
