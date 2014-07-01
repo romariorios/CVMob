@@ -25,6 +25,8 @@ namespace Ui {
 class PlayBar;
 }
 
+class BaseJob;
+class JobHandler;
 class QTimerEvent;
 
 class PlayBar : public QWidget
@@ -38,6 +40,7 @@ public:
 public slots:
     void setPlaying(bool playing);
     void setPlayData(int frames, int frameDuration);
+    void setJobHandler(JobHandler *jh);
     void updateSettings();
 
 protected:
@@ -63,6 +66,7 @@ private:
     bool _playing;
     Ui::PlayBar *_ui;
     bool _playStatus;
+    JobHandler *_jobHandler = nullptr;
 };
 
 #endif // PLAYERBAR_HPP

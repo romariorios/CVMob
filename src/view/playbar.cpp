@@ -19,6 +19,7 @@
 #include "playbar.hpp"
 #include "ui_playbar.h"
 
+#include <model/jobs/jobhandler.hpp>
 #include <QMenu>
 
 #include <QPushButton>
@@ -51,6 +52,9 @@ PlayBar::PlayBar(QWidget *parent) :
     calibrateMenu->addAction(_ui->actionCalibrate_framerate);
     _ui->calibrateButton->setMenu(calibrateMenu);
     _ui->calibrateButton->setDefaultAction(_ui->actionCalibrate_scale);
+
+    _ui->backgroundActivityButton->setDefaultAction(_ui->actionBackground_activity);
+    _ui->backgroundActivityButton->hide();
 
     _ui->settingsButton->setDefaultAction(_ui->actionSettings);
 
@@ -108,6 +112,28 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
     _ui->playPauseButton->setEnabled(frameCount);
 
     emit playDataChanged(frameCount, frameDuration);
+}
+
+void PlayBar::setJobHandler(JobHandler* jh)
+{
+    if (_jobHandler) {
+        _jobHandler->disconnect();
+    }
+
+    _jobHandler = jh;
+
+    if (!_jobHandler) {
+        return;
+    }
+
+    connect(_jobHandler, &QThread::finished,
+            _ui->backgroundActivityButton, &QWidget::hide);
+    connect(_jobHandler, &QObject::destroyed, [&](){
+        _jobHandler = nullptr;
+    });
+
+    connect(_jobHandler, &JobHandler::jobAmountChanged,           // if amount == 0, then setVisible(0) gets
+            _ui->backgroundActivityButton, &QWidget::setVisible); // called, which equals setVisible(false)
 }
 
 void PlayBar::updateSettings()

@@ -73,6 +73,16 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="backgroundActivityButton">
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -191,6 +201,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionBackground_activity">
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/background-activity.png</normaloff>:/images/icons/background-activity.png</iconset>
+   </property>
+   <property name="text">
+    <string>Background activity</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+B</string>
    </property>
   </action>
  </widget>

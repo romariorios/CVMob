@@ -274,7 +274,7 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
                           model()->data(
                               model()->index(_currentVideoRow,
                                              VideoModel::FrameDurationCol)).toInt());
-//     _status->setJobHandler(static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow));
+    _playBar->setJobHandler(static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow));
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
