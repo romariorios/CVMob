@@ -31,7 +31,6 @@ class QGraphicsRectItem;
 class QGraphicsScene;
 class TrajectoryItem;
 class VideoGraphicsView;
-class VideoStatus;
 class VideoModel;
 
 class VideoView : public QAbstractItemView
@@ -79,7 +78,6 @@ private:
     Video _noVideoVideo;
     int _currentVideoRow;
     PlayBar *_playBar;
-    VideoStatus *_status;
 
     VideoModel *videoModel() const;
 
