@@ -246,6 +246,10 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/opened-videos.png</normaloff>:/images/icons/opened-videos.png</iconset>
+   </property>
    <property name="text">
     <string>Opened videos</string>
    </property>
@@ -257,6 +261,10 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/data-tables.png</normaloff>:/images/icons/data-tables.png</iconset>
+   </property>
    <property name="text">
     <string>Data tables</string>
    </property>
@@ -267,6 +275,10 @@
    </property>
    <property name="checked">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/graphs.png</normaloff>:/images/icons/graphs.png</iconset>
    </property>
    <property name="text">
     <string>Graphs</string>
@@ -286,6 +298,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../cvmob_resource.qrc"/>
+ </resources>
  <connections/>
 </ui>
