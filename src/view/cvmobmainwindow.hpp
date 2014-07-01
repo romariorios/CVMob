@@ -39,6 +39,7 @@ class CvMobMainWindow : public QMainWindow
 
 protected slots:
     void openFile();
+    void setDockWasShown(bool shown);
 
 public:
     explicit CvMobMainWindow(QWidget *parent = 0);

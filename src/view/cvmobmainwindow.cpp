@@ -44,6 +44,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _settingsWidget(new Settings(this))
 {
     _ui->setupUi(this);
+    _ui->toolBar->hide();
 
     _ui->action_Open->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
     _ui->openButton->setDefaultAction(_ui->action_Open);
@@ -129,24 +130,35 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     connect(_ui->actionShow_opened_videos, SIGNAL(triggered(bool)),
             _ui->openedVideosDockWidget, SLOT(setVisible(bool)));
+    connect(_ui->actionShow_opened_videos, SIGNAL(triggered(bool)),
+            SLOT(setDockWasShown(bool)));
+
     connect(_ui->actionShow_data_tables, SIGNAL(triggered(bool)),
             _ui->dataTablesDockWidget, SLOT(setVisible(bool)));
+    connect(_ui->actionShow_data_tables, SIGNAL(triggered(bool)),
+            SLOT(setDockWasShown(bool)));
+
     connect(_ui->actionShow_graphs, SIGNAL(triggered(bool)),
             _ui->graphsDockWidget, SLOT(setVisible(bool)));
+    connect(_ui->actionShow_graphs, SIGNAL(triggered(bool)),
+            SLOT(setDockWasShown(bool)));
 
     connect(_ui->openedVideosDockWidget, &CVMDockWidget::closed, _ui->actionShow_opened_videos, [=]()
     {
         _ui->actionShow_opened_videos->setChecked(false);
+        setDockWasShown(false);
     });
 
     connect(_ui->dataTablesDockWidget, &CVMDockWidget::closed, _ui->actionShow_opened_videos, [=]()
     {
         _ui->actionShow_data_tables->setChecked(false);
+        setDockWasShown(false);
     });
 
     connect(_ui->graphsDockWidget, &CVMDockWidget::closed, _ui->actionShow_opened_videos, [=]()
     {
         _ui->actionShow_graphs->setChecked(false);
+        setDockWasShown(false);
     });
 
     connect(_videoView, SIGNAL(settingsRequested()), _settingsWidget, SLOT(exec()));
@@ -176,6 +188,17 @@ void CvMobMainWindow::openFile() {
         );
     } else {
         QMessageBox::critical(this, tr("Error"), tr("Could not open %1").arg(pathName));
+    }
+}
+
+void CvMobMainWindow::setDockWasShown(bool shown)
+{
+    if (shown) {
+        if (--_closedDocks == 0) {
+            _ui->toolBar->hide();
+        }
+    } else if (_closedDocks++ == 0) {
+        _ui->toolBar->show();
     }
 }
 
