@@ -41,6 +41,10 @@ public slots:
     void setPlaying(bool playing);
     void setPlayData(int frames, int frameDuration);
     void setJobHandler(JobHandler *jh);
+    long enqueueMessage(const QString &message, int duration = 5000);
+    void dequeueFirstMessage();
+    void dequeueMessageWithId(long messageId);
+    inline void pushPersistentMessage(const QString &message) { enqueueMessage(message, 0); }
     void updateSettings();
 
 protected:
@@ -59,6 +63,22 @@ signals:
     void settingsRequested();
 
 private:
+    struct Message
+    {
+        Message(const QString &message) :
+            message { message }
+        {}
+
+        operator QString() { return message; }
+
+        long id = newId++;
+        QString message;
+
+        static long newId;
+    };
+
+    void removeMessage(const QList<Message>::iterator &it);
+
     int _frameCount;
     int _frameDuration;
     int _videoFrameDuration;
@@ -67,6 +87,7 @@ private:
     Ui::ControlBar *_ui;
     bool _playStatus;
     JobHandler *_jobHandler = nullptr;
+    QList<Message> _statusQueue;
 
 private slots:
     void setStatusVisible(bool visible = true);

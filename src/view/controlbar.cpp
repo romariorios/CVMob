@@ -22,8 +22,12 @@
 #include <model/jobs/jobhandler.hpp>
 #include <QMenu>
 
+#include <algorithm>
 #include <QPushButton>
 #include <QSettings>
+#include <QTimer>
+
+long ControlBar::Message::newId = 0;
 
 ControlBar::ControlBar(QWidget *parent) :
     QWidget(parent),
@@ -36,7 +40,7 @@ ControlBar::ControlBar(QWidget *parent) :
     _ui->setupUi(this);
     _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
     _ui->progressSlide->setTracking(false);
-    hideStatus();
+    _ui->statusWidget->hide();
 
     _ui->actionPlay->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
     _ui->actionSettings->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
@@ -89,7 +93,11 @@ ControlBar::ControlBar(QWidget *parent) :
         setPlaying(_playing);
     });
 
-    connect(_ui->actionClose_status, SIGNAL(triggered(bool)), SLOT(hideStatus()));
+    connect(_ui->actionClose_status, &QAction::triggered, [=]()
+    {
+        removeMessage(_statusQueue.begin());
+        hideStatus();
+    });
 
     setPlayData(0, 0);
 }
@@ -143,6 +151,40 @@ void ControlBar::setJobHandler(JobHandler* jh)
             _ui->backgroundActivityButton, &QWidget::setVisible); // called, which equals setVisible(false)
 }
 
+long ControlBar::enqueueMessage(const QString& message, int duration)
+{
+    _statusQueue << message;
+
+    if (_statusQueue.size() == 1) {
+        setStatusVisible();
+        _ui->message->setText(message);
+    }
+
+    auto messageId = _statusQueue.last().id;
+
+    if (duration != 0) {
+        auto timer = new QTimer { this };
+        timer->setSingleShot(true);
+        timer->start(duration);
+
+        connect(timer, &QTimer::timeout, [=]()
+        {
+            dequeueMessageWithId(messageId);
+        });
+    } else { // Persistent
+        while (_statusQueue[0].id != messageId) {
+            dequeueFirstMessage();
+        }
+    }
+
+    return messageId;
+}
+
+void ControlBar::dequeueFirstMessage()
+{
+    removeMessage(_statusQueue.begin());
+}
+
 void ControlBar::updateSettings()
 {
     QSettings set;
@@ -151,6 +193,31 @@ void ControlBar::updateSettings()
     if (_playing) {
         killTimer(_currentTimer);
         _currentTimer = startTimer(_frameDuration);
+    }
+}
+
+void ControlBar::dequeueMessageWithId(long messageId)
+{
+    QList<Message>::iterator it = std::find_if(
+        _statusQueue.begin(),
+        _statusQueue.end(),
+        [=](Message m) -> bool { return m.id == messageId; });
+
+    removeMessage(it);
+}
+
+void ControlBar::removeMessage(const QList<ControlBar::Message>::iterator &it)
+{
+    if (it == _statusQueue.end()) {
+        return;
+    }
+
+    _statusQueue.erase(it);
+
+    if (_statusQueue.isEmpty()) {
+        hideStatus();
+    } else {
+        _ui->message->setText(_statusQueue[0]);
     }
 }
 

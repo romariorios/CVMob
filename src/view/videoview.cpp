@@ -117,10 +117,13 @@ VideoView::VideoView(QWidget *parent) :
 
     connect(_controlBar, &ControlBar::newTrajectoryRequested, [=]()
     {
-//         auto status = new Status::Persistent(_status, tr("Click a point to track"));
+        auto messageId = _controlBar->enqueueMessage(tr("Click a point to track"));
 
         connect(_view, SIGNAL(mouseReleased(QPointF)), SLOT(calculateTrajectory(QPointF)));
-//         connect(_view, SIGNAL(mouseReleased(QPointF)), status, SLOT(deleteLater()));
+        connect(_view, &VideoGraphicsView::mouseReleased, [=]()
+        {
+            _controlBar->dequeueMessageWithId(messageId);
+        });
     });
 }
 
@@ -131,7 +134,7 @@ VideoView::~VideoView()
 
 void VideoView::showMessage(const QString &message, int duration)
 {
-//     new Status::Message(_status, message, duration);
+    _controlBar->enqueueMessage(message, duration);
 }
 
 QRect VideoView::visualRect(const QModelIndex &index) const
@@ -430,10 +433,13 @@ void VideoView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int e
 
 void VideoView::beginDistanceCreation()
 {
-//     auto status = new Status::Persistent(_status, tr("Click and drag to measure a distance"));
+    auto messageId = _controlBar->enqueueMessage(tr("Click and drag to measure a distance"));
 
     connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(distanceFirstPoint(QPointF)));
-//     connect(_view, SIGNAL(mousePressed(QPointF)), status, SLOT(deleteLater()));
+    connect(_view, &VideoGraphicsView::mousePressed, [=]()
+    {
+        _controlBar->dequeueMessageWithId(messageId);
+    });
 }
 
 static QGraphicsLineItem *guideLine = 0;
@@ -448,11 +454,14 @@ void VideoView::distanceFirstPoint(const QPointF &p)
     guideLine = new QGraphicsLineItem(QLineF(p, p), currentVideo.bgRect);
     guideLine->setPen(QColor(0, 0, 255));
 
-//     auto status = new Status::Persistent(_status, tr("Release to finish"));
+    auto messageId = _controlBar->enqueueMessage(tr("Release to finish"));
 
     connect(_view, SIGNAL(mouseDragged(QPointF)), SLOT(distanceUpdateSecondPoint(QPointF)));
     connect(_view, SIGNAL(mouseReleased(QPointF)), SLOT(distanceEndCreation(QPointF)));
-//     connect(_view, SIGNAL(mouseReleased(QPointF)), status, SLOT(deleteLater()));
+    connect(_view, &VideoGraphicsView::mouseReleased, [=]()
+    {
+        _controlBar->dequeueMessageWithId(messageId);
+    });
 }
 
 void VideoView::distanceUpdateSecondPoint(const QPointF &p)
@@ -471,7 +480,7 @@ void VideoView::distanceEndCreation(const QPointF &p)
     delete guideLine;
     guideLine = 0;
 
-//     new Status::Message(_status, tr("Done"), 3000);
+    _controlBar->enqueueMessage(tr("Done"), 3000);
 
     disconnect(_view, SIGNAL(mouseDragged(QPointF)), this, SLOT(distanceUpdateSecondPoint(QPointF)));
     disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(distanceEndCreation(QPointF)));
@@ -479,10 +488,13 @@ void VideoView::distanceEndCreation(const QPointF &p)
 
 void VideoView::beginAngleCreation()
 {
-//     auto status = new Status::Persistent(_status, tr("Click on the center of the angle"));
+    auto messageId = _controlBar->enqueueMessage(tr("Click on the center of the angle"));
 
     connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleCenter(QPointF)));
-//     connect(_view, SIGNAL(mousePressed(QPointF)), status, SLOT(deleteLater()));
+    connect(_view, &VideoGraphicsView::mousePressed, [=]()
+    {
+        _controlBar->dequeueMessageWithId(messageId);
+    });
 }
 
 static AngleItem *guideAngleItem = 0;
@@ -493,10 +505,13 @@ void VideoView::angleCenter(const QPointF& p)
 
     guideAngleItem = new AngleItem(p, p, p, _videos[_currentVideoRow].bgRect);
 
-//     auto status = new Status::Persistent(_status, tr("Now click on the first peripheral edge"));
+    auto messageId = _controlBar->enqueueMessage(tr("Now click on the first peripheral edge"));
 
     connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge1(QPointF)));
-//     connect(_view, SIGNAL(mousePressed(QPointF)), status, SLOT(deleteLater()));
+    connect(_view, &VideoGraphicsView::mousePressed, [=]()
+    {
+        _controlBar->dequeueMessageWithId(messageId);
+    });
 }
 
 void VideoView::angleEdge1(const QPointF& p)
@@ -505,10 +520,13 @@ void VideoView::angleEdge1(const QPointF& p)
 
     guideAngleItem->setEdge1(p);
 
-//     auto status = new Status::Persistent(_status, tr("Now click on the second peripheral edge"));
+    auto messageId = _controlBar->enqueueMessage(tr("Now click on the second peripheral edge"));
 
     connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge2(QPointF)));
-//     connect(_view, SIGNAL(mousePressed(QPointF)),  status, SLOT(deleteLater()));
+    connect(_view, &VideoGraphicsView::mousePressed, [=]()
+    {
+        _controlBar->dequeueMessageWithId(messageId);
+    });
 }
 
 void VideoView::angleEdge2(const QPointF& p)
