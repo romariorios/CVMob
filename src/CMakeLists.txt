@@ -35,9 +35,8 @@ set(CVMob_sources
     model/jobs/basejob.cpp
     model/jobs/jobhandler.cpp
     model/jobs/trajectorycalcjob.cpp
-    view/playbar.cpp
+    view/controlbar.cpp
     view/playslider.cpp
-    view/videostatus.cpp
     view/graphicsitems/angleitem.cpp
     view/graphicsitems/distanceitem.cpp
     view/graphicsitems/trajectoryinstantitem.cpp
@@ -46,12 +45,11 @@ set(CVMob_sources
 
 set(CVMob_forms
     view/aboutdialog.ui
+    view/controlbar.ui
     view/cvmobmainwindow.ui
-    view/playbar.ui
     view/recordingframeratedialog.ui
     view/scalecalibrationdialog.ui
     view/settings.ui
-    view/videostatus.ui
 )
 
 set(CVMob_translations

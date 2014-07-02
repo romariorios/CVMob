@@ -16,28 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLAYERBAR_HPP
-#define PLAYERBAR_HPP
+#ifndef CONTROLBAR_HPP
+#define CONTROLBAR_HPP
 
 #include <QWidget>
 
 namespace Ui {
-class PlayBar;
+class ControlBar;
 }
 
+class BaseJob;
+class JobHandler;
 class QTimerEvent;
 
-class PlayBar : public QWidget
+class ControlBar : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlayBar(QWidget *parent = 0);
-    ~PlayBar();
+    explicit ControlBar(QWidget *parent = nullptr);
+    ~ControlBar();
 
 public slots:
     void setPlaying(bool playing);
     void setPlayData(int frames, int frameDuration);
+    void setJobHandler(JobHandler *jh);
+    long enqueueMessage(const QString &message, int duration = 5000);
+    void dequeueFirstMessage();
+    void dequeueMessageWithId(long messageId);
+    inline void pushPersistentMessage(const QString &message) { enqueueMessage(message, 0); }
     void updateSettings();
 
 protected:
@@ -56,13 +63,35 @@ signals:
     void settingsRequested();
 
 private:
+    struct Message
+    {
+        Message(const QString &message) :
+            message { message }
+        {}
+
+        operator QString() { return message; }
+
+        long id = newId++;
+        QString message;
+
+        static long newId;
+    };
+
+    void removeMessage(const QList<Message>::iterator &it);
+
     int _frameCount;
     int _frameDuration;
     int _videoFrameDuration;
     int _currentTimer;
     bool _playing;
-    Ui::PlayBar *_ui;
+    Ui::ControlBar *_ui;
     bool _playStatus;
+    JobHandler *_jobHandler = nullptr;
+    QList<Message> _statusQueue;
+
+private slots:
+    void setStatusVisible(bool visible = true);
+    inline void hideStatus() { setStatusVisible(false); }
 };
 
-#endif // PLAYERBAR_HPP
+#endif // CONTROLBAR_HPP

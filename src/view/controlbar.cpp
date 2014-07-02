@@ -16,28 +16,36 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "playbar.hpp"
-#include "ui_playbar.h"
+#include "controlbar.hpp"
+#include "ui_controlbar.h"
 
+#include <model/jobs/jobhandler.hpp>
 #include <QMenu>
 
+#include <algorithm>
 #include <QPushButton>
 #include <QSettings>
+#include <QTimer>
 
-PlayBar::PlayBar(QWidget *parent) :
+long ControlBar::Message::newId = 0;
+
+ControlBar::ControlBar(QWidget *parent) :
     QWidget(parent),
     _frameCount(0),
     _frameDuration(0),
     _videoFrameDuration(0),
     _currentTimer(0),
-    _ui(new Ui::PlayBar)
+    _ui { new Ui::ControlBar }
 {
     _ui->setupUi(this);
     _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
     _ui->progressSlide->setTracking(false);
+    _ui->statusWidget->hide();
 
     _ui->actionPlay->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
     _ui->actionSettings->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
+    _ui->actionClose_status->setIcon(
+        QApplication::style()->standardIcon(QStyle::SP_DialogCloseButton));
 
     QMenu *drawMenu = new QMenu(_ui->drawButton);
     drawMenu->addAction(_ui->actionMeasure_distance);
@@ -52,7 +60,12 @@ PlayBar::PlayBar(QWidget *parent) :
     _ui->calibrateButton->setMenu(calibrateMenu);
     _ui->calibrateButton->setDefaultAction(_ui->actionCalibrate_scale);
 
+    _ui->backgroundActivityButton->setDefaultAction(_ui->actionBackground_activity);
+    _ui->backgroundActivityButton->hide();
+
     _ui->settingsButton->setDefaultAction(_ui->actionSettings);
+
+    _ui->closeStatusButton->setDefaultAction(_ui->actionClose_status);
 
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
     connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
@@ -80,16 +93,22 @@ PlayBar::PlayBar(QWidget *parent) :
         setPlaying(_playing);
     });
 
+    connect(_ui->actionClose_status, &QAction::triggered, [=]()
+    {
+        removeMessage(_statusQueue.begin());
+        hideStatus();
+    });
+
     setPlayData(0, 0);
 }
 
-PlayBar::~PlayBar()
+ControlBar::~ControlBar()
 {
     delete _ui;
 }
 
 
-void PlayBar::setPlayData(int frameCount, int frameDuration)
+void ControlBar::setPlayData(int frameCount, int frameDuration)
 {
     _ui->progressSlide->setMaximum(frameCount);
     _ui->progressSlide->setValue(0);
@@ -110,7 +129,63 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
     emit playDataChanged(frameCount, frameDuration);
 }
 
-void PlayBar::updateSettings()
+void ControlBar::setJobHandler(JobHandler* jh)
+{
+    if (_jobHandler) {
+        _jobHandler->disconnect();
+    }
+
+    _jobHandler = jh;
+
+    if (!_jobHandler) {
+        return;
+    }
+
+    connect(_jobHandler, &QThread::finished,
+            _ui->backgroundActivityButton, &QWidget::hide);
+    connect(_jobHandler, &QObject::destroyed, [&](){
+        _jobHandler = nullptr;
+    });
+
+    connect(_jobHandler, &JobHandler::jobAmountChanged,           // if amount == 0, then setVisible(0) gets
+            _ui->backgroundActivityButton, &QWidget::setVisible); // called, which equals setVisible(false)
+}
+
+long ControlBar::enqueueMessage(const QString& message, int duration)
+{
+    _statusQueue << message;
+
+    if (_statusQueue.size() == 1) {
+        setStatusVisible();
+        _ui->message->setText(message);
+    }
+
+    auto messageId = _statusQueue.last().id;
+
+    if (duration != 0) {
+        auto timer = new QTimer { this };
+        timer->setSingleShot(true);
+        timer->start(duration);
+
+        connect(timer, &QTimer::timeout, [=]()
+        {
+            dequeueMessageWithId(messageId);
+        });
+    } else { // Persistent
+        while (_statusQueue[0].id != messageId) {
+            dequeueFirstMessage();
+        }
+    }
+
+    return messageId;
+}
+
+void ControlBar::dequeueFirstMessage()
+{
+    removeMessage(_statusQueue.begin());
+}
+
+void ControlBar::updateSettings()
 {
     QSettings set;
 
@@ -121,12 +196,43 @@ void PlayBar::updateSettings()
     }
 }
 
-void PlayBar::timerEvent(QTimerEvent *)
+void ControlBar::dequeueMessageWithId(long messageId)
+{
+    QList<Message>::iterator it = std::find_if(
+        _statusQueue.begin(),
+        _statusQueue.end(),
+        [=](Message m) -> bool { return m.id == messageId; });
+
+    removeMessage(it);
+}
+
+void ControlBar::removeMessage(const QList<ControlBar::Message>::iterator &it)
+{
+    if (it == _statusQueue.end()) {
+        return;
+    }
+
+    _statusQueue.erase(it);
+
+    if (_statusQueue.isEmpty()) {
+        hideStatus();
+    } else {
+        _ui->message->setText(_statusQueue[0]);
+    }
+}
+
+void ControlBar::timerEvent(QTimerEvent *)
 {
     _ui->progressSlide->setValue(_ui->progressSlide->value() + 1);
 }
 
-void PlayBar::setPlaying(bool playing)
+void ControlBar::setStatusVisible(bool visible)
+{
+    _ui->statusWidget->setVisible(visible);
+    _ui->playWidget->setVisible(!visible);
+}
+
+void ControlBar::setPlaying(bool playing)
 {
     _playing = playing;
 
