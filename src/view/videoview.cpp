@@ -34,7 +34,7 @@
 #include <view/graphicsitems/distanceitem.hpp>
 #include <view/graphicsitems/trajectoryinstantitem.hpp>
 #include <view/graphicsitems/trajectoryitem.hpp>
-#include <view/playbar.hpp>
+#include <view/controlbar.hpp>
 #include <view/videographicsview.hpp>
 #include <view/videostatus.hpp>
 
@@ -45,7 +45,7 @@ VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
     _view(new VideoGraphicsView),
     _noVideoVideo(Video(new QGraphicsScene(_view), 0)),
-    _playBar(new PlayBar(this))
+    _controlBar { new ControlBar { this } }
 {
     new QVBoxLayout(viewport());
     viewport()->layout()->addWidget(_view);
@@ -58,7 +58,7 @@ VideoView::VideoView(QWidget *parent) :
 
     _view->setRenderHint(set.value("video/antiAlias", true).toBool()?
         QPainter::Antialiasing : QPainter::NonCosmeticDefaultPen);
-    viewport()->layout()->addWidget(_playBar);
+    viewport()->layout()->addWidget(_controlBar);
 
     QImage bgImage(":/images/translucent-logo.png");
     _view->setScene(_noVideoVideo.scene);
@@ -71,11 +71,11 @@ VideoView::VideoView(QWidget *parent) :
     QGraphicsItem *noVideoText = _noVideoVideo.scene->addText(tr("No video"));
     noVideoText->moveBy(100, 50);
 
-    connect(_playBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
-    connect(_playBar, SIGNAL(newAngleRequested()), SLOT(beginAngleCreation()));
-    connect(_playBar, SIGNAL(scaleCalibrationRequested()), SLOT(beginScaleCalibration()));
+    connect(_controlBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
+    connect(_controlBar, SIGNAL(newAngleRequested()), SLOT(beginAngleCreation()));
+    connect(_controlBar, SIGNAL(scaleCalibrationRequested()), SLOT(beginScaleCalibration()));
 
-    connect(_playBar, &PlayBar::framerateCalibrationRequested, [=]()
+    connect(_controlBar, &ControlBar::framerateCalibrationRequested, [=]()
     {
         auto frameDurationIndex = model()->index(_currentVideoRow, VideoModel::FrameDurationCol);
 
@@ -90,9 +90,9 @@ VideoView::VideoView(QWidget *parent) :
         }
     });
 
-    connect(_playBar, SIGNAL(settingsRequested()), SIGNAL(settingsRequested()));
+    connect(_controlBar, SIGNAL(settingsRequested()), SIGNAL(settingsRequested()));
 
-    connect(_playBar, &PlayBar::frameChanged, [=](int frame)
+    connect(_controlBar, &ControlBar::frameChanged, [=](int frame)
     {
         QModelIndex currentFrameIndex = model()
                 ->index(_currentVideoRow, VideoModel::CurrentFrameCol);
@@ -104,7 +104,7 @@ VideoView::VideoView(QWidget *parent) :
         model()->setData(currentFrameIndex, frame);
     });
 
-    connect(_playBar, &PlayBar::playingChanged, [=](bool isPlaying) {
+    connect(_controlBar, &ControlBar::playingChanged, [=](bool isPlaying) {
         QModelIndex currentPlayStatusIndex =
             model()->index(_currentVideoRow, VideoModel::PlayStatusCol);
 
@@ -115,7 +115,7 @@ VideoView::VideoView(QWidget *parent) :
         model()->setData(currentPlayStatusIndex, isPlaying);
     });
 
-    connect(_playBar, &PlayBar::newTrajectoryRequested, [=]()
+    connect(_controlBar, &ControlBar::newTrajectoryRequested, [=]()
     {
 //         auto status = new Status::Persistent(_status, tr("Click a point to track"));
 
@@ -150,7 +150,7 @@ void VideoView::updateSettings()
 
     _view->setRenderHint(set.value("video/antiAlias", true).toBool()?
         QPainter::Antialiasing : QPainter::NonCosmeticDefaultPen);
-    _playBar->updateSettings();
+    _controlBar->updateSettings();
 }
 
 void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, const QVector<int> &)
@@ -267,14 +267,14 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
     _view->setScene(_videos.at(_currentVideoRow).scene);
     _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
 
-    _playBar->setPlayData(model()->rowCount(
+    _controlBar->setPlayData(model()->rowCount(
                               model()->index(
                                   _currentVideoRow,
                                   VideoModel::AllFramesCol)),
                           model()->data(
                               model()->index(_currentVideoRow,
                                              VideoModel::FrameDurationCol)).toInt());
-    _playBar->setJobHandler(static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow));
+    _controlBar->setJobHandler(static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow));
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)

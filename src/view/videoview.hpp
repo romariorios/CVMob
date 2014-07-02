@@ -24,8 +24,8 @@
 #include <QList>
 
 class AngleItem;
+class ControlBar;
 class DistanceItem;
-class PlayBar;
 class QGraphicsLineItem;
 class QGraphicsRectItem;
 class QGraphicsScene;
@@ -77,7 +77,7 @@ private:
     QList<Video> _videos;
     Video _noVideoVideo;
     int _currentVideoRow;
-    PlayBar *_playBar;
+    ControlBar *_controlBar;
 
     VideoModel *videoModel() const;
 

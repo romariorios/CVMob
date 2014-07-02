@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "playbar.hpp"
-#include "ui_playbar.h"
+#include "controlbar.hpp"
+#include "ui_controlbar.h"
 
 #include <model/jobs/jobhandler.hpp>
 #include <QMenu>
@@ -25,13 +25,13 @@
 #include <QPushButton>
 #include <QSettings>
 
-PlayBar::PlayBar(QWidget *parent) :
+ControlBar::ControlBar(QWidget *parent) :
     QWidget(parent),
     _frameCount(0),
     _frameDuration(0),
     _videoFrameDuration(0),
     _currentTimer(0),
-    _ui(new Ui::PlayBar)
+    _ui { new Ui::ControlBar }
 {
     _ui->setupUi(this);
     _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
@@ -87,13 +87,13 @@ PlayBar::PlayBar(QWidget *parent) :
     setPlayData(0, 0);
 }
 
-PlayBar::~PlayBar()
+ControlBar::~ControlBar()
 {
     delete _ui;
 }
 
 
-void PlayBar::setPlayData(int frameCount, int frameDuration)
+void ControlBar::setPlayData(int frameCount, int frameDuration)
 {
     _ui->progressSlide->setMaximum(frameCount);
     _ui->progressSlide->setValue(0);
@@ -114,7 +114,7 @@ void PlayBar::setPlayData(int frameCount, int frameDuration)
     emit playDataChanged(frameCount, frameDuration);
 }
 
-void PlayBar::setJobHandler(JobHandler* jh)
+void ControlBar::setJobHandler(JobHandler* jh)
 {
     if (_jobHandler) {
         _jobHandler->disconnect();
@@ -136,7 +136,7 @@ void PlayBar::setJobHandler(JobHandler* jh)
             _ui->backgroundActivityButton, &QWidget::setVisible); // called, which equals setVisible(false)
 }
 
-void PlayBar::updateSettings()
+void ControlBar::updateSettings()
 {
     QSettings set;
 
@@ -147,12 +147,12 @@ void PlayBar::updateSettings()
     }
 }
 
-void PlayBar::timerEvent(QTimerEvent *)
+void ControlBar::timerEvent(QTimerEvent *)
 {
     _ui->progressSlide->setValue(_ui->progressSlide->value() + 1);
 }
 
-void PlayBar::setPlaying(bool playing)
+void ControlBar::setPlaying(bool playing)
 {
     _playing = playing;
 

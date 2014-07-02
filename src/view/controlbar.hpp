@@ -16,26 +16,26 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLAYERBAR_HPP
-#define PLAYERBAR_HPP
+#ifndef CONTROLBAR_HPP
+#define CONTROLBAR_HPP
 
 #include <QWidget>
 
 namespace Ui {
-class PlayBar;
+class ControlBar;
 }
 
 class BaseJob;
 class JobHandler;
 class QTimerEvent;
 
-class PlayBar : public QWidget
+class ControlBar : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlayBar(QWidget *parent = 0);
-    ~PlayBar();
+    explicit ControlBar(QWidget *parent = nullptr);
+    ~ControlBar();
 
 public slots:
     void setPlaying(bool playing);
@@ -64,9 +64,9 @@ private:
     int _videoFrameDuration;
     int _currentTimer;
     bool _playing;
-    Ui::PlayBar *_ui;
+    Ui::ControlBar *_ui;
     bool _playStatus;
     JobHandler *_jobHandler = nullptr;
 };
 
-#endif // PLAYERBAR_HPP
+#endif // CONTROLBAR_HPP

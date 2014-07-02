@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PlayBar</class>
- <widget class="QWidget" name="PlayBar">
+ <class>ControlBar</class>
+ <widget class="QWidget" name="ControlBar">
   <property name="geometry">
    <rect>
     <x>0</x>
