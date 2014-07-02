@@ -37,7 +37,6 @@ set(CVMob_sources
     model/jobs/trajectorycalcjob.cpp
     view/controlbar.cpp
     view/playslider.cpp
-    view/videostatus.cpp
     view/graphicsitems/angleitem.cpp
     view/graphicsitems/distanceitem.cpp
     view/graphicsitems/trajectoryinstantitem.cpp
@@ -51,7 +50,6 @@ set(CVMob_forms
     view/recordingframeratedialog.ui
     view/scalecalibrationdialog.ui
     view/settings.ui
-    view/videostatus.ui
 )
 
 set(CVMob_translations
