@@ -67,6 +67,10 @@ private:
     Ui::ControlBar *_ui;
     bool _playStatus;
     JobHandler *_jobHandler = nullptr;
+
+private slots:
+    void setStatusVisible(bool visible = true);
+    inline void hideStatus() { setStatusVisible(false); }
 };
 
 #endif // CONTROLBAR_HPP

@@ -36,9 +36,12 @@ ControlBar::ControlBar(QWidget *parent) :
     _ui->setupUi(this);
     _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
     _ui->progressSlide->setTracking(false);
+    hideStatus();
 
     _ui->actionPlay->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
     _ui->actionSettings->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
+    _ui->actionClose_status->setIcon(
+        QApplication::style()->standardIcon(QStyle::SP_DialogCloseButton));
 
     QMenu *drawMenu = new QMenu(_ui->drawButton);
     drawMenu->addAction(_ui->actionMeasure_distance);
@@ -57,6 +60,8 @@ ControlBar::ControlBar(QWidget *parent) :
     _ui->backgroundActivityButton->hide();
 
     _ui->settingsButton->setDefaultAction(_ui->actionSettings);
+
+    _ui->closeStatusButton->setDefaultAction(_ui->actionClose_status);
 
     connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
     connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
@@ -83,6 +88,8 @@ ControlBar::ControlBar(QWidget *parent) :
     connect(_ui->progressSlide, &QSlider::sliderReleased, [&](){
         setPlaying(_playing);
     });
+
+    connect(_ui->actionClose_status, SIGNAL(triggered(bool)), SLOT(hideStatus()));
 
     setPlayData(0, 0);
 }
@@ -150,6 +157,12 @@ void ControlBar::updateSettings()
 void ControlBar::timerEvent(QTimerEvent *)
 {
     _ui->progressSlide->setValue(_ui->progressSlide->value() + 1);
+}
+
+void ControlBar::setStatusVisible(bool visible)
+{
+    _ui->statusWidget->setVisible(visible);
+    _ui->playWidget->setVisible(!visible);
 }
 
 void ControlBar::setPlaying(bool playing)
