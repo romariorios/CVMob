@@ -265,16 +265,19 @@
     <string>Ctrl+F</string>
    </property>
   </action>
-  <action name="actionBackground_activity">
+  <action name="actionStop_background_activity">
    <property name="icon">
     <iconset resource="../cvmob_resource.qrc">
-     <normaloff>:/images/icons/background-activity.png</normaloff>:/images/icons/background-activity.png</iconset>
+     <normaloff>:/images/icons/background-activity-stop.png</normaloff>:/images/icons/background-activity-stop.png</iconset>
    </property>
    <property name="text">
-    <string>Background activity</string>
+    <string>Stop background activity</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop background activity</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+B</string>
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionClose_status">

@@ -52,6 +52,10 @@ void JobHandler::startJob(BaseJob* j)
 {
     QMutexLocker l(&_lock);
 
+    if (_stopRequested) {
+        return;
+    }
+
     _newJobs.append(j);
     j->emitNewPoints(j->_startFrame, j->_currentPoints);
 
@@ -128,6 +132,15 @@ void JobHandler::run()
         _lock.lock();
         int videoFrame = _videoFrame;
         bool playing = _playStatus;
+
+        if (_stopRequested) {
+            _newJobs.clear();
+
+            for (auto j : jobs) {
+                j->deleteLater();
+            }
+            jobs.clear();
+        }
         _lock.unlock();
 
         if (playing && videoFrame < currentFrame) {
@@ -240,6 +253,10 @@ void JobHandler::run()
     } while (!jobs.empty());
 
     stopProgressTimer();
+
+    _lock.lock();
+    _stopRequested = false;
+    _lock.unlock();
 }
 
 void JobHandler::timerEvent(QTimerEvent* e)
@@ -282,5 +299,12 @@ void JobHandler::setPlayStatus(bool playStatus)
 {
     _lock.lock();
     _playStatus = playStatus;
+    _lock.unlock();
+}
+
+void JobHandler::stopAll()
+{
+    _lock.lock();
+    _stopRequested = true;
     _lock.unlock();
 }

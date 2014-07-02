@@ -60,7 +60,7 @@ ControlBar::ControlBar(QWidget *parent) :
     _ui->calibrateButton->setMenu(calibrateMenu);
     _ui->calibrateButton->setDefaultAction(_ui->actionCalibrate_scale);
 
-    _ui->backgroundActivityButton->setDefaultAction(_ui->actionBackground_activity);
+    _ui->backgroundActivityButton->setDefaultAction(_ui->actionStop_background_activity);
     _ui->backgroundActivityButton->hide();
 
     _ui->settingsButton->setDefaultAction(_ui->actionSettings);
@@ -141,6 +141,8 @@ void ControlBar::setJobHandler(JobHandler* jh)
         return;
     }
 
+    connect(_ui->actionStop_background_activity, &QAction::triggered,
+            _jobHandler, &JobHandler::stopAll);
     connect(_jobHandler, &QThread::finished,
             _ui->backgroundActivityButton, &QWidget::hide);
     connect(_jobHandler, &QObject::destroyed, [&](){
@@ -221,7 +223,7 @@ void ControlBar::removeMessage(const QList<ControlBar::Message>::iterator &it)
     }
 }
 
-void ControlBar::timerEvent(QTimerEvent *)
+void ControlBar::timerEvent(QTimerEvent *e)
 {
     _ui->progressSlide->setValue(_ui->progressSlide->value() + 1);
 }

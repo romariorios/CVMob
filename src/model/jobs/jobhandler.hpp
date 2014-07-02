@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2014  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,6 +40,9 @@ public:
     void setVideoFrame(int frame);
     void setPlayStatus(bool playStatus);
 
+public slots:
+    void stopAll();
+
 protected:
     void run();
     void timerEvent(QTimerEvent *e);
@@ -64,6 +67,7 @@ private:
     QMutex _progressTimerLock;
     int _progress;
     int _previousProgress;
+    bool _stopRequested = false;
 };
 
 #endif // JOBHANDLER_H

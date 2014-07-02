@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/images">
+    <file>icons/background-activity-stop.png</file>
     <file>icons/background-activity.png</file>
     <file>icons/opened-videos.png</file>
     <file>icons/graphs.png</file>

@@ -48,7 +48,7 @@ public slots:
     void updateSettings();
 
 protected:
-    void timerEvent(QTimerEvent *);
+    void timerEvent(QTimerEvent *e);
 
 signals:
     void playingChanged(bool playing);
