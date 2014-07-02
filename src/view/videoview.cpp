@@ -36,7 +36,6 @@
 #include <view/graphicsitems/trajectoryitem.hpp>
 #include <view/controlbar.hpp>
 #include <view/videographicsview.hpp>
-#include <view/videostatus.hpp>
 
 #include "ui_recordingframeratedialog.h"
 #include "ui_scalecalibrationdialog.h"
