@@ -36,6 +36,8 @@
 #include <view/videoview.hpp>
 #include <view/videolistdelegate.hpp>
 
+#include <cvmob_version.hpp>
+
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::CvMobMainWindow),
@@ -124,7 +126,7 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     setCentralWidget(_videoView);
 
-    _videoView->showMessage(tr("CVMob developer snapshot"));
+    _videoView->showMessage(tr("CVMob %1").arg(CVMobVersionString));
 
     connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
 
