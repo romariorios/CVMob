@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
-find_package(KF5 REQUIRED COMPONENTS ItemModels)
+find_package(KF5ItemModels REQUIRED)
 find_package(OpenCV 2 REQUIRED)
 
 include_directories(${Qt5Widgets_INCLUDE_DIRS})

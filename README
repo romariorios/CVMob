@@ -8,9 +8,9 @@ Requires:
    - http://opencv.org/
  - Qt (Core Gui Widgets LinguistTools* >= 5.0)
    - http://qt-project.org/
- - KF5 (ItemModels >= 4.100 KF5Umbrella* >= 4.98)
-   - http://download.kde.org/unstable/frameworks/4.100.0/kitemmodels-4.100.0.zip
-   - http://download.kde.org/unstable/frameworks/4.98.0/kf5umbrella-4.98.0.zip
+ - KF5ItemModels >= 5.0
+   - http://download.kde.org/stable/frameworks/5.7/kitemmodels-5.7.0.zip
+   (latest version)
  - CMake* (>= 2.8.12)
    - http://www.cmake.org/
 
