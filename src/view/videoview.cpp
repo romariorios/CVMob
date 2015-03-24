@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,33 +34,29 @@
 #include <view/graphicsitems/distanceitem.hpp>
 #include <view/graphicsitems/trajectoryinstantitem.hpp>
 #include <view/graphicsitems/trajectoryitem.hpp>
-#include <view/controlbar.hpp>
-#include <view/videographicsview.hpp>
 
 #include "ui_recordingframeratedialog.h"
 #include "ui_scalecalibrationdialog.h"
 
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
-    _view(new VideoGraphicsView),
-    _noVideoVideo(Video(new QGraphicsScene(_view), 0)),
-    _controlBar { new ControlBar { this } }
+    _noVideoVideo(Video(new QGraphicsScene(&_view), 0))
 {
     new QVBoxLayout(viewport());
-    viewport()->layout()->addWidget(_view);
+    viewport()->layout()->addWidget(&_view);
     viewport()->layout()->setMargin(0);
     viewport()->layout()->setSpacing(0);
-    _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    _view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    _view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QSettings set;
 
-    _view->setRenderHint(set.value("video/antiAlias", true).toBool()?
+    _view.setRenderHint(set.value("video/antiAlias", true).toBool()?
         QPainter::Antialiasing : QPainter::NonCosmeticDefaultPen);
-    viewport()->layout()->addWidget(_controlBar);
+    viewport()->layout()->addWidget(&_controlBar);
 
     QImage bgImage(":/images/translucent-logo.png");
-    _view->setScene(_noVideoVideo.scene);
+    _view.setScene(_noVideoVideo.scene);
     _noVideoVideo.bgRect = new QGraphicsRectItem(0);
     _noVideoVideo.bgRect->setRect(QRectF(QPointF(0, 0), bgImage.size()));
     _noVideoVideo.bgRect->setBrush(bgImage);
@@ -70,11 +66,11 @@ VideoView::VideoView(QWidget *parent) :
     QGraphicsItem *noVideoText = _noVideoVideo.scene->addText(tr("No video"));
     noVideoText->moveBy(100, 50);
 
-    connect(_controlBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
-    connect(_controlBar, SIGNAL(newAngleRequested()), SLOT(beginAngleCreation()));
-    connect(_controlBar, SIGNAL(scaleCalibrationRequested()), SLOT(beginScaleCalibration()));
+    connect(&_controlBar, SIGNAL(newDistanceRequested()), SLOT(beginDistanceCreation()));
+    connect(&_controlBar, SIGNAL(newAngleRequested()), SLOT(beginAngleCreation()));
+    connect(&_controlBar, SIGNAL(scaleCalibrationRequested()), SLOT(beginScaleCalibration()));
 
-    connect(_controlBar, &ControlBar::framerateCalibrationRequested, [=]()
+    connect(&_controlBar, &ControlBar::framerateCalibrationRequested, [=]()
     {
         auto frameDurationIndex = model()->index(_currentVideoRow, VideoModel::FrameDurationCol);
 
@@ -89,9 +85,9 @@ VideoView::VideoView(QWidget *parent) :
         }
     });
 
-    connect(_controlBar, SIGNAL(settingsRequested()), SIGNAL(settingsRequested()));
+    connect(&_controlBar, SIGNAL(settingsRequested()), SIGNAL(settingsRequested()));
 
-    connect(_controlBar, &ControlBar::frameChanged, [=](int frame)
+    connect(&_controlBar, &ControlBar::frameChanged, [=](int frame)
     {
         QModelIndex currentFrameIndex = model()
                 ->index(_currentVideoRow, VideoModel::CurrentFrameCol);
@@ -103,7 +99,7 @@ VideoView::VideoView(QWidget *parent) :
         model()->setData(currentFrameIndex, frame);
     });
 
-    connect(_controlBar, &ControlBar::playingChanged, [=](bool isPlaying) {
+    connect(&_controlBar, &ControlBar::playingChanged, [=](bool isPlaying) {
         QModelIndex currentPlayStatusIndex =
             model()->index(_currentVideoRow, VideoModel::PlayStatusCol);
 
@@ -114,26 +110,21 @@ VideoView::VideoView(QWidget *parent) :
         model()->setData(currentPlayStatusIndex, isPlaying);
     });
 
-    connect(_controlBar, &ControlBar::newTrajectoryRequested, [=]()
+    connect(&_controlBar, &ControlBar::newTrajectoryRequested, [=]()
     {
-        auto messageId = _controlBar->enqueueMessage(tr("Click a point to track"));
+        auto messageId = _controlBar.enqueueMessage(tr("Click a point to track"));
 
-        connect(_view, SIGNAL(mouseReleased(QPointF)), SLOT(calculateTrajectory(QPointF)));
-        connect(_view, &VideoGraphicsView::mouseReleased, [=]()
+        connect(&_view, SIGNAL(mouseReleased(QPointF)), SLOT(calculateTrajectory(QPointF)));
+        connect(&_view, &VideoGraphicsView::mouseReleased, [=]()
         {
-            _controlBar->dequeueMessageWithId(messageId);
+            _controlBar.dequeueMessageWithId(messageId);
         });
     });
 }
 
-VideoView::~VideoView()
-{
-    delete _view;
-}
-
 void VideoView::showMessage(const QString &message, int duration)
 {
-    _controlBar->enqueueMessage(message, duration);
+    _controlBar.enqueueMessage(message, duration);
 }
 
 QRect VideoView::visualRect(const QModelIndex &index) const
@@ -150,9 +141,9 @@ void VideoView::updateSettings()
 {
     QSettings set;
 
-    _view->setRenderHint(set.value("video/antiAlias", true).toBool()?
+    _view.setRenderHint(set.value("video/antiAlias", true).toBool()?
         QPainter::Antialiasing : QPainter::NonCosmeticDefaultPen);
-    _controlBar->updateSettings();
+    _controlBar.updateSettings();
 }
 
 void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, const QVector<int> &)
@@ -170,7 +161,7 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
         } else if (topLeft.column() == VideoModel::CurrentFrameCol) {
             int frame = topLeft.data().toInt();
 
-            v.bgRect->setBrush(videoModel()->index({
+            v.bgRect->setBrush(videoModel().index({
                 { topLeft.row(), VideoModel::AllFramesCol },
                 { frame, 0 }
             }).data().value<QImage>());
@@ -180,24 +171,24 @@ void VideoView::dataChanged(const QModelIndex &topLeft, const QModelIndex &, con
             }
 
             for (int i = 0; i < v.angles.size(); ++i) {
-                auto currentAngleIndex = videoModel()->index({
+                auto currentAngleIndex = videoModel().index({
                     { topLeft.row(), VideoModel::AllAnglesCol },
                     { i, 0 }
                 });
 
-                auto startFrame = videoModel()->index(currentAngleIndex, {
+                auto startFrame = videoModel().index(currentAngleIndex, {
                     { 0, VideoModel::AFrameCol }
                 }).data().toInt();
 
                 frame -= startFrame;
 
-                auto centerIndex = videoModel()->index(currentAngleIndex, {
+                auto centerIndex = videoModel().index(currentAngleIndex, {
                     { frame, VideoModel::ACenterCol }
                 });
-                auto edge1Index = videoModel()->index(currentAngleIndex, {
+                auto edge1Index = videoModel().index(currentAngleIndex, {
                     { frame, VideoModel::AEdge1Col }
                 });
-                auto edge2Index = videoModel()->index(currentAngleIndex, {
+                auto edge2Index = videoModel().index(currentAngleIndex, {
                     { frame, VideoModel::AEdge2Col }
                 });
 
@@ -266,17 +257,17 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
     QModelIndex selectedIndex = selected.at(0).indexes().at(0);
     _currentVideoRow = selectedIndex.row();
 
-    _view->setScene(_videos.at(_currentVideoRow).scene);
-    _view->fitInView(_view->sceneRect(), Qt::KeepAspectRatio);
+    _view.setScene(_videos.at(_currentVideoRow).scene);
+    _view.fitInView(_view.sceneRect(), Qt::KeepAspectRatio);
 
-    _controlBar->setPlayData(model()->rowCount(
+    _controlBar.setPlayData(model()->rowCount(
                               model()->index(
                                   _currentVideoRow,
                                   VideoModel::AllFramesCol)),
                           model()->data(
                               model()->index(_currentVideoRow,
                                              VideoModel::FrameDurationCol)).toInt());
-    _controlBar->setJobHandler(static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow));
+    _controlBar.setJobHandler(static_cast<VideoModel *>(model())->jobHandlerForVideo(_currentVideoRow));
 }
 
 void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -287,7 +278,7 @@ void VideoView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint
 
 QModelIndex VideoView::indexAt(const QPoint &point) const
 {
-    foreach (QGraphicsItem *item, _view->scene()->items(point, Qt::ContainsItemShape, Qt::AscendingOrder)) {
+    foreach (QGraphicsItem *item, _view.scene()->items(point, Qt::ContainsItemShape, Qt::AscendingOrder)) {
         for (int i = 0; i < model()->rowCount(); ++i) {
             QModelIndex index = model()->index(i, VideoModel::AllDistancesCol);
             if (index.data().toPointF() == item->boundingRect().topLeft()) {
@@ -337,16 +328,16 @@ QRegion VideoView::visualRegionForSelection(const QItemSelection &selection) con
     return QRegion();
 }
 
-VideoModel* VideoView::videoModel() const
+VideoModel &VideoView::videoModel() const
 {
-    return static_cast<VideoModel *>(model());
+    return *static_cast<VideoModel *>(model());
 }
 
 void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
     if (!parent.isValid()) { // Level 0
         for (int i = start; i <= end; ++i) {
-            _videos.insert(i, Video(new QGraphicsScene(_view), 0));
+            _videos.insert(i, Video(new QGraphicsScene(&_view), 0));
             Video &v = _videos[i];
             v.bgRect = new QGraphicsRectItem();
             v.scene->addItem(v.bgRect);
@@ -366,7 +357,7 @@ void VideoView::rowsInserted(const QModelIndex &parent, int start, int end)
                 break;
             case VideoModel::AllTrajectoriesCol:
                 traj = new TrajectoryItem {
-                    videoModel()->index(parent, {
+                    videoModel().index(parent, {
                         { i, VideoModel::TrajectoryColorCol }
                     }).data().value<QColor>(),
                     v.bgRect->rect().size(),
@@ -407,7 +398,7 @@ void VideoView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int e
             delete v.scene;
         }
 
-        _view->setScene(_videos.empty()? _noVideoVideo.scene : _videos.first().scene);
+        _view.setScene(_videos.empty()? _noVideoVideo.scene : _videos.first().scene);
     } else if (!parent.parent().isValid()) { // Level 1
         auto &v = _videos[parent.row()];
 
@@ -432,12 +423,12 @@ void VideoView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int e
 
 void VideoView::beginDistanceCreation()
 {
-    auto messageId = _controlBar->enqueueMessage(tr("Click and drag to measure a distance"));
+    auto messageId = _controlBar.enqueueMessage(tr("Click and drag to measure a distance"));
 
-    connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(distanceFirstPoint(QPointF)));
-    connect(_view, &VideoGraphicsView::mousePressed, [=]()
+    connect(&_view, SIGNAL(mousePressed(QPointF)), SLOT(distanceFirstPoint(QPointF)));
+    connect(&_view, &VideoGraphicsView::mousePressed, [=]()
     {
-        _controlBar->dequeueMessageWithId(messageId);
+        _controlBar.dequeueMessageWithId(messageId);
     });
 }
 
@@ -446,20 +437,20 @@ static bool calibration = false;
 
 void VideoView::distanceFirstPoint(const QPointF &p)
 {
-    disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(distanceFirstPoint(QPointF)));
+    disconnect(&_view, SIGNAL(mousePressed(QPointF)), this, SLOT(distanceFirstPoint(QPointF)));
 
     Video &currentVideo = _videos[_currentVideoRow];
 
     guideLine = new QGraphicsLineItem(QLineF(p, p), currentVideo.bgRect);
     guideLine->setPen(QColor(0, 0, 255));
 
-    auto messageId = _controlBar->enqueueMessage(tr("Release to finish"));
+    auto messageId = _controlBar.enqueueMessage(tr("Release to finish"));
 
-    connect(_view, SIGNAL(mouseDragged(QPointF)), SLOT(distanceUpdateSecondPoint(QPointF)));
-    connect(_view, SIGNAL(mouseReleased(QPointF)), SLOT(distanceEndCreation(QPointF)));
-    connect(_view, &VideoGraphicsView::mouseReleased, [=]()
+    connect(&_view, SIGNAL(mouseDragged(QPointF)), SLOT(distanceUpdateSecondPoint(QPointF)));
+    connect(&_view, SIGNAL(mouseReleased(QPointF)), SLOT(distanceEndCreation(QPointF)));
+    connect(&_view, &VideoGraphicsView::mouseReleased, [=]()
     {
-        _controlBar->dequeueMessageWithId(messageId);
+        _controlBar.dequeueMessageWithId(messageId);
     });
 }
 
@@ -479,20 +470,20 @@ void VideoView::distanceEndCreation(const QPointF &p)
     delete guideLine;
     guideLine = 0;
 
-    _controlBar->enqueueMessage(tr("Done"), 3000);
+    _controlBar.enqueueMessage(tr("Done"), 3000);
 
-    disconnect(_view, SIGNAL(mouseDragged(QPointF)), this, SLOT(distanceUpdateSecondPoint(QPointF)));
-    disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(distanceEndCreation(QPointF)));
+    disconnect(&_view, SIGNAL(mouseDragged(QPointF)), this, SLOT(distanceUpdateSecondPoint(QPointF)));
+    disconnect(&_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(distanceEndCreation(QPointF)));
 }
 
 void VideoView::beginAngleCreation()
 {
-    auto messageId = _controlBar->enqueueMessage(tr("Click on the center of the angle"));
+    auto messageId = _controlBar.enqueueMessage(tr("Click on the center of the angle"));
 
-    connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleCenter(QPointF)));
-    connect(_view, &VideoGraphicsView::mousePressed, [=]()
+    connect(&_view, SIGNAL(mousePressed(QPointF)), SLOT(angleCenter(QPointF)));
+    connect(&_view, &VideoGraphicsView::mousePressed, [=]()
     {
-        _controlBar->dequeueMessageWithId(messageId);
+        _controlBar.dequeueMessageWithId(messageId);
     });
 }
 
@@ -500,37 +491,37 @@ static AngleItem *guideAngleItem = 0;
 
 void VideoView::angleCenter(const QPointF& p)
 {
-    disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleCenter(QPointF)));
+    disconnect(&_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleCenter(QPointF)));
 
     guideAngleItem = new AngleItem(p, p, p, _videos[_currentVideoRow].bgRect);
 
-    auto messageId = _controlBar->enqueueMessage(tr("Now click on the first peripheral edge"));
+    auto messageId = _controlBar.enqueueMessage(tr("Now click on the first peripheral edge"));
 
-    connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge1(QPointF)));
-    connect(_view, &VideoGraphicsView::mousePressed, [=]()
+    connect(&_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge1(QPointF)));
+    connect(&_view, &VideoGraphicsView::mousePressed, [=]()
     {
-        _controlBar->dequeueMessageWithId(messageId);
+        _controlBar.dequeueMessageWithId(messageId);
     });
 }
 
 void VideoView::angleEdge1(const QPointF& p)
 {
-    disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleEdge1(QPointF)));
+    disconnect(&_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleEdge1(QPointF)));
 
     guideAngleItem->setEdge1(p);
 
-    auto messageId = _controlBar->enqueueMessage(tr("Now click on the second peripheral edge"));
+    auto messageId = _controlBar.enqueueMessage(tr("Now click on the second peripheral edge"));
 
-    connect(_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge2(QPointF)));
-    connect(_view, &VideoGraphicsView::mousePressed, [=]()
+    connect(&_view, SIGNAL(mousePressed(QPointF)), SLOT(angleEdge2(QPointF)));
+    connect(&_view, &VideoGraphicsView::mousePressed, [=]()
     {
-        _controlBar->dequeueMessageWithId(messageId);
+        _controlBar.dequeueMessageWithId(messageId);
     });
 }
 
 void VideoView::angleEdge2(const QPointF& p)
 {
-    disconnect(_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleEdge2(QPointF)));
+    disconnect(&_view, SIGNAL(mousePressed(QPointF)), this, SLOT(angleEdge2(QPointF)));
 
     guideAngleItem->setEdge2(p);
 
@@ -548,7 +539,7 @@ void VideoView::angleEdge2(const QPointF& p)
 
 void VideoView::calculateTrajectory(const QPointF &p)
 {
-    disconnect(_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(calculateTrajectory(QPointF)));
+    disconnect(&_view, SIGNAL(mouseReleased(QPointF)), this, SLOT(calculateTrajectory(QPointF)));
 
     int frame = model()->index(_currentVideoRow, VideoModel::CurrentFrameCol).data().toInt();
 

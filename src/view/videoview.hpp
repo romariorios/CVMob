@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,14 +23,15 @@
 
 #include <QList>
 
+#include <view/controlbar.hpp>
+#include <view/videographicsview.hpp>
+
 class AngleItem;
-class ControlBar;
 class DistanceItem;
 class QGraphicsLineItem;
 class QGraphicsRectItem;
 class QGraphicsScene;
 class TrajectoryItem;
-class VideoGraphicsView;
 class VideoModel;
 
 class VideoView : public QAbstractItemView
@@ -39,7 +40,6 @@ class VideoView : public QAbstractItemView
 
 public:
     explicit VideoView(QWidget *parent = 0);
-    ~VideoView();
 
     void scrollTo(const QModelIndex &index, ScrollHint hint);
     QModelIndex indexAt(const QPoint &point) const;
@@ -73,13 +73,13 @@ private:
         {}
     };
 
-    VideoGraphicsView *_view;
+    VideoGraphicsView _view;
     QList<Video> _videos;
     Video _noVideoVideo;
     int _currentVideoRow;
-    ControlBar *_controlBar;
+    ControlBar _controlBar;
 
-    VideoModel *videoModel() const;
+    VideoModel &videoModel() const;
 
 public slots:
     void updateSettings();
