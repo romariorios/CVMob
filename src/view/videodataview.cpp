@@ -1,6 +1,6 @@
 /*
  *     CVMob - Motion capture program
- *     Copyright (C) 2014  The CVMob contributors
+ *     Copyright (C) 2014, 2015  The CVMob contributors
  *
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -27,41 +27,28 @@
 #include <model/videomodel.hpp>
 
 VideoDataView::VideoDataView(QWidget* parent) :
-    QTreeView { parent },
-    _contextMenu { new QMenu { this } }
+    QTreeView{parent}
 {
     // Delete
-    _deleteAction = new QAction {
-        style()->standardIcon(QStyle::SP_TrashIcon),
-        tr("Delete"),
-        this
-    };
+    _deleteAction.setShortcut(tr("Delete"));
 
-    _deleteAction->setShortcut(tr("Delete"));
-
-    connect(_deleteAction, &QAction::triggered, [=]()
+    connect(&_deleteAction, &QAction::triggered, [=]()
     {
         for (auto index : selectionModel()->selectedIndexes()) {
             model()->removeRow(index.row(), index.parent());
         }
     });
 
-    addAction(_deleteAction);
-    _contextMenu->addAction(_deleteAction);
+    addAction(&_deleteAction);
+    _contextMenu.addAction(&_deleteAction);
 
     // Copy
-    _copyAction = new QAction {
-        style()->standardIcon(QStyle::SP_FileIcon),
-        tr("Copy data to clipboard"),
-        this
-    };
+    _copyAction.setShortcut(tr("Ctrl+C"));
 
-    _copyAction->setShortcut(tr("Ctrl+C"));
+    connect(&_copyAction, &QAction::triggered, this, &VideoDataView::copySelectionToClipboard);
 
-    connect(_copyAction, &QAction::triggered, this, &VideoDataView::copySelectionToClipboard);
-
-    addAction(_copyAction);
-    _contextMenu->addAction(_copyAction);
+    addAction(&_copyAction);
+    _contextMenu.addAction(&_copyAction);
 }
 
 void VideoDataView::contextMenuEvent(QContextMenuEvent* e)
@@ -93,9 +80,9 @@ void VideoDataView::contextMenuEvent(QContextMenuEvent* e)
     default:
         deleteString = tr("Delete");
     }
-    _deleteAction->setText(deleteString);
+    _deleteAction.setText(deleteString);
 
-    _contextMenu->popup(e->globalPos());
+    _contextMenu.popup(e->globalPos());
 }
 
 void VideoDataView::copySelectionToClipboard()
@@ -155,8 +142,8 @@ void VideoDataView::selectionChanged(const QItemSelection& selected, const QItem
         }
     }
 
-    _deleteAction->setEnabled(enableActions);
-    _copyAction->setEnabled(enableActions);
+    _deleteAction.setEnabled(enableActions);
+    _copyAction.setEnabled(enableActions);
 
     QTreeView::selectionChanged(selected, deselected);
 }
