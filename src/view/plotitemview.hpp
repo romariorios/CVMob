@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,9 +21,7 @@
 
 #include <QAbstractItemView>
 
-class QCPItemLine;
-class QCPPlotTitle;
-class QCustomPlot;
+#include <view/qcustomplot.h>
 
 class PlotItemView : public QAbstractItemView
 {
@@ -65,13 +63,13 @@ private:
     int startMainTimer();
     void requestUpdate();
 
-    QCustomPlot *_plot;
-    QCPPlotTitle *_title;
-    QCPItemLine *_timeLine;
-    bool _wantsUpdate;
+    QCustomPlot _plot;
+    QCPPlotTitle _title{&_plot, tr("(untitled)")};
+    QCPItemLine _timeLine{&_plot};
+    bool _wantsUpdate = false;
     bool _timerRunning = false;
     int _mainTimerId;
-    bool _wasVisibleBefore;
+    bool _wasVisibleBefore = false;
 
 };
 
