@@ -34,7 +34,7 @@ VideoDataView::VideoDataView(QWidget* parent) :
 
     connect(&_deleteAction, &QAction::triggered, [=]()
     {
-        for (auto index : selectionModel()->selectedIndexes()) {
+        for (auto index : selectionModel()->selectedRows()) {
             model()->removeRow(index.row(), index.parent());
         }
     });
