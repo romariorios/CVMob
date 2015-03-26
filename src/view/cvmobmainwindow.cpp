@@ -19,17 +19,11 @@
 #include "cvmobmainwindow.hpp"
 
 #include <KItemModels/KLinkItemSelectionModel>
-#include <model/proxies/anglesproxymodel.hpp>
-#include <model/proxies/distancesproxymodel.hpp>
-#include <model/proxies/plotproxies.hpp>
-#include <model/proxies/trajectoriesproxymodel.hpp>
-#include <model/proxies/videolistproxymodel.hpp>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPointF>
 #include <QStandardItemModel>
 #include <QFileDialog>
-#include <view/plotitemview.hpp>
 #include <view/videolistdelegate.hpp>
 
 #include <cvmob_version.hpp>
@@ -43,78 +37,63 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     _ui.action_Open->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
     _ui.openButton->setDefaultAction(_ui.action_Open);
 
-    VideoListProxyModel *videoNamesModel = new VideoListProxyModel(this);
-    videoNamesModel->setSourceModel(&_videoModel);
+    _videoNamesModel.setSourceModel(&_videoModel);
 
-    _ui.openedVideosList->setModel(videoNamesModel);
+    _ui.openedVideosList->setModel(&_videoNamesModel);
     _ui.openedVideosList->setItemDelegate(new VideoListDelegate(this));
     _videoView.setModel(&_videoModel);
+    _videoView.setSelectionModel(new KLinkItemSelectionModel{
+        &_videoModel,
+        _ui.openedVideosList->selectionModel(),
+        this});
 
-    KLinkItemSelectionModel *selectionModel =
-        new KLinkItemSelectionModel(&_videoModel, _ui.openedVideosList->selectionModel());
-    _videoView.setSelectionModel(selectionModel);
-
-    DistancesProxyModel *distancesModel = new DistancesProxyModel(this);
-    distancesModel->setSourceModel(&_videoModel);
-    distancesModel->setSelectionModel(_ui.openedVideosList->selectionModel());
-    _ui.distancesView->setModel(distancesModel);
+    _distancesModel.setSourceModel(&_videoModel);
+    _distancesModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _ui.distancesView->setModel(&_distancesModel);
     _ui.distancesView->header()->setSectionResizeMode(QHeaderView::Stretch);
 
-    TrajectoriesProxyModel *trajectoriesModel =
-            new TrajectoriesProxyModel(this);
-    trajectoriesModel->setSourceModel(&_videoModel);
-    trajectoriesModel->setSelectionModel(_ui.openedVideosList->selectionModel());
-    _ui.trajectoriesView->setModel(trajectoriesModel);
+    _trajectoriesModel.setSourceModel(&_videoModel);
+    _trajectoriesModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _ui.trajectoriesView->setModel(&_trajectoriesModel);
 
-    AnglesProxyModel *anglesModel = new AnglesProxyModel(this);
-    anglesModel->setSourceModel(&_videoModel);
-    anglesModel->setSelectionModel(_ui.openedVideosList->selectionModel());
-    _ui.anglesView->setModel(anglesModel);
+    _anglesModel.setSourceModel(&_videoModel);
+    _anglesModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _ui.anglesView->setModel(&_anglesModel);
 
     QLayout *l = _ui.graphsDockWidgetContents->layout();
 
-    PlotItemView *xPlot = new PlotItemView(this);
-    auto xModel = new XTrajectoryPlotProxyModel(this);
-    xModel->setSourceModel(&_videoModel);
-    xModel->setSelectionModel(_ui.openedVideosList->selectionModel());
-    xPlot->setModel(xModel);
-    l->addWidget(xPlot);
-    connect(_ui.xGraphCheckBox, &QCheckBox::toggled, xPlot, &QWidget::setVisible);
+    _xPlotModel.setSourceModel(&_videoModel);
+    _xPlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _xPlot.setModel(&_xPlotModel);
+    l->addWidget(&_xPlot);
+    connect(_ui.xGraphCheckBox, &QCheckBox::toggled, &_xPlot, &QWidget::setVisible);
 
-    PlotItemView *yPlot = new PlotItemView(this);
-    auto yModel = new YTrajectoryPlotProxyModel(this);
-    yModel->setSourceModel(&_videoModel);
-    yModel->setSelectionModel(_ui.openedVideosList->selectionModel());
-    yPlot->setModel(yModel);
-    l->addWidget(yPlot);
-    connect(_ui.yGraphCheckBox, &QCheckBox::toggled, yPlot, &QWidget::setVisible);
+    _yPlotModel.setSourceModel(&_videoModel);
+    _yPlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _yPlot.setModel(&_yPlotModel);
+    l->addWidget(&_yPlot);
+    connect(_ui.yGraphCheckBox, &QCheckBox::toggled, &_yPlot, &QWidget::setVisible);
 
-    PlotItemView *speedPlot = new PlotItemView(this);
-    auto speedModel = new TrajectorySpeedPlotProxyModel(this);
-    speedModel->setSourceModel(&_videoModel);
-    speedModel->setSelectionModel(_ui.openedVideosList->selectionModel());
-    speedPlot->setModel(speedModel);
-    l->addWidget(speedPlot);
-    speedPlot->hide();
-    connect(_ui.speedCheckBox, &QCheckBox::toggled, speedPlot, &QWidget::setVisible);
+    _speedPlotModel.setSourceModel(&_videoModel);
+    _speedPlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _speedPlot.setModel(&_speedPlotModel);
+    l->addWidget(&_speedPlot);
+    _speedPlot.hide();
+    connect(_ui.speedCheckBox, &QCheckBox::toggled, &_speedPlot, &QWidget::setVisible);
 
-    PlotItemView *accelPlot = new PlotItemView(this);
-    auto accelModel = new TrajectoryAccelPlotProxyModel(this);
-    accelModel->setSourceModel(&_videoModel);
-    accelModel->setSelectionModel(_ui.openedVideosList->selectionModel());
-    accelPlot->setModel(accelModel);
-    l->addWidget(accelPlot);
-    accelPlot->hide();
-    connect(_ui.accelerationCheckBox, &QCheckBox::toggled, accelPlot, &QWidget::setVisible);
+    _accelPlotModel.setSourceModel(&_videoModel);
+    _accelPlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _accelPlot.setModel(&_accelPlotModel);
+    l->addWidget(&_accelPlot);
+    _accelPlot.hide();
+    connect(_ui.accelerationCheckBox, &QCheckBox::toggled, &_accelPlot, &QWidget::setVisible);
 
-    PlotItemView *anglePlot = new PlotItemView(this);
-    auto angleModel = new AnglePlotProxyModel(this);
-    angleModel->setSourceModel(&_videoModel);
-    angleModel->setSelectionModel(_ui.openedVideosList->selectionModel());
-    anglePlot->setModel(angleModel);
-    l->addWidget(anglePlot);
-    anglePlot->hide();
-    connect(_ui.angleCheckBox, &QCheckBox::toggled, anglePlot, &QWidget::setVisible);
+    _anglePlotModel.setSourceModel(&_videoModel);
+    _anglePlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _anglePlot.setModel(&_anglePlotModel);
+    l->addWidget(&_anglePlot);
+    _anglePlot.hide();
+    connect(_ui.angleCheckBox, &QCheckBox::toggled, &_anglePlot, &QWidget::setVisible);
 
     setCentralWidget(&_videoView);
 
@@ -158,11 +137,11 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     connect(&_videoView, SIGNAL(settingsRequested()), &_settingsWidget, SLOT(exec()));
     connect(&_settingsWidget, SIGNAL(settingsChanged()), &_videoModel, SLOT(updateSettings()));
     connect(&_settingsWidget, SIGNAL(settingsChanged()), &_videoView, SLOT(updateSettings()));
-    connect(&_settingsWidget, SIGNAL(settingsChanged()), xPlot, SLOT(updateSettings()));
-    connect(&_settingsWidget, SIGNAL(settingsChanged()), yPlot, SLOT(updateSettings()));
-    connect(&_settingsWidget, SIGNAL(settingsChanged()), speedPlot, SLOT(updateSettings()));
-    connect(&_settingsWidget, SIGNAL(settingsChanged()), accelPlot, SLOT(updateSettings()));
-    connect(&_settingsWidget, SIGNAL(settingsChanged()), anglePlot, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_xPlot, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_yPlot, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_speedPlot, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_accelPlot, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_anglePlot, SLOT(updateSettings()));
 }
 
 void CvMobMainWindow::openFile() {

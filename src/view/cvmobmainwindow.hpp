@@ -25,6 +25,12 @@
 #include <QList>
 
 #include <model/videomodel.hpp>
+#include <model/proxies/anglesproxymodel.hpp>
+#include <model/proxies/distancesproxymodel.hpp>
+#include <model/proxies/plotproxies.hpp>
+#include <model/proxies/trajectoriesproxymodel.hpp>
+#include <model/proxies/videolistproxymodel.hpp>
+#include <view/plotitemview.hpp>
 #include <view/settings.hpp>
 #include <view/videoview.hpp>
 
@@ -43,7 +49,24 @@ public:
 
 private:
     Ui::CvMobMainWindow _ui;
+
     VideoModel _videoModel;
+    VideoListProxyModel _videoNamesModel;
+    DistancesProxyModel _distancesModel;
+    TrajectoriesProxyModel _trajectoriesModel;
+    AnglesProxyModel _anglesModel;
+    PlotItemView
+        _xPlot,
+        _yPlot,
+        _speedPlot,
+        _accelPlot,
+        _anglePlot;
+    XTrajectoryPlotProxyModel _xPlotModel;
+    YTrajectoryPlotProxyModel _yPlotModel;
+    TrajectorySpeedPlotProxyModel _speedPlotModel;
+    TrajectoryAccelPlotProxyModel _accelPlotModel;
+    AnglePlotProxyModel _anglePlotModel;
+
     VideoView _videoView;
     Settings _settingsWidget;
     short _closedDocks = 0;
