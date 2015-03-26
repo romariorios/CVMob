@@ -29,6 +29,8 @@
 #include <QMutex>
 #include <QSizeF>
 
+#include <memory>
+
 #include <opencv/highgui.h>
 
 #include <model/jobs/anglecalcjob.hpp>
@@ -148,7 +150,7 @@ public:
                                                        const QSize &windowSize = QSize(21, 21),
                                                        CalculationFlags flags = FromHereOnwards);
 
-    JobHandler *jobHandlerForVideo(int videoRow) const;
+    std::shared_ptr<JobHandler> jobHandlerForVideo(int videoRow) const;
 
 public slots:
     void updateSettings();
@@ -224,7 +226,7 @@ private:
         QImage frameImage;
         QSizeF frameSize;
         cv::VideoCapture videoStream;
-        JobHandler *jobHandler;
+        std::shared_ptr<JobHandler> jobHandler{nullptr};
 
         QList<QLineF> distances;
         QList<Trajectory> trajectories;

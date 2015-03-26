@@ -21,6 +21,8 @@
 
 #include <QWidget>
 
+#include <memory>
+
 namespace Ui {
 class ControlBar;
 }
@@ -40,7 +42,7 @@ public:
 public slots:
     void setPlaying(bool playing);
     void setPlayData(int frames, int frameDuration);
-    void setJobHandler(JobHandler *jh);
+    void setJobHandler(const std::shared_ptr<JobHandler> &jh);
     long enqueueMessage(const QString &message, int duration = 5000);
     void dequeueFirstMessage();
     void dequeueMessageWithId(long messageId);
@@ -86,7 +88,7 @@ private:
     bool _playing;
     Ui::ControlBar *_ui;
     bool _playStatus;
-    JobHandler *_jobHandler = nullptr;
+    std::shared_ptr<JobHandler> _jobHandler{nullptr};
     QList<Message> _statusQueue;
 
 private slots:

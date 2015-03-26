@@ -26,6 +26,9 @@
 
 #include <model/jobs/jobhandler.hpp>
 
+using namespace cv;
+using namespace std;
+
 // From the cosines law:
 // c^2 = a^2 + b^2 - 2ab cos(t)
 // cos(t) = (a^2 + b^2 - c^2) / 2ab
@@ -729,13 +732,13 @@ int VideoModel::openVideo(const QString &path)
     const auto winSize = s.value("video/searchWindowSize", 21).toInt();
 
     newVideo.frameCount = videoStream.get(CV_CAP_PROP_FRAME_COUNT);
-    newVideo.jobHandler = new JobHandler(fileNameIndex.row(), this);
+    newVideo.jobHandler = make_shared<JobHandler>(fileNameIndex.row(), this);
     newVideo.jobHandler->setWindowSize(QSize { winSize, winSize });
 
     return fileNameIndex.row();
 }
 
-JobHandler* VideoModel::jobHandlerForVideo(int videoRow) const
+shared_ptr<JobHandler> VideoModel::jobHandlerForVideo(int videoRow) const
 {
     return _cvmobVideoData->at(videoRow).jobHandler;
 }
@@ -830,9 +833,4 @@ void VideoModel::updateSettings()
     for (auto &video : *_cvmobVideoData) {
         video.jobHandler->setWindowSize(QSize { winSize, winSize });
     }
-}
-
-VideoModel::Video::~Video()
-{
-    delete jobHandler;
 }

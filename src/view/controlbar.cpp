@@ -27,6 +27,8 @@
 #include <QSettings>
 #include <QTimer>
 
+using namespace std;
+
 long ControlBar::Message::newId = 0;
 
 ControlBar::ControlBar(QWidget *parent) :
@@ -129,7 +131,7 @@ void ControlBar::setPlayData(int frameCount, int frameDuration)
     emit playDataChanged(frameCount, frameDuration);
 }
 
-void ControlBar::setJobHandler(JobHandler* jh)
+void ControlBar::setJobHandler(const shared_ptr<JobHandler> &jh)
 {
     if (_jobHandler) {
         _jobHandler->disconnect();
@@ -142,14 +144,11 @@ void ControlBar::setJobHandler(JobHandler* jh)
     }
 
     connect(_ui->actionStop_background_activity, &QAction::triggered,
-            _jobHandler, &JobHandler::stopAll);
-    connect(_jobHandler, &QThread::finished,
+            _jobHandler.get(), &JobHandler::stopAll);
+    connect(_jobHandler.get(), &QThread::finished,
             _ui->backgroundActivityButton, &QWidget::hide);
-    connect(_jobHandler, &QObject::destroyed, [&](){
-        _jobHandler = nullptr;
-    });
 
-    connect(_jobHandler, &JobHandler::jobAmountChanged,           // if amount == 0, then setVisible(0) gets
+    connect(_jobHandler.get(), &JobHandler::jobAmountChanged,     // if amount == 0, then setVisible(0) gets
             _ui->backgroundActivityButton, &QWidget::setVisible); // called, which equals setVisible(false)
 }
 
