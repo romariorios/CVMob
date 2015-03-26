@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,14 +24,11 @@
 #include <opencv/cv.h>
 #include <QList>
 
-class Settings;
-class VideoModel;
-class QStandardItemModel;
-class VideoView;
+#include <model/videomodel.hpp>
+#include <view/settings.hpp>
+#include <view/videoview.hpp>
 
-namespace Ui {
-    class CvMobMainWindow;
-}
+#include "ui_cvmobmainwindow.h"
 
 class CvMobMainWindow : public QMainWindow
 {
@@ -43,13 +40,12 @@ protected slots:
 
 public:
     explicit CvMobMainWindow(QWidget *parent = 0);
-    ~CvMobMainWindow();
 
 private:
-    Ui::CvMobMainWindow *_ui;
-    VideoModel *_videoModel;
-    VideoView *_videoView;
-    Settings *_settingsWidget;
+    Ui::CvMobMainWindow _ui;
+    VideoModel _videoModel;
+    VideoView _videoView;
+    Settings _settingsWidget;
     short _closedDocks = 0;
 };
 
