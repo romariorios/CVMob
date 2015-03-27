@@ -137,16 +137,18 @@ void PlotItemView::reset()
     _title.setText(model()->headerData(0, Qt::Horizontal).toString());
     _plot.xAxis->setLabel(model()->headerData(1, Qt::Horizontal).toString());
     _plot.yAxis->setLabel(model()->headerData(2, Qt::Vertical).toString());
-
     _plot.clearGraphs();
 
     for (int i = 0; i < model()->rowCount(); ++i) {
-        _plot.addGraph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 5));
+        auto g = _plot.addGraph();
+        g->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 5));
+        g->setPen(model()->index(i, VideoModel::TrajectoryColorCol).data().value<QColor>());
 
         QModelIndex iIndex = model()->index(i, 0);
         for (int j = 0; j < model()->rowCount(iIndex); ++j) {
-            _plot.graph(i)->addData(model()->index(j, 0, iIndex).data().toDouble(),
-                                     model()->index(j, 1, iIndex).data().toDouble());
+            g->addData(
+                model()->index(j, 0, iIndex).data().toDouble(),
+                model()->index(j, 1, iIndex).data().toDouble());
         }
     }
 
