@@ -29,7 +29,7 @@ set(CVMob_sources
     model/proxies/distancesproxymodel.cpp
     model/proxies/instantsproxymodel.cpp
     model/proxies/trajectoriesproxymodel.cpp
-    model/proxies/plotproxies.cpp
+    model/proxies/plotproxymodel.cpp
     model/proxies/videolistproxymodel.cpp
     model/jobs/anglecalcjob.cpp
     model/jobs/basejob.cpp

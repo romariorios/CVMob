@@ -29,7 +29,58 @@
 #include <cvmob_version.hpp>
 
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
-    QMainWindow{parent}
+    QMainWindow{parent},
+    _xPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("X (Trajectory)"),
+        VideoModel::PositionCol,
+        VideoModel::LFrameCol,
+        tr("X"),
+        [](const QModelIndex &i)
+        {
+            return i.data().toPointF().x();
+        }
+    },
+    _yPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("Y (trajectory)"),
+        VideoModel::PositionCol,
+        VideoModel::LFrameCol,
+        tr("Y"),
+        [](const QModelIndex &i)
+        {
+            return i.data().toPointF().y();
+        }
+    },
+    _speedPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("Speed"),
+        VideoModel::LSpeedCol,
+        VideoModel::LFrameCol,
+        tr("Speed (pxl/frame)"),
+        [](const QModelIndex &i)
+        {
+            return QLineF{QPointF{0, 0}, i.data().toPointF()}.length();
+        }
+    },
+    _accelPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("Acceleration"),
+        VideoModel::LAccelCol,
+        VideoModel::LFrameCol,
+        tr("Acceleration (pxl/frame^2)"),
+        [](const QModelIndex &i)
+        {
+            return QLineF{QPointF{0, 0}, i.data().toPointF()}.length();
+        }
+    },
+    _anglePlotModel{
+        VideoModel::AllAnglesCol,
+        tr("Angle"),
+        VideoModel::AngleCol,
+        VideoModel::AFrameCol,
+        tr("Angle (radians)")
+    }
 {
     _ui.setupUi(this);
     _ui.toolBar->hide();

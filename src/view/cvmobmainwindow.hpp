@@ -27,7 +27,7 @@
 #include <model/videomodel.hpp>
 #include <model/proxies/anglesproxymodel.hpp>
 #include <model/proxies/distancesproxymodel.hpp>
-#include <model/proxies/plotproxies.hpp>
+#include <model/proxies/plotproxymodel.hpp>
 #include <model/proxies/trajectoriesproxymodel.hpp>
 #include <model/proxies/videolistproxymodel.hpp>
 #include <view/plotitemview.hpp>
@@ -61,11 +61,12 @@ private:
         _speedPlot,
         _accelPlot,
         _anglePlot;
-    XTrajectoryPlotProxyModel _xPlotModel;
-    YTrajectoryPlotProxyModel _yPlotModel;
-    TrajectorySpeedPlotProxyModel _speedPlotModel;
-    TrajectoryAccelPlotProxyModel _accelPlotModel;
-    AnglePlotProxyModel _anglePlotModel;
+    PlotProxyModel
+        _xPlotModel,
+        _yPlotModel,
+        _speedPlotModel,
+        _accelPlotModel,
+        _anglePlotModel;
 
     VideoView _videoView;
     Settings _settingsWidget;
