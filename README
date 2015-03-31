@@ -1,5 +1,5 @@
 CVMob - Movement analysis tool
-Copyright (C) 2012-2014  The CVMob contributors
+Copyright (C) 2012-2015  The CVMob contributors
 
 #### THIS SOFTWARE IS UNDER HEAVY DEVELOPMENT AND NOT USABLE YET ####
 
@@ -17,11 +17,8 @@ Requires:
  * Build-time only dependencies
 
 Notes about the dependencies:
-If you use Linux, OpenCV 2 and Qt 5 are available for installation in most
-distributions. At the moment, KDE Framewoks 5.0 are still Beta 3, so not
-many distributions include them in their main repositories -- although they
-may provide some extra repository for that. Installation instructions here:
-https://community.kde.org/Frameworks/Binary_Packages
+If you use Linux, OpenCV 2, Qt 5 and KF5 are available for installation in most
+distributions.
 
 Aside from that, if you intend to use the opencv provided by your distro,
 note that some ship a version of libopencv compiled with no FFMPEG support,
@@ -59,15 +56,13 @@ combine both commands above:
             -DOpenCV_DIR=/path/to/opencv/share/OpenCV
 
 To tell CMake where KItemModels is, you have to set KF5ItemModels_DIR
-to where you built KItemModels and KF5_DIR to where you build KF5Umbrella:
+to where you built KItemModels:
 
     cmake . -DCMAKE_PREFIX_PATH=/path/to/qt5 \
             -DOpenCV_DIR=/path/to/opencv/share/OpenCV \
-            -DKF5ItemModels_DIR=/path/to/kitemmodels/lib/cmake/KF5ItemModels \
-            -DKF5_DIR=/path/to/kf5umbrella/lib/cmake/KF5
+            -DKF5ItemModels_DIR=/path/to/kitemmodels/lib/cmake/KF5ItemModels
 
-To know the actual directories, you have to look for, respectively, 
-KF5ItemModelsConfig.cmake and KF5Config.cmake.
+To know the actual directories, you have to look for KF5ItemModelsConfig.cmake.
 
 After configuring CVMob a Makefile will be generated. To build that
 Makefile, just run make:
