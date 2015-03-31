@@ -24,9 +24,12 @@
 #include <QPointF>
 #include <QStandardItemModel>
 #include <QFileDialog>
+#include <tuple>
 #include <view/videolistdelegate.hpp>
 
 #include <cvmob_version.hpp>
+
+using namespace std;
 
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     QMainWindow{parent},
@@ -113,38 +116,27 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
 
     QLayout *l = _ui.graphsDockWidgetContents->layout();
 
-    _xPlotModel.setSourceModel(&_videoModel);
-    _xPlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
-    _xPlot.setModel(&_xPlotModel);
-    l->addWidget(&_xPlot);
-    connect(_ui.xGraphCheckBox, &QCheckBox::toggled, &_xPlot, &QWidget::setVisible);
+    for (auto tuple : {
+        make_tuple(&_xPlot, &_xPlotModel, _ui.xGraphCheckBox),
+        make_tuple(&_yPlot, &_yPlotModel, _ui.yGraphCheckBox),
+        make_tuple(&_speedPlot, &_speedPlotModel, _ui.speedCheckBox),
+        make_tuple(&_accelPlot, &_accelPlotModel, _ui.accelerationCheckBox),
+        make_tuple(&_anglePlot, &_anglePlotModel, _ui.angleCheckBox)
+    }) {
+        auto w = get<0>(tuple);
+        auto p = get<1>(tuple);
+        auto checkBox = get<2>(tuple);
 
-    _yPlotModel.setSourceModel(&_videoModel);
-    _yPlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
-    _yPlot.setModel(&_yPlotModel);
-    l->addWidget(&_yPlot);
-    connect(_ui.yGraphCheckBox, &QCheckBox::toggled, &_yPlot, &QWidget::setVisible);
+        p->setSourceModel(&_videoModel);
+        p->setSelectionModel(_ui.openedVideosList->selectionModel());
+        w->setModel(p);
+        l->addWidget(w);
+        w->hide();
+        connect(checkBox, &QCheckBox::toggled, w, &QWidget::setVisible);
+    }
 
-    _speedPlotModel.setSourceModel(&_videoModel);
-    _speedPlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
-    _speedPlot.setModel(&_speedPlotModel);
-    l->addWidget(&_speedPlot);
-    _speedPlot.hide();
-    connect(_ui.speedCheckBox, &QCheckBox::toggled, &_speedPlot, &QWidget::setVisible);
-
-    _accelPlotModel.setSourceModel(&_videoModel);
-    _accelPlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
-    _accelPlot.setModel(&_accelPlotModel);
-    l->addWidget(&_accelPlot);
-    _accelPlot.hide();
-    connect(_ui.accelerationCheckBox, &QCheckBox::toggled, &_accelPlot, &QWidget::setVisible);
-
-    _anglePlotModel.setSourceModel(&_videoModel);
-    _anglePlotModel.setSelectionModel(_ui.openedVideosList->selectionModel());
-    _anglePlot.setModel(&_anglePlotModel);
-    l->addWidget(&_anglePlot);
-    _anglePlot.hide();
-    connect(_ui.angleCheckBox, &QCheckBox::toggled, &_anglePlot, &QWidget::setVisible);
+    _xPlot.show();
+    _yPlot.show();
 
     setCentralWidget(&_videoView);
 
