@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,11 +21,13 @@
 
 #include <model/jobs/basejob.hpp>
 
+class AngleCalcJob;
+
 class TargetAngle : public BaseTarget
 {
     Q_OBJECT
 private:
-    explicit TargetAngle(QObject* parent = 0);
+    explicit TargetAngle(AngleCalcJob *parent);
 
 private:
     void storeInstant(int frame, float aSpeed, float aAccel, const QPointF &centralEdge,

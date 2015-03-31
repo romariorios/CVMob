@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "trajectorycalcjob.hpp"
 
+#include <model/jobs/jobhandler.hpp>
 #include <model/videomodel.hpp>
 
 using namespace std;
@@ -29,7 +30,8 @@ TrajectoryCalcJob::TrajectoryCalcJob(const QPointF &startPoint,
                                                  QAbstractItemModel *parent) :
     BaseJob({ startPoint }, startFrame, endFrame, videoRow, parent),
     _previousPoint(startPoint),
-    _previousSpeed(0, 0)
+    _previousSpeed(0, 0),
+    _target{this}
 {
     connect(this, &TrajectoryCalcJob::instantGenerated,
             &_target, &TargetTrajectory::storeInstant, Qt::QueuedConnection);
@@ -48,7 +50,7 @@ void TrajectoryCalcJob::emitNewPoints(int frame,
     _previousSpeed = newSpeed;
 }
 
-TargetTrajectory::TargetTrajectory(QObject *parent) :
+TargetTrajectory::TargetTrajectory(TrajectoryCalcJob *parent) :
     BaseTarget(parent)
 {}
 
@@ -58,16 +60,20 @@ void TargetTrajectory::storeInstant(int frame, const QPointF &p, const QPointF &
         return;
     }
 
-    int currentRow = model->rowCount(parentIndex);
+    try {
+        int currentRow = model->rowCount(parentIndex);
 
-    model->insertRow(currentRow, parentIndex);
+        model->insertRow(currentRow, parentIndex);
 
-    if (currentRow == 0) {
-        model->insertColumns(0, VideoModel::TrajectoryInstantColCount, parentIndex);
+        if (currentRow == 0) {
+            model->insertColumns(0, VideoModel::TrajectoryInstantColCount, parentIndex);
+        }
+
+        model->setData(model->index(currentRow, VideoModel::LFrameCol, parentIndex), frame);
+        model->setData(model->index(currentRow, VideoModel::PositionCol, parentIndex), p);
+        model->setData(model->index(currentRow, VideoModel::LSpeedCol, parentIndex), s);
+        model->setData(model->index(currentRow, VideoModel::LAccelCol, parentIndex), a);
+    } catch (out_of_range) {
+        jobHandler->removeJob(job);
     }
-
-    model->setData(model->index(currentRow, VideoModel::LFrameCol, parentIndex), frame);
-    model->setData(model->index(currentRow, VideoModel::PositionCol, parentIndex), p);
-    model->setData(model->index(currentRow, VideoModel::LSpeedCol, parentIndex), s);
-    model->setData(model->index(currentRow, VideoModel::LAccelCol, parentIndex), a);
 }
