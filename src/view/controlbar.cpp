@@ -22,6 +22,7 @@
 #include <QMenu>
 
 #include <algorithm>
+#include <initializer_list>
 #include <QPushButton>
 #include <QSettings>
 #include <QTimer>
@@ -39,10 +40,16 @@ ControlBar::ControlBar(QWidget *parent) :
 {
     _ui.setupUi(this);
     _ui.playPauseButton->setDefaultAction(_ui.actionPlay);
+    _ui.previousFrameButton->setDefaultAction(_ui.actionPrevious_frame);
+    _ui.nextFrameButton->setDefaultAction(_ui.actionNext_Frame);
     _ui.progressSlide->setTracking(false);
     _ui.statusWidget->hide();
 
     _ui.actionPlay->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
+    _ui.actionPrevious_frame->setIcon(
+        QApplication::style()->standardIcon(QStyle::SP_MediaSeekBackward));
+    _ui.actionNext_Frame->setIcon(
+        QApplication::style()->standardIcon(QStyle::SP_MediaSeekForward));
     _ui.actionSettings->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
     _ui.actionClose_status->setIcon(
         QApplication::style()->standardIcon(QStyle::SP_DialogCloseButton));
@@ -68,6 +75,9 @@ ControlBar::ControlBar(QWidget *parent) :
     _ui.closeStatusButton->setDefaultAction(_ui.actionClose_status);
 
     connect(_ui.progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
+    connect(_ui.frameSpinBox, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
+    connect(this, SIGNAL(frameChanged(int)), _ui.progressSlide, SLOT(setValue(int)));
+    connect(this, SIGNAL(frameChanged(int)), _ui.frameSpinBox, SLOT(setValue(int)));
     connect(_ui.actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
     connect(_ui.actionMeasure_distance, SIGNAL(triggered()), SIGNAL(newDistanceRequested()));
     connect(_ui.actionCalculate_trajectory, SIGNAL(triggered()), SIGNAL(newTrajectoryRequested()));
@@ -99,6 +109,18 @@ ControlBar::ControlBar(QWidget *parent) :
         hideStatus();
     });
 
+    connect(_ui.actionNext_Frame, &QAction::triggered, [this]()
+    {
+        auto newValue = _ui.frameSpinBox->value() + 10;
+        _ui.frameSpinBox->setValue(newValue < _frameCount? newValue : _frameCount - 1);
+    });
+
+    connect(_ui.actionPrevious_frame, &QAction::triggered, [this]()
+    {
+        auto newValue = _ui.frameSpinBox->value() - 10;
+        _ui.frameSpinBox->setValue(newValue >= 0? newValue : 0);
+    });
+
     setPlayData(0, 0);
 }
 
@@ -107,9 +129,19 @@ void ControlBar::setPlayData(int frameCount, int frameDuration)
     _ui.progressSlide->setMaximum(frameCount);
     _ui.progressSlide->setValue(0);
 
-    _ui.progressSlide->setEnabled(frameCount);
-    _ui.drawButton->setEnabled(frameCount);
-    _ui.calibrateButton->setEnabled(frameCount);
+    for (auto w : initializer_list<QWidget *> {
+        _ui.progressSlide,
+        _ui.drawButton,
+        _ui.calibrateButton,
+        _ui.previousFrameButton,
+        _ui.nextFrameButton
+    }) {
+        w->setEnabled(frameCount);
+    }
+
+    _ui.frameSpinBox->setMaximum(frameCount);
+    _ui.frameSpinBox->setValue(0);
+    _ui.frameSpinBox->setEnabled(frameCount);
 
     QSettings set;
 
