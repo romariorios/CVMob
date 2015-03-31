@@ -17,7 +17,6 @@
 */
 
 #include "controlbar.hpp"
-#include "ui_controlbar.h"
 
 #include <model/jobs/jobhandler.hpp>
 #include <QMenu>
@@ -36,66 +35,65 @@ ControlBar::ControlBar(QWidget *parent) :
     _frameCount(0),
     _frameDuration(0),
     _videoFrameDuration(0),
-    _currentTimer(0),
-    _ui { new Ui::ControlBar }
+    _currentTimer(0)
 {
-    _ui->setupUi(this);
-    _ui->playPauseButton->setDefaultAction(_ui->actionPlay);
-    _ui->progressSlide->setTracking(false);
-    _ui->statusWidget->hide();
+    _ui.setupUi(this);
+    _ui.playPauseButton->setDefaultAction(_ui.actionPlay);
+    _ui.progressSlide->setTracking(false);
+    _ui.statusWidget->hide();
 
-    _ui->actionPlay->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
-    _ui->actionSettings->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
-    _ui->actionClose_status->setIcon(
+    _ui.actionPlay->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
+    _ui.actionSettings->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
+    _ui.actionClose_status->setIcon(
         QApplication::style()->standardIcon(QStyle::SP_DialogCloseButton));
 
-    QMenu *drawMenu = new QMenu(_ui->drawButton);
-    drawMenu->addAction(_ui->actionMeasure_distance);
-    drawMenu->addAction(_ui->actionCalculate_trajectory);
-    drawMenu->addAction(_ui->actionTrack_angle);
-    _ui->drawButton->setMenu(drawMenu);
-    _ui->drawButton->setDefaultAction(_ui->actionMeasure_distance);
+    QMenu *drawMenu = new QMenu(_ui.drawButton);
+    drawMenu->addAction(_ui.actionMeasure_distance);
+    drawMenu->addAction(_ui.actionCalculate_trajectory);
+    drawMenu->addAction(_ui.actionTrack_angle);
+    _ui.drawButton->setMenu(drawMenu);
+    _ui.drawButton->setDefaultAction(_ui.actionMeasure_distance);
 
-    QMenu *calibrateMenu = new QMenu { _ui->calibrateButton };
-    calibrateMenu->addAction(_ui->actionCalibrate_scale);
-    calibrateMenu->addAction(_ui->actionCalibrate_framerate);
-    _ui->calibrateButton->setMenu(calibrateMenu);
-    _ui->calibrateButton->setDefaultAction(_ui->actionCalibrate_scale);
+    QMenu *calibrateMenu = new QMenu { _ui.calibrateButton };
+    calibrateMenu->addAction(_ui.actionCalibrate_scale);
+    calibrateMenu->addAction(_ui.actionCalibrate_framerate);
+    _ui.calibrateButton->setMenu(calibrateMenu);
+    _ui.calibrateButton->setDefaultAction(_ui.actionCalibrate_scale);
 
-    _ui->backgroundActivityButton->setDefaultAction(_ui->actionStop_background_activity);
-    _ui->backgroundActivityButton->hide();
+    _ui.backgroundActivityButton->setDefaultAction(_ui.actionStop_background_activity);
+    _ui.backgroundActivityButton->hide();
 
-    _ui->settingsButton->setDefaultAction(_ui->actionSettings);
+    _ui.settingsButton->setDefaultAction(_ui.actionSettings);
 
-    _ui->closeStatusButton->setDefaultAction(_ui->actionClose_status);
+    _ui.closeStatusButton->setDefaultAction(_ui.actionClose_status);
 
-    connect(_ui->progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
-    connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
-    connect(_ui->actionMeasure_distance, SIGNAL(triggered()), SIGNAL(newDistanceRequested()));
-    connect(_ui->actionCalculate_trajectory, SIGNAL(triggered()), SIGNAL(newTrajectoryRequested()));
-    connect(_ui->actionTrack_angle, SIGNAL(triggered(bool)), SIGNAL(newAngleRequested()));
-    connect(_ui->actionCalibrate_scale, SIGNAL(triggered(bool)), SIGNAL(scaleCalibrationRequested()));
-    connect(_ui->actionCalibrate_framerate, SIGNAL(triggered(bool)),
+    connect(_ui.progressSlide, SIGNAL(valueChanged(int)), SIGNAL(frameChanged(int)));
+    connect(_ui.actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
+    connect(_ui.actionMeasure_distance, SIGNAL(triggered()), SIGNAL(newDistanceRequested()));
+    connect(_ui.actionCalculate_trajectory, SIGNAL(triggered()), SIGNAL(newTrajectoryRequested()));
+    connect(_ui.actionTrack_angle, SIGNAL(triggered(bool)), SIGNAL(newAngleRequested()));
+    connect(_ui.actionCalibrate_scale, SIGNAL(triggered(bool)), SIGNAL(scaleCalibrationRequested()));
+    connect(_ui.actionCalibrate_framerate, SIGNAL(triggered(bool)),
             SIGNAL(framerateCalibrationRequested()));
-    connect(_ui->actionSettings, SIGNAL(triggered(bool)), SIGNAL(settingsRequested()));
+    connect(_ui.actionSettings, SIGNAL(triggered(bool)), SIGNAL(settingsRequested()));
 
-    connect(_ui->progressSlide, &QSlider::valueChanged, [&](int frame)
+    connect(_ui.progressSlide, &QSlider::valueChanged, [&](int frame)
     {
         if (!(frame < _frameCount) && _playing) {
             setPlaying(false);
-            _ui->progressSlide->setValue(0);
+            _ui.progressSlide->setValue(0);
         }
     });
 
-    connect(_ui->progressSlide, &QSlider::sliderPressed, [&](){
+    connect(_ui.progressSlide, &QSlider::sliderPressed, [&](){
         killTimer(_currentTimer);
     });
 
-    connect(_ui->progressSlide, &QSlider::sliderReleased, [&](){
+    connect(_ui.progressSlide, &QSlider::sliderReleased, [&](){
         setPlaying(_playing);
     });
 
-    connect(_ui->actionClose_status, &QAction::triggered, [=]()
+    connect(_ui.actionClose_status, &QAction::triggered, [=]()
     {
         removeMessage(_statusQueue.begin());
         hideStatus();
@@ -104,20 +102,14 @@ ControlBar::ControlBar(QWidget *parent) :
     setPlayData(0, 0);
 }
 
-ControlBar::~ControlBar()
-{
-    delete _ui;
-}
-
-
 void ControlBar::setPlayData(int frameCount, int frameDuration)
 {
-    _ui->progressSlide->setMaximum(frameCount);
-    _ui->progressSlide->setValue(0);
+    _ui.progressSlide->setMaximum(frameCount);
+    _ui.progressSlide->setValue(0);
 
-    _ui->progressSlide->setEnabled(frameCount);
-    _ui->drawButton->setEnabled(frameCount);
-    _ui->calibrateButton->setEnabled(frameCount);
+    _ui.progressSlide->setEnabled(frameCount);
+    _ui.drawButton->setEnabled(frameCount);
+    _ui.calibrateButton->setEnabled(frameCount);
 
     QSettings set;
 
@@ -126,7 +118,7 @@ void ControlBar::setPlayData(int frameCount, int frameDuration)
     _frameCount = frameCount;
     setPlaying(false);
 
-    _ui->playPauseButton->setEnabled(frameCount);
+    _ui.playPauseButton->setEnabled(frameCount);
 
     emit playDataChanged(frameCount, frameDuration);
 }
@@ -143,13 +135,13 @@ void ControlBar::setJobHandler(const shared_ptr<JobHandler> &jh)
         return;
     }
 
-    connect(_ui->actionStop_background_activity, &QAction::triggered,
+    connect(_ui.actionStop_background_activity, &QAction::triggered,
             _jobHandler.get(), &JobHandler::stopAll);
     connect(_jobHandler.get(), &QThread::finished,
-            _ui->backgroundActivityButton, &QWidget::hide);
+            _ui.backgroundActivityButton, &QWidget::hide);
 
     connect(_jobHandler.get(), &JobHandler::jobAmountChanged,     // if amount == 0, then setVisible(0) gets
-            _ui->backgroundActivityButton, &QWidget::setVisible); // called, which equals setVisible(false)
+            _ui.backgroundActivityButton, &QWidget::setVisible); // called, which equals setVisible(false)
 }
 
 long ControlBar::enqueueMessage(const QString& message, int duration)
@@ -158,7 +150,7 @@ long ControlBar::enqueueMessage(const QString& message, int duration)
 
     if (_statusQueue.size() == 1) {
         setStatusVisible();
-        _ui->message->setText(message);
+        _ui.message->setText(message);
     }
 
     auto messageId = _statusQueue.last().id;
@@ -218,19 +210,19 @@ void ControlBar::removeMessage(const QList<ControlBar::Message>::iterator &it)
     if (_statusQueue.isEmpty()) {
         hideStatus();
     } else {
-        _ui->message->setText(_statusQueue[0]);
+        _ui.message->setText(_statusQueue[0]);
     }
 }
 
 void ControlBar::timerEvent(QTimerEvent *e)
 {
-    _ui->progressSlide->setValue(_ui->progressSlide->value() + 1);
+    _ui.progressSlide->setValue(_ui.progressSlide->value() + 1);
 }
 
 void ControlBar::setStatusVisible(bool visible)
 {
-    _ui->statusWidget->setVisible(visible);
-    _ui->playWidget->setVisible(!visible);
+    _ui.statusWidget->setVisible(visible);
+    _ui.playWidget->setVisible(!visible);
 }
 
 void ControlBar::setPlaying(bool playing)
@@ -243,14 +235,14 @@ void ControlBar::setPlaying(bool playing)
         killTimer(_currentTimer);
     }
 
-    _ui->actionPlay->setText(playing? tr("Pause") : tr("Play"));
-    _ui->actionPlay->setToolTip(playing? tr("Pause playback") : tr("Start playback"));
-    _ui->actionPlay->setIcon(playing? QApplication::style()->standardIcon(QStyle::SP_MediaPause) :
+    _ui.actionPlay->setText(playing? tr("Pause") : tr("Play"));
+    _ui.actionPlay->setToolTip(playing? tr("Pause playback") : tr("Start playback"));
+    _ui.actionPlay->setIcon(playing? QApplication::style()->standardIcon(QStyle::SP_MediaPause) :
                                       QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
 
-    disconnect(_ui->actionPlay, SIGNAL(toggled(bool)), this, SLOT(setPlaying(bool)));
-    _ui->actionPlay->setChecked(playing);
-    connect(_ui->actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
+    disconnect(_ui.actionPlay, SIGNAL(toggled(bool)), this, SLOT(setPlaying(bool)));
+    _ui.actionPlay->setChecked(playing);
+    connect(_ui.actionPlay, SIGNAL(toggled(bool)), SLOT(setPlaying(bool)));
 
     emit playingChanged(playing);
 }
