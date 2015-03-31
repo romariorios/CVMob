@@ -1,6 +1,6 @@
 /*
  *     CVMob - Motion capture program
- *     Copyright (C) 2014  The CVMob contributors
+ *     Copyright (C) 2014, 2015  The CVMob contributors
  *
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -22,9 +22,10 @@
 
 #include <QTreeView>
 
-class QAction;
+#include <QAction>
+#include <QMenu>
+
 class QAbstractProxyModel;
-class QMenu;
 
 class VideoDataView : public QTreeView
 {
@@ -41,9 +42,15 @@ private:
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     QAbstractProxyModel *proxyModel();
 
-    QMenu *_contextMenu;
-    QAction *_deleteAction;
-    QAction *_copyAction;
+    QMenu _contextMenu;
+    QAction _deleteAction{
+        style()->standardIcon(QStyle::SP_TrashIcon),
+        tr("Delete"),
+        this};
+    QAction _copyAction{
+        style()->standardIcon(QStyle::SP_FileIcon),
+        tr("Copy data to clipboard"),
+        this};
 };
 
 #endif // VIDEODATAVIEW_H

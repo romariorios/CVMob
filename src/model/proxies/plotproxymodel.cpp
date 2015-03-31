@@ -16,17 +16,38 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plotproxies.hpp"
+#include "plotproxymodel.hpp"
 
 enum {
     __HACKCurrentFrameCol = 2
 };
 
-BasePlotProxyModel::BasePlotProxyModel(QObject* parent) :
-    InstantsProxyModel(parent)
-{}
+using namespace std;
 
-QVariant BasePlotProxyModel::data(const QModelIndex& proxyIndex, int role) const
+PlotProxyModel::PlotProxyModel(
+    int parentColumn,
+    const QString &graphTitle,
+    int yColumn,
+    int xColumn,
+    const QString &yTitle,
+    const function<QVariant(const QModelIndex &)> &yData,
+    const function<QVariant(const QModelIndex &)> &xData,
+    const QString &xTitle,
+    QObject *parent
+) :
+    InstantsProxyModel{parent},
+    _graphTitle{graphTitle},
+    _yColumn{yColumn},
+    _xColumn{xColumn},
+    _yTitle{yTitle},
+    _xTitle{xTitle},
+    _yData{yData},
+    _xData{xData}
+{
+    setColumn(parentColumn);
+}
+
+QVariant PlotProxyModel::data(const QModelIndex &proxyIndex, int role) const
 {
     if (!proxyIndex.parent().isValid() && (
             proxyIndex.column() == __HACKCurrentFrameCol ||
@@ -36,29 +57,29 @@ QVariant BasePlotProxyModel::data(const QModelIndex& proxyIndex, int role) const
 
     switch (proxyIndex.column()) {
     case 0:
-        return xData(mapToSource(proxyIndex));
+        return _xData(mapToSource(proxyIndex));
     case 1:
-        return yData(mapToSource(proxyIndex));
+        return _yData(mapToSource(proxyIndex));
     default:
         return QVariant();
     }
 }
 
-QVariant BasePlotProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant PlotProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     switch (section) {
     case 0:
-        return graphTitle();
+        return _graphTitle;
     case 1:
-        return xTitle();
+        return _xTitle;
     case 2:
-        return yTitle();
+        return _yTitle;
     default:
         return QVariant();
     }
 }
 
-QModelIndex BasePlotProxyModel::mapFromSource(const QModelIndex& sourceIndex) const
+QModelIndex PlotProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
     if (_parentIndex.isValid() && !sourceIndex.parent().isValid()) {
         auto path = VideoModel::indexPath(_parentIndex);
@@ -75,18 +96,18 @@ QModelIndex BasePlotProxyModel::mapFromSource(const QModelIndex& sourceIndex) co
         return instantsSourceIndex;
     }
 
-    if (instantsSourceIndex.column() == xColumn()) {
+    if (instantsSourceIndex.column() == _xColumn) {
         return index(instantsSourceIndex.row(), 0, instantsSourceIndex.parent());
     }
 
-    if (instantsSourceIndex.column() == yColumn()) {
+    if (instantsSourceIndex.column() == _yColumn) {
         return index(instantsSourceIndex.row(), 1, instantsSourceIndex.parent());
     }
 
     return QModelIndex();
 }
 
-QModelIndex BasePlotProxyModel::mapToSource(const QModelIndex& proxyIndex) const
+QModelIndex PlotProxyModel::mapToSource(const QModelIndex &proxyIndex) const
 {
     if (!_parentIndex.isValid()) {
         return QModelIndex {};
@@ -106,10 +127,10 @@ QModelIndex BasePlotProxyModel::mapToSource(const QModelIndex& proxyIndex) const
 
     switch (proxyIndex.column()) {
     case 0:
-        column = xColumn();
+        column = _xColumn;
         break;
     case 1:
-        column = yColumn();
+        column = _yColumn;
         break;
     default:
         return QModelIndex();
@@ -118,7 +139,7 @@ QModelIndex BasePlotProxyModel::mapToSource(const QModelIndex& proxyIndex) const
     return InstantsProxyModel::mapToSource(index(proxyIndex.row(), column, proxyIndex.parent()));
 }
 
-int BasePlotProxyModel::columnCount(const QModelIndex& p) const
+int PlotProxyModel::columnCount(const QModelIndex &p) const
 {
     return p.isValid()? 2 : 1;
 }

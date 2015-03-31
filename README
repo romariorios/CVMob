@@ -1,20 +1,38 @@
 CVMob - Movement analysis tool
-Copyright (C) 2012-2014  The CVMob contributors
+Copyright (C) 2012-2015  The CVMob contributors
 
 #### THIS SOFTWARE IS UNDER HEAVY DEVELOPMENT AND NOT USABLE YET ####
 
 Requires:
- * OpenCV (>= 2.0)
- * Qt (>= 5.0)
- * CMake (>= 2.8.6, for build only)
+ - OpenCV (>= 2.0)
+   - http://opencv.org/
+ - Qt (Core Gui Widgets LinguistTools* >= 5.0)
+   - http://qt-project.org/
+ - KF5ItemModels >= 5.0
+   - http://download.kde.org/stable/frameworks/5.7/kitemmodels-5.7.0.zip
+   (latest version)
+ - CMake* (>= 2.8.12)
+   - http://www.cmake.org/
 
-Note: A Qt 4.6 version of this software can be found at the qt4
-branch, but it's long unmaintained and severely outdated. You can try
-to compile the master branch using Qt 4, but the code now uses quite
-a few Qt5- (and C++11-) only features, so you'll have to port those.
+ * Build-time only dependencies
+
+Notes about the dependencies:
+If you use Linux, OpenCV 2, Qt 5 and KF5 are available for installation in most
+distributions.
+
+Aside from that, if you intend to use the opencv provided by your distro,
+note that some ship a version of libopencv compiled with no FFMPEG support,
+relying solely on GStreamer, which may be problematic -- it may be unable
+to, i.e., seek and gather length information from videos, basically killing
+the application. If in doubt, compile opencv.
+
+If you're using Windows, I advise you to, first, download and install the Qt
+SDK and CMake, and work your way to compile OpenCV and KItemModels from there.
+To compile KItemModels, you need to know that the KF5Config.cmake require by
+it is inside KF5Umbrella.
 
 Build instructions:
-If you have both OpenCV and Qt in your path, you can configure the
+If you have OpenCV, Qt and KF5 in your path, you can configure the
 project simply by running:
 
     cmake .
@@ -37,11 +55,14 @@ combine both commands above:
     cmake . -DCMAKE_PREFIX_PATH=/path/to/qt5 \
             -DOpenCV_DIR=/path/to/opencv/share/OpenCV
 
-If you use Linux and intend to use the opencv provided by your distro,
-note that some distros ship a version of libopencv compiled with no
-FFMPEG support, relying solely on GStreamer, which may be problematic --
-it may be unable to, i.e., seek and gather length information from videos,
-basically killing the application. If in doubt, compile opencv.
+To tell CMake where KItemModels is, you have to set KF5ItemModels_DIR
+to where you built KItemModels:
+
+    cmake . -DCMAKE_PREFIX_PATH=/path/to/qt5 \
+            -DOpenCV_DIR=/path/to/opencv/share/OpenCV \
+            -DKF5ItemModels_DIR=/path/to/kitemmodels/lib/cmake/KF5ItemModels
+
+To know the actual directories, you have to look for KF5ItemModelsConfig.cmake.
 
 After configuring CVMob a Makefile will be generated. To build that
 Makefile, just run make:

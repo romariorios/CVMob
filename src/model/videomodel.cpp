@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@
 
 #include <model/jobs/jobhandler.hpp>
 
+using namespace cv;
+using namespace std;
+
 // From the cosines law:
 // c^2 = a^2 + b^2 - 2ab cos(t)
 // cos(t) = (a^2 + b^2 - c^2) / 2ab
@@ -43,8 +46,7 @@ float angleFromPoints(const QPointF& c, const QPointF& e1, const QPointF& e2)
 
 VideoModel::VideoModel(QObject *parent) :
     QAbstractItemModel(parent),
-    _indexesData(new QHash<QPair<int, int>, InternalData*>()),
-    _cvmobVideoData(new QList<VideoModel::Video>)
+    _indexesData(new QHash<QPair<int, int>, InternalData*>())
 {
 }
 
@@ -522,10 +524,12 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
     return true;
 }
 
-template <class T> bool VideoModel::checkAndInsertRowsIn(QList<T> &l,
-                                                              int row,
-                                                              int count,
-                                                              const QModelIndex &parent)
+template <class T>
+bool VideoModel::checkAndInsertRowsIn(
+    vector<T> &l,
+    int row,
+    int count,
+    const QModelIndex &parent)
 {
     int first = row;
     int last = row + count - 1;
@@ -536,8 +540,9 @@ template <class T> bool VideoModel::checkAndInsertRowsIn(QList<T> &l,
 
     beginInsertRows(parent, first, last);
 
+    auto rowIt = l.begin() + row;
     for (int i = 0; i < count; ++i) {
-        l.insert(row, *new T);
+        l.emplace(rowIt);
     }
 
     endInsertRows();
@@ -614,10 +619,12 @@ bool VideoModel::insertRows(int row, int count, const QModelIndex &parent)
     return false;
 }
 
-template <class T> bool VideoModel::checkAndRemoveRowsFrom(QList<T> &l,
-                                                                int row,
-                                                                int count,
-                                                                const QModelIndex &parent)
+template <class T>
+bool VideoModel::checkAndRemoveRowsFrom(
+    vector<T> &l,
+    int row,
+    int count,
+    const QModelIndex &parent)
 {
     int first = row;
     int last = row + count - 1;
@@ -630,8 +637,9 @@ template <class T> bool VideoModel::checkAndRemoveRowsFrom(QList<T> &l,
 
     beginRemoveRows(parent, first, last);
 
+    auto rowIt = l.begin() + row;
     for (int i = 0; i < count; ++i) {
-        l.removeAt(row);
+        l.erase(rowIt);
     }
 
     endRemoveRows();
@@ -698,7 +706,7 @@ bool VideoModel::removeRows(int row, int count, const QModelIndex &parent)
 int VideoModel::openVideo(const QString &path)
 {
     insertRow(rowCount());
-    Video &newVideo = _cvmobVideoData->last();
+    Video &newVideo = *(_cvmobVideoData->end() - 1);
     cv::VideoCapture &videoStream = newVideo.videoStream;
 
     if (!videoStream.open(path.toUtf8().constData()) ||
@@ -729,13 +737,13 @@ int VideoModel::openVideo(const QString &path)
     const auto winSize = s.value("video/searchWindowSize", 21).toInt();
 
     newVideo.frameCount = videoStream.get(CV_CAP_PROP_FRAME_COUNT);
-    newVideo.jobHandler = new JobHandler(fileNameIndex.row(), this);
+    newVideo.jobHandler = make_shared<JobHandler>(fileNameIndex.row(), this);
     newVideo.jobHandler->setWindowSize(QSize { winSize, winSize });
 
     return fileNameIndex.row();
 }
 
-JobHandler* VideoModel::jobHandlerForVideo(int videoRow) const
+shared_ptr<JobHandler> VideoModel::jobHandlerForVideo(int videoRow) const
 {
     return _cvmobVideoData->at(videoRow).jobHandler;
 }
@@ -830,9 +838,4 @@ void VideoModel::updateSettings()
     for (auto &video : *_cvmobVideoData) {
         video.jobHandler->setWindowSize(QSize { winSize, winSize });
     }
-}
-
-VideoModel::Video::~Video()
-{
-    delete jobHandler;
 }

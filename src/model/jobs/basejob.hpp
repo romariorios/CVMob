@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,18 +26,21 @@
 #include <QPointF>
 #include <QSize>
 
+class BaseJob;
+class JobHandler;
+
 class BaseTarget : public QObject
 {
 protected:
-    explicit BaseTarget(QObject* parent = 0);
+    explicit BaseTarget(BaseJob *parent);
 
     QModelIndex parentIndex;
-    QAbstractItemModel *model;
+    QAbstractItemModel *model = nullptr;
+    JobHandler *jobHandler;
+    BaseJob *job;
 
     friend class BaseJob;
 };
-
-class JobHandler;
 
 class BaseJob : public QObject
 {
@@ -47,6 +50,7 @@ public:
     explicit BaseJob(const QVector<QPointF> &startPoints, int startFrame, int endFrame,
                      int videoRow, QAbstractItemModel *parent);
     void setTarget(const QModelIndex &index);
+    inline void setJobHandler(JobHandler *jh) { target().jobHandler = jh; }
     virtual BaseTarget &target() = 0;
 
 protected:

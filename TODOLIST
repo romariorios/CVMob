@@ -1,3 +1,8 @@
+=== Missing features from 3.x ===
+Reports
+Export trajectory
+Set Origin Point
+
 === Refactoring ===
 Make context menu data come from the model
 

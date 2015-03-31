@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,160 +17,198 @@
 */
 
 #include "cvmobmainwindow.hpp"
-#include "ui_cvmobmainwindow.h"
 
 #include <KItemModels/KLinkItemSelectionModel>
-#include <model/videomodel.hpp>
-#include <model/proxies/anglesproxymodel.hpp>
-#include <model/proxies/distancesproxymodel.hpp>
-#include <model/proxies/plotproxies.hpp>
-#include <model/proxies/trajectoriesproxymodel.hpp>
-#include <model/proxies/videolistproxymodel.hpp>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPointF>
 #include <QStandardItemModel>
 #include <QFileDialog>
-#include <view/plotitemview.hpp>
-#include <view/settings.hpp>
-#include <view/videoview.hpp>
+#include <tuple>
 #include <view/videolistdelegate.hpp>
 
 #include <cvmob_version.hpp>
 
+using namespace std;
+
 CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    _ui(new Ui::CvMobMainWindow),
-    _videoModel(new VideoModel),
-    _videoView(new VideoView),
-    _settingsWidget(new Settings(this))
+    QMainWindow{parent},
+    _xPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("X (Trajectory)"),
+        VideoModel::PositionCol,
+        VideoModel::LFrameCol,
+        tr("X"),
+        [](const QModelIndex &i)
+        {
+            return i.data().toPointF().x();
+        }
+    },
+    _yPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("Y (trajectory)"),
+        VideoModel::PositionCol,
+        VideoModel::LFrameCol,
+        tr("Y"),
+        [](const QModelIndex &i)
+        {
+            return i.data().toPointF().y();
+        }
+    },
+    _xSpeedPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("vx(t)"),
+        VideoModel::LSpeedCol,
+        VideoModel::LFrameCol,
+        tr("velX (pxl/frame)"),
+        [](const QModelIndex &i)
+        {
+            return i.data().toPointF().x();
+        }
+    },
+    _ySpeedPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("vy(t)"),
+        VideoModel::LSpeedCol,
+        VideoModel::LFrameCol,
+        tr("velY (pxl/frame)"),
+        [](const QModelIndex &i)
+        {
+            return i.data().toPointF().y();
+        }
+    },
+    _speedPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("Speed"),
+        VideoModel::LSpeedCol,
+        VideoModel::LFrameCol,
+        tr("Speed (pxl/frame)"),
+        [](const QModelIndex &i)
+        {
+            return QLineF{QPointF{0, 0}, i.data().toPointF()}.length();
+        }
+    },
+    _accelPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("Acceleration"),
+        VideoModel::LAccelCol,
+        VideoModel::LFrameCol,
+        tr("Acceleration (pxl/frame^2)"),
+        [](const QModelIndex &i)
+        {
+            return QLineF{QPointF{0, 0}, i.data().toPointF()}.length();
+        }
+    },
+    _anglePlotModel{
+        VideoModel::AllAnglesCol,
+        tr("Angle"),
+        VideoModel::AngleCol,
+        VideoModel::AFrameCol,
+        tr("Angle (radians)")
+    }
 {
-    _ui->setupUi(this);
-    _ui->toolBar->hide();
+    _ui.setupUi(this);
+    _ui.toolBar->hide();
 
-    _ui->action_Open->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
-    _ui->openButton->setDefaultAction(_ui->action_Open);
+    _ui.action_Open->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+    _ui.openButton->setDefaultAction(_ui.action_Open);
 
-    VideoListProxyModel *videoNamesModel = new VideoListProxyModel(this);
-    videoNamesModel->setSourceModel(_videoModel);
+    _videoNamesModel.setSourceModel(&_videoModel);
 
-    _ui->openedVideosList->setModel(videoNamesModel);
-    _ui->openedVideosList->setItemDelegate(new VideoListDelegate(this));
-    _videoView->setModel(_videoModel);
+    _ui.openedVideosList->setModel(&_videoNamesModel);
+    _ui.openedVideosList->setItemDelegate(new VideoListDelegate(this));
+    _videoView.setModel(&_videoModel);
+    _videoView.setSelectionModel(new KLinkItemSelectionModel{
+        &_videoModel,
+        _ui.openedVideosList->selectionModel(),
+        this});
 
-    KLinkItemSelectionModel *selectionModel =
-        new KLinkItemSelectionModel(_videoModel, _ui->openedVideosList->selectionModel());
-    _videoView->setSelectionModel(selectionModel);
+    _distancesModel.setSourceModel(&_videoModel);
+    _distancesModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _ui.distancesView->setModel(&_distancesModel);
+    _ui.distancesView->header()->setSectionResizeMode(QHeaderView::Stretch);
 
-    DistancesProxyModel *distancesModel = new DistancesProxyModel(this);
-    distancesModel->setSourceModel(_videoModel);
-    distancesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
-    _ui->distancesView->setModel(distancesModel);
-    _ui->distancesView->header()->setSectionResizeMode(QHeaderView::Stretch);
+    _trajectoriesModel.setSourceModel(&_videoModel);
+    _trajectoriesModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _ui.trajectoriesView->setModel(&_trajectoriesModel);
 
-    TrajectoriesProxyModel *trajectoriesModel =
-            new TrajectoriesProxyModel(this);
-    trajectoriesModel->setSourceModel(_videoModel);
-    trajectoriesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
-    _ui->trajectoriesView->setModel(trajectoriesModel);
+    _anglesModel.setSourceModel(&_videoModel);
+    _anglesModel.setSelectionModel(_ui.openedVideosList->selectionModel());
+    _ui.anglesView->setModel(&_anglesModel);
 
-    AnglesProxyModel *anglesModel = new AnglesProxyModel(this);
-    anglesModel->setSourceModel(_videoModel);
-    anglesModel->setSelectionModel(_ui->openedVideosList->selectionModel());
-    _ui->anglesView->setModel(anglesModel);
+    QLayout *l = _ui.graphsDockWidgetContents->layout();
 
-    QLayout *l = _ui->graphsDockWidgetContents->layout();
+    for (auto tuple : {
+        make_tuple(&_xPlot, &_xPlotModel, _ui.xGraphCheckBox),
+        make_tuple(&_yPlot, &_yPlotModel, _ui.yGraphCheckBox),
+        make_tuple(&_xSpeedPlot, &_xSpeedPlotModel, _ui.xSpeedCheckBox),
+        make_tuple(&_ySpeedPlot, &_ySpeedPlotModel, _ui.ySpeedCheckBox),
+        make_tuple(&_speedPlot, &_speedPlotModel, _ui.speedCheckBox),
+        make_tuple(&_accelPlot, &_accelPlotModel, _ui.accelerationCheckBox),
+        make_tuple(&_anglePlot, &_anglePlotModel, _ui.angleCheckBox)
+    }) {
+        auto w = get<0>(tuple);
+        auto p = get<1>(tuple);
+        auto checkBox = get<2>(tuple);
 
-    PlotItemView *xPlot = new PlotItemView(this);
-    auto xModel = new XTrajectoryPlotProxyModel(this);
-    xModel->setSourceModel(_videoModel);
-    xModel->setSelectionModel(_ui->openedVideosList->selectionModel());
-    xPlot->setModel(xModel);
-    l->addWidget(xPlot);
-    connect(_ui->xGraphCheckBox, &QCheckBox::toggled, xPlot, &QWidget::setVisible);
+        p->setSourceModel(&_videoModel);
+        p->setSelectionModel(_ui.openedVideosList->selectionModel());
+        w->setModel(p);
+        l->addWidget(w);
+        w->hide();
+        connect(checkBox, &QCheckBox::toggled, w, &QWidget::setVisible);
+    }
 
-    PlotItemView *yPlot = new PlotItemView(this);
-    auto yModel = new YTrajectoryPlotProxyModel(this);
-    yModel->setSourceModel(_videoModel);
-    yModel->setSelectionModel(_ui->openedVideosList->selectionModel());
-    yPlot->setModel(yModel);
-    l->addWidget(yPlot);
-    connect(_ui->yGraphCheckBox, &QCheckBox::toggled, yPlot, &QWidget::setVisible);
+    _xPlot.show();
+    _yPlot.show();
 
-    PlotItemView *speedPlot = new PlotItemView(this);
-    auto speedModel = new TrajectorySpeedPlotProxyModel(this);
-    speedModel->setSourceModel(_videoModel);
-    speedModel->setSelectionModel(_ui->openedVideosList->selectionModel());
-    speedPlot->setModel(speedModel);
-    l->addWidget(speedPlot);
-    speedPlot->hide();
-    connect(_ui->speedCheckBox, &QCheckBox::toggled, speedPlot, &QWidget::setVisible);
+    setCentralWidget(&_videoView);
 
-    PlotItemView *accelPlot = new PlotItemView(this);
-    auto accelModel = new TrajectoryAccelPlotProxyModel(this);
-    accelModel->setSourceModel(_videoModel);
-    accelModel->setSelectionModel(_ui->openedVideosList->selectionModel());
-    accelPlot->setModel(accelModel);
-    l->addWidget(accelPlot);
-    accelPlot->hide();
-    connect(_ui->accelerationCheckBox, &QCheckBox::toggled, accelPlot, &QWidget::setVisible);
+    _videoView.showMessage(tr("CVMob %1").arg(CVMobVersionString));
 
-    PlotItemView *anglePlot = new PlotItemView(this);
-    auto angleModel = new AnglePlotProxyModel(this);
-    angleModel->setSourceModel(_videoModel);
-    angleModel->setSelectionModel(_ui->openedVideosList->selectionModel());
-    anglePlot->setModel(angleModel);
-    l->addWidget(anglePlot);
-    anglePlot->hide();
-    connect(_ui->angleCheckBox, &QCheckBox::toggled, anglePlot, &QWidget::setVisible);
+    connect(_ui.action_Open, SIGNAL(triggered()), SLOT(openFile()));
 
-    setCentralWidget(_videoView);
-
-    _videoView->showMessage(tr("CVMob %1").arg(CVMobVersionString));
-
-    connect(_ui->action_Open, SIGNAL(triggered()), SLOT(openFile()));
-
-    connect(_ui->actionShow_opened_videos, SIGNAL(triggered(bool)),
-            _ui->openedVideosDockWidget, SLOT(setVisible(bool)));
-    connect(_ui->actionShow_opened_videos, SIGNAL(triggered(bool)),
+    connect(_ui.actionShow_opened_videos, SIGNAL(triggered(bool)),
+            _ui.openedVideosDockWidget, SLOT(setVisible(bool)));
+    connect(_ui.actionShow_opened_videos, SIGNAL(triggered(bool)),
             SLOT(setDockWasShown(bool)));
 
-    connect(_ui->actionShow_data_tables, SIGNAL(triggered(bool)),
-            _ui->dataTablesDockWidget, SLOT(setVisible(bool)));
-    connect(_ui->actionShow_data_tables, SIGNAL(triggered(bool)),
+    connect(_ui.actionShow_data_tables, SIGNAL(triggered(bool)),
+            _ui.dataTablesDockWidget, SLOT(setVisible(bool)));
+    connect(_ui.actionShow_data_tables, SIGNAL(triggered(bool)),
             SLOT(setDockWasShown(bool)));
 
-    connect(_ui->actionShow_graphs, SIGNAL(triggered(bool)),
-            _ui->graphsDockWidget, SLOT(setVisible(bool)));
-    connect(_ui->actionShow_graphs, SIGNAL(triggered(bool)),
+    connect(_ui.actionShow_graphs, SIGNAL(triggered(bool)),
+            _ui.graphsDockWidget, SLOT(setVisible(bool)));
+    connect(_ui.actionShow_graphs, SIGNAL(triggered(bool)),
             SLOT(setDockWasShown(bool)));
 
-    connect(_ui->openedVideosDockWidget, &CVMDockWidget::closed, _ui->actionShow_opened_videos, [=]()
+    connect(_ui.openedVideosDockWidget, &CVMDockWidget::closed, _ui.actionShow_opened_videos, [=]()
     {
-        _ui->actionShow_opened_videos->setChecked(false);
+        _ui.actionShow_opened_videos->setChecked(false);
         setDockWasShown(false);
     });
 
-    connect(_ui->dataTablesDockWidget, &CVMDockWidget::closed, _ui->actionShow_opened_videos, [=]()
+    connect(_ui.dataTablesDockWidget, &CVMDockWidget::closed, _ui.actionShow_opened_videos, [=]()
     {
-        _ui->actionShow_data_tables->setChecked(false);
+        _ui.actionShow_data_tables->setChecked(false);
         setDockWasShown(false);
     });
 
-    connect(_ui->graphsDockWidget, &CVMDockWidget::closed, _ui->actionShow_opened_videos, [=]()
+    connect(_ui.graphsDockWidget, &CVMDockWidget::closed, _ui.actionShow_opened_videos, [=]()
     {
-        _ui->actionShow_graphs->setChecked(false);
+        _ui.actionShow_graphs->setChecked(false);
         setDockWasShown(false);
     });
 
-    connect(_videoView, SIGNAL(settingsRequested()), _settingsWidget, SLOT(exec()));
-    connect(_settingsWidget, SIGNAL(settingsChanged()), _videoModel, SLOT(updateSettings()));
-    connect(_settingsWidget, SIGNAL(settingsChanged()), _videoView, SLOT(updateSettings()));
-    connect(_settingsWidget, SIGNAL(settingsChanged()), xPlot, SLOT(updateSettings()));
-    connect(_settingsWidget, SIGNAL(settingsChanged()), yPlot, SLOT(updateSettings()));
-    connect(_settingsWidget, SIGNAL(settingsChanged()), speedPlot, SLOT(updateSettings()));
-    connect(_settingsWidget, SIGNAL(settingsChanged()), accelPlot, SLOT(updateSettings()));
-    connect(_settingsWidget, SIGNAL(settingsChanged()), anglePlot, SLOT(updateSettings()));
+    connect(&_videoView, SIGNAL(settingsRequested()), &_settingsWidget, SLOT(exec()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_videoModel, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_videoView, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_xPlot, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_yPlot, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_speedPlot, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_accelPlot, SLOT(updateSettings()));
+    connect(&_settingsWidget, SIGNAL(settingsChanged()), &_anglePlot, SLOT(updateSettings()));
 }
 
 void CvMobMainWindow::openFile() {
@@ -181,11 +219,11 @@ void CvMobMainWindow::openFile() {
         return;
     }
 
-    auto videoRow = _videoModel->openVideo(pathName);
+    auto videoRow = _videoModel.openVideo(pathName);
     if (videoRow >= 0) {
-        _videoView->showMessage(tr("%1 opened").arg(pathName));
-        _ui->openedVideosList->selectionModel()->select(
-            _ui->openedVideosList->model()->index(videoRow, 0),
+        _videoView.showMessage(tr("%1 opened").arg(pathName));
+        _ui.openedVideosList->selectionModel()->select(
+            _ui.openedVideosList->model()->index(videoRow, 0),
             QItemSelectionModel::ClearAndSelect
         );
     } else {
@@ -197,14 +235,9 @@ void CvMobMainWindow::setDockWasShown(bool shown)
 {
     if (shown) {
         if (--_closedDocks == 0) {
-            _ui->toolBar->hide();
+            _ui.toolBar->hide();
         }
     } else if (_closedDocks++ == 0) {
-        _ui->toolBar->show();
+        _ui.toolBar->show();
     }
-}
-
-CvMobMainWindow::~CvMobMainWindow()
-{
-	delete _ui;
 }

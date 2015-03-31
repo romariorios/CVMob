@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,37 +27,31 @@
 #include <QTimer>
 
 #include <model/videomodel.hpp>
-#include <view/qcustomplot.h>
 
 enum {
     __HACKCurrentFrameCol = 2
 };
 
 PlotItemView::PlotItemView(QWidget* parent) :
-    QAbstractItemView(parent),
-    _plot(new QCustomPlot(this)),
-    _title(new QCPPlotTitle(_plot, tr("(untitled)"))),
-    _timeLine { new QCPItemLine { _plot } },
-    _wantsUpdate(false),
-    _wasVisibleBefore(false)
+    QAbstractItemView{parent}
 {
-    _plot->setInteraction(QCP::iRangeDrag, true);
-    _plot->setInteraction(QCP::iRangeZoom, true);
-    _plot->setInteraction(QCP::iSelectPlottables, true);
-    _plot->setInteraction(QCP::iSelectItems, true);
-    _plot->setInteraction(QCP::iSelectAxes, true);
-    _plot->setInteraction(QCP::iSelectOther, true);
-    _plot->plotLayout()->insertRow(0);
-    _plot->plotLayout()->addElement(0, 0, _title);
+    _plot.setInteraction(QCP::iRangeDrag, true);
+    _plot.setInteraction(QCP::iRangeZoom, true);
+    _plot.setInteraction(QCP::iSelectPlottables, true);
+    _plot.setInteraction(QCP::iSelectItems, true);
+    _plot.setInteraction(QCP::iSelectAxes, true);
+    _plot.setInteraction(QCP::iSelectOther, true);
+    _plot.plotLayout()->insertRow(0);
+    _plot.plotLayout()->addElement(0, 0, &_title);
 
-    _timeLine->start->setCoords(0, -10);
-    _timeLine->end->setCoords(0, 10);
-    _plot->addItem(_timeLine);
+    _timeLine.start->setCoords(0, -10);
+    _timeLine.end->setCoords(0, 10);
+    _plot.addItem(&_timeLine);
 
-    connect(_plot, &QCustomPlot::mousePress, this, &PlotItemView::onPlotMousePress);
+    connect(&_plot, &QCustomPlot::mousePress, this, &PlotItemView::onPlotMousePress);
 
     new QBoxLayout(QBoxLayout::TopToBottom, viewport());
-    viewport()->layout()->addWidget(_plot);
+    viewport()->layout()->addWidget(&_plot);
 }
 
 QModelIndex PlotItemView::indexAt(const QPoint& point) const
@@ -140,24 +134,26 @@ void PlotItemView::reset()
         return;
     }
 
-    _title->setText(model()->headerData(0, Qt::Horizontal).toString());
-    _plot->xAxis->setLabel(model()->headerData(1, Qt::Horizontal).toString());
-    _plot->yAxis->setLabel(model()->headerData(2, Qt::Vertical).toString());
-
-    _plot->clearGraphs();
+    _title.setText(model()->headerData(0, Qt::Horizontal).toString());
+    _plot.xAxis->setLabel(model()->headerData(1, Qt::Horizontal).toString());
+    _plot.yAxis->setLabel(model()->headerData(2, Qt::Vertical).toString());
+    _plot.clearGraphs();
 
     for (int i = 0; i < model()->rowCount(); ++i) {
-        _plot->addGraph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 5));
+        auto g = _plot.addGraph();
+        g->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 5));
+        g->setPen(model()->index(i, VideoModel::TrajectoryColorCol).data().value<QColor>());
 
         QModelIndex iIndex = model()->index(i, 0);
         for (int j = 0; j < model()->rowCount(iIndex); ++j) {
-            _plot->graph(i)->addData(model()->index(j, 0, iIndex).data().toDouble(),
-                                     model()->index(j, 1, iIndex).data().toDouble());
+            g->addData(
+                model()->index(j, 0, iIndex).data().toDouble(),
+                model()->index(j, 1, iIndex).data().toDouble());
         }
     }
 
-    _plot->rescaleAxes();
-    _plot->replot();
+    _plot.rescaleAxes();
+    _plot.replot();
 }
 
 void PlotItemView::timerEvent(QTimerEvent* e)
@@ -201,12 +197,12 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
         if (topLeft.column() == __HACKCurrentFrameCol) {
             auto x = topLeft.data().toInt();
 
-            _timeLine->start->setCoords(x, -10000);
-            _timeLine->end->setCoords(x, 10000);
+            _timeLine.start->setCoords(x, -10000);
+            _timeLine.end->setCoords(x, 10000);
         }
 
         if (topLeft.column() == VideoModel::TrajectoryColorCol) {
-            _plot->graph(topLeft.row())->setPen(topLeft.data().value<QColor>());
+            _plot.graph(topLeft.row())->setPen(topLeft.data().value<QColor>());
         }
 
         return requestUpdate();
@@ -219,7 +215,7 @@ void PlotItemView::dataChanged(const QModelIndex& topLeft, const QModelIndex& , 
     int graphRow = topLeft.parent().row();
     QModelIndex graphIndex = model()->index(topLeft.parent().row(), 0);
     double key = model()->index(topLeft.row(), 0, graphIndex).data().toDouble();
-    QCPGraph *graph = _plot->graph(graphRow);
+    QCPGraph *graph = _plot.graph(graphRow);
 
     graph->removeData(key);
     graph->addData(model()->index(topLeft.row(), 0, graphIndex).data().toDouble(),
@@ -239,7 +235,7 @@ void PlotItemView::rowsInserted(const QModelIndex& parent, int start, int end)
             continue;
         }
 
-        _plot->addGraph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 5));
+        _plot.addGraph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 5));
     }
 }
 
@@ -247,7 +243,7 @@ void PlotItemView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, in
 {
     if (!parent.isValid()) {
         for (; start <= end; --end) {
-            _plot->removeGraph(start);
+            _plot.removeGraph(start);
         }
     }
 
@@ -256,7 +252,7 @@ void PlotItemView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, in
 
 void PlotItemView::onPlotMousePress(QMouseEvent* e)
 {
-    int i = _plot->graphCount();
+    int i = _plot.graphCount();
 
     if (e->button() != Qt::RightButton || i <= 0) {
         return;
@@ -264,13 +260,13 @@ void PlotItemView::onPlotMousePress(QMouseEvent* e)
 
     double ax = e->pos().x();
     double ay = e->pos().y();
-    ax = _plot->xAxis->pixelToCoord(ax);
-    ay = _plot->yAxis->pixelToCoord(ay);
+    ax = _plot.xAxis->pixelToCoord(ax);
+    ay = _plot.yAxis->pixelToCoord(ay);
     double dMin = 999999999;
     double xMin, yMin;
 
     for (int j = 0; j < i; j++) {
-        QCPData b = _plot->graph(j)->data()->lowerBound(ax).value();
+        QCPData b = _plot.graph(j)->data()->lowerBound(ax).value();
         double dx = ax-b.key;
         double dy = ay-b.value;
         double d = sqrt(dx * dx + dy * dy); // calcs distance
@@ -282,10 +278,10 @@ void PlotItemView::onPlotMousePress(QMouseEvent* e)
         }
     }
 
-    _plot->addGraph();
-    _plot->graph(i)->setPen(QPen { QColor { 255, 0, 0 } });
-    _plot->graph(i)->setScatterStyle(QCPScatterStyle { QCPScatterStyle::ssCircle, 10 });
-    _plot->graph(i)->addData(xMin, yMin);
+    _plot.addGraph();
+    _plot.graph(i)->setPen(QPen { QColor { 255, 0, 0 } });
+    _plot.graph(i)->setScatterStyle(QCPScatterStyle { QCPScatterStyle::ssCircle, 10 });
+    _plot.graph(i)->addData(xMin, yMin);
 
     QDialog coordinatesDialog { this };
     coordinatesDialog.setWindowTitle(tr("Point"));
@@ -298,15 +294,15 @@ void PlotItemView::onPlotMousePress(QMouseEvent* e)
     requestUpdate();
     coordinatesDialog.exec();
 
-    _plot->graph(i)->clearData();
-    _plot->removeGraph(i);
+    _plot.graph(i)->clearData();
+    _plot.removeGraph(i);
     requestUpdate();
 }
 
 void PlotItemView::updatePlot()
 {
-    _plot->rescaleAxes();
-    _plot->replot();
+    _plot.rescaleAxes();
+    _plot.replot();
     _wantsUpdate = false;
 }
 

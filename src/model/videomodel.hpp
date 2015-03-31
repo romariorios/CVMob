@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,6 +28,9 @@
 #include <QPointF>
 #include <QMutex>
 #include <QSizeF>
+
+#include <memory>
+#include <vector>
 
 #include <opencv/highgui.h>
 
@@ -148,7 +151,7 @@ public:
                                                        const QSize &windowSize = QSize(21, 21),
                                                        CalculationFlags flags = FromHereOnwards);
 
-    JobHandler *jobHandlerForVideo(int videoRow) const;
+    std::shared_ptr<JobHandler> jobHandlerForVideo(int videoRow) const;
 
 public slots:
     void updateSettings();
@@ -167,7 +170,7 @@ private:
         {}
 
         QColor color;
-        QList<TrajectoryInstant> instants;
+        std::vector<TrajectoryInstant> instants;
     };
 
     struct AngleInstant
@@ -185,17 +188,15 @@ private:
         {}
 
         QColor color;
-        QList<AngleInstant> instants;
+        std::vector<AngleInstant> instants;
     };
 
     struct Video
     {
         Video() :
             streamFrame(-1),
-            playStatus(false),
-            jobHandler(0)
+            playStatus(false)
         {}
-        ~Video();
 
         inline void setCalibrationRatio(double ratioValue)
         {
@@ -224,11 +225,11 @@ private:
         QImage frameImage;
         QSizeF frameSize;
         cv::VideoCapture videoStream;
-        JobHandler *jobHandler;
+        std::shared_ptr<JobHandler> jobHandler{nullptr};
 
-        QList<QLineF> distances;
-        QList<Trajectory> trajectories;
-        QList<Angle> angles;
+        std::vector<QLineF> distances;
+        std::vector<Trajectory> trajectories;
+        std::vector<Angle> angles;
     };
 
     struct InternalData
@@ -248,18 +249,24 @@ private:
 
     QHash<QPair<int, int>, InternalData *> *_indexesData;
 
-    QList<Video> *_cvmobVideoData;
+    std::vector<Video> *_cvmobVideoData = new std::vector<Video>;
     mutable QMutex _streamLock;
 
     double calculateDistance(long row) const;
-    template <class T> bool checkAndInsertRowsIn(QList<T> &l,
-                                                 int row,
-                                                 int count,
-                                                 const QModelIndex &parent = QModelIndex());
-    template <class T> bool checkAndRemoveRowsFrom(QList<T> &l,
-                                                   int row,
-                                                   int count,
-                                                   const QModelIndex &parent = QModelIndex());
+
+    template <class T>
+    bool checkAndInsertRowsIn(
+        std::vector<T> &l,
+        int row,
+        int count,
+        const QModelIndex &parent = {});
+
+    template <class T>
+    bool checkAndRemoveRowsFrom(
+        std::vector<T> &l,
+        int row,
+        int count,
+        const QModelIndex &parent = {});
 };
 
 #endif // CVMOBMODEL_HPP

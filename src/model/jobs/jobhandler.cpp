@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ void JobHandler::startJob(BaseJob* j)
     }
 
     _newJobs.append(j);
+    j->setJobHandler(this);
     j->emitNewPoints(j->_startFrame, j->_currentPoints);
 
     l.unlock();
@@ -132,6 +133,14 @@ void JobHandler::run()
         _lock.lock();
         int videoFrame = _videoFrame;
         bool playing = _playStatus;
+
+        for (auto j : _jobsToRemove) {
+            jobs.removeAll(j);
+        }
+
+        if (jobs.empty() && _newJobs.empty()) {
+            _stopRequested = true;
+        }
 
         if (_stopRequested) {
             _newJobs.clear();
@@ -299,6 +308,13 @@ void JobHandler::setPlayStatus(bool playStatus)
 {
     _lock.lock();
     _playStatus = playStatus;
+    _lock.unlock();
+}
+
+void JobHandler::removeJob(BaseJob* j)
+{
+    _lock.lock();
+    _jobsToRemove << j;
     _lock.unlock();
 }
 

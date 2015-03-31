@@ -21,9 +21,9 @@
 
 #include <QWidget>
 
-namespace Ui {
-class ControlBar;
-}
+#include <memory>
+
+#include "ui_controlbar.h"
 
 class BaseJob;
 class JobHandler;
@@ -35,12 +35,11 @@ class ControlBar : public QWidget
 
 public:
     explicit ControlBar(QWidget *parent = nullptr);
-    ~ControlBar();
 
 public slots:
     void setPlaying(bool playing);
     void setPlayData(int frames, int frameDuration);
-    void setJobHandler(JobHandler *jh);
+    void setJobHandler(const std::shared_ptr<JobHandler> &jh);
     long enqueueMessage(const QString &message, int duration = 5000);
     void dequeueFirstMessage();
     void dequeueMessageWithId(long messageId);
@@ -84,9 +83,9 @@ private:
     int _videoFrameDuration;
     int _currentTimer;
     bool _playing;
-    Ui::ControlBar *_ui;
+    Ui::ControlBar _ui;
     bool _playStatus;
-    JobHandler *_jobHandler = nullptr;
+    std::shared_ptr<JobHandler> _jobHandler{nullptr};
     QList<Message> _statusQueue;
 
 private slots:

@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,10 +25,12 @@
 #include <QPointF>
 #include <QSize>
 
+class TrajectoryCalcJob;
+
 class TargetTrajectory : public BaseTarget {
     Q_OBJECT
 private:
-    TargetTrajectory(QObject *parent = 0);
+    TargetTrajectory(TrajectoryCalcJob *parent);
 
 private slots:
     void storeInstant(int frame, const QPointF &p, const QPointF &s, const QPointF &a);

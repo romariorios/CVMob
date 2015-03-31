@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013  The CVMob contributors
+    Copyright (C) 2013, 2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "anglecalcjob.hpp"
 
+#include <model/jobs/jobhandler.hpp>
 #include <model/videomodel.hpp>
 
 using namespace std;
@@ -27,7 +28,8 @@ AngleCalcJob::AngleCalcJob(const QVector< QPointF >& startAngle,
                            QAbstractItemModel* parent) :
     BaseJob(startAngle, startFrame, endFrame, videoRow, parent),
     _previousAngle(angleFromPoints(startAngle[0], startAngle[1], startAngle[2])),
-    _previousASpeed(0)
+    _previousASpeed(0),
+    _target{this}
 {
     connect(this, &AngleCalcJob::instantGenerated,
             &_target, &TargetAngle::storeInstant, Qt::QueuedConnection);
@@ -45,7 +47,7 @@ void AngleCalcJob::emitNewPoints(int frame, const QVector< QPointF >& points)
     _previousASpeed = newASpeed;
 }
 
-TargetAngle::TargetAngle(QObject* parent) :
+TargetAngle::TargetAngle(AngleCalcJob *parent) :
     BaseTarget(parent)
 {}
 
@@ -56,21 +58,25 @@ void TargetAngle::storeInstant(int frame, float aSpeed, float aAccel, const QPoi
         return;
     }
 
-    int currentRow = model->rowCount(parentIndex);
+    try {
+        int currentRow = model->rowCount(parentIndex);
 
-    model->insertRow(currentRow, parentIndex);
+        model->insertRow(currentRow, parentIndex);
 
-    if (currentRow == 0) {
-        model->insertColumns(0, VideoModel::AngleInstantColCount, parentIndex);
+        if (currentRow == 0) {
+            model->insertColumns(0, VideoModel::AngleInstantColCount, parentIndex);
+        }
+
+        model->setData(model->index(currentRow, VideoModel::AFrameCol, parentIndex), frame);
+        model->setData(model->index(currentRow, VideoModel::ASpeedCol, parentIndex), aSpeed);
+        model->setData(model->index(currentRow, VideoModel::AAccelCol, parentIndex), aAccel);
+        model->setData(model->index(currentRow, VideoModel::ACenterCol, parentIndex),
+                    centralEdge);
+        model->setData(model->index(currentRow, VideoModel::AEdge1Col, parentIndex),
+                    pEdge1);
+        model->setData(model->index(currentRow, VideoModel::AEdge2Col, parentIndex),
+                    pEdge2);
+    } catch (out_of_range) {
+        jobHandler->removeJob(job);
     }
-
-    model->setData(model->index(currentRow, VideoModel::AFrameCol, parentIndex), frame);
-    model->setData(model->index(currentRow, VideoModel::ASpeedCol, parentIndex), aSpeed);
-    model->setData(model->index(currentRow, VideoModel::AAccelCol, parentIndex), aAccel);
-    model->setData(model->index(currentRow, VideoModel::ACenterCol, parentIndex),
-                   centralEdge);
-    model->setData(model->index(currentRow, VideoModel::AEdge1Col, parentIndex),
-                   pEdge1);
-    model->setData(model->index(currentRow, VideoModel::AEdge2Col, parentIndex),
-                   pEdge2);
 }
