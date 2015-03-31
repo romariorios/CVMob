@@ -191,6 +191,20 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="xSpeedCheckBox">
+          <property name="text">
+           <string>X (Speed)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="ySpeedCheckBox">
+          <property name="text">
+           <string>Y (Speed)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QCheckBox" name="speedCheckBox">
           <property name="text">
            <string>Speed (Trajectory)</string>

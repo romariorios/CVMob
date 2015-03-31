@@ -58,12 +58,16 @@ private:
     PlotItemView
         _xPlot,
         _yPlot,
+        _xSpeedPlot,
+        _ySpeedPlot,
         _speedPlot,
         _accelPlot,
         _anglePlot;
     PlotProxyModel
         _xPlotModel,
         _yPlotModel,
+        _xSpeedPlotModel,
+        _ySpeedPlotModel,
         _speedPlotModel,
         _accelPlotModel,
         _anglePlotModel;

@@ -55,6 +55,28 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
             return i.data().toPointF().y();
         }
     },
+    _xSpeedPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("vx(t)"),
+        VideoModel::LSpeedCol,
+        VideoModel::LFrameCol,
+        tr("velX (pxl/frame)"),
+        [](const QModelIndex &i)
+        {
+            return i.data().toPointF().x();
+        }
+    },
+    _ySpeedPlotModel{
+        VideoModel::AllTrajectoriesCol,
+        tr("vy(t)"),
+        VideoModel::LSpeedCol,
+        VideoModel::LFrameCol,
+        tr("velY (pxl/frame)"),
+        [](const QModelIndex &i)
+        {
+            return i.data().toPointF().y();
+        }
+    },
     _speedPlotModel{
         VideoModel::AllTrajectoriesCol,
         tr("Speed"),
@@ -119,6 +141,8 @@ CvMobMainWindow::CvMobMainWindow(QWidget *parent) :
     for (auto tuple : {
         make_tuple(&_xPlot, &_xPlotModel, _ui.xGraphCheckBox),
         make_tuple(&_yPlot, &_yPlotModel, _ui.yGraphCheckBox),
+        make_tuple(&_xSpeedPlot, &_xSpeedPlotModel, _ui.xSpeedCheckBox),
+        make_tuple(&_ySpeedPlot, &_ySpeedPlotModel, _ui.ySpeedCheckBox),
         make_tuple(&_speedPlot, &_speedPlotModel, _ui.speedCheckBox),
         make_tuple(&_accelPlot, &_accelPlotModel, _ui.accelerationCheckBox),
         make_tuple(&_anglePlot, &_anglePlotModel, _ui.angleCheckBox)
