@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ public slots:
     long enqueueMessage(const QString &message, int duration = 5000);
     void dequeueFirstMessage();
     void dequeueMessageWithId(long messageId);
-    inline void pushPersistentMessage(const QString &message) { enqueueMessage(message, 0); }
+    inline long pushPersistentMessage(const QString &message) { return enqueueMessage(message, 0); }
     void updateSettings();
 
 protected:
@@ -59,6 +59,7 @@ signals:
     void newTrajectoryRequested();
     void scaleCalibrationRequested();
     void framerateCalibrationRequested();
+    void originPointSettingRequested();
     void settingsRequested();
 
 private:

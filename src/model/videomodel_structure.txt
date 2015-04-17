@@ -9,23 +9,24 @@ Root
 4| AllFramesCol: The frames of this video
 4~>0| (QImage): A frame
 5| PlayStatusCol: True if the video is playing; false otherwise
-6| SizeCalibrationRatioCol (double): m/pixel. Invalid if the video wasn't calibrated
-7| AllDistancesCol
-7~>0| (QLineF): A line between two points
-8| AllTrajectoriesCol
-8~>0| AllTrajectoryInstantsCol: The instants of a linear trajectory
-8~>0~>0| LFrameCol (int)
-8~>0~>1| PositionCol (QPointF)
-8~>0~>2| LSpeedCol (QPointF)
-8~>0~>3| LAccelCol (QPointF)
-8~>1| TrajectoryColorCol (QColor): The color of a trajectory
-9| AllAnglesCol
-9~>0| AllAngleInstantsCol: The instants of an angular trajectory
-9~>0~>0| AFrameCol (int)
-9~>0~>1| AngleCol (float): Angle in radians
-9~>0~>2| ASpeedCol (float)
-9~>0~>3| AAccelCol (float)
-9~>0~>4| ACenterCol (QPointF)
-9~>0~>5| AEdge1Col (QPointF)
-9~>0~>6| AEdge2Col (QPointF)
-9~>1| AngleColorCol (QColor): Color of the angle
+6| CalibrationRatioCol (double): m/pixel. Invalid if the video wasn't calibrated
+7| OriginPointCol (QPointF): Point of origin of the coordinate system
+8| AllDistancesCol
+8~>0| (QLineF): A line between two points
+9| AllTrajectoriesCol
+9~>0| AllTrajectoryInstantsCol: The instants of a linear trajectory
+9~>0~>0| LFrameCol (int)
+9~>0~>1| PositionCol (QPointF)
+9~>0~>2| LSpeedCol (QPointF)
+9~>0~>3| LAccelCol (QPointF)
+9~>1| TrajectoryColorCol (QColor): The color of a trajectory
+10| AllAnglesCol
+10~>0| AllAngleInstantsCol: The instants of an angular trajectory
+10~>0~>0| AFrameCol (int)
+10~>0~>1| AngleCol (float): Angle in radians
+10~>0~>2| ASpeedCol (float)
+10~>0~>3| AAccelCol (float)
+10~>0~>4| ACenterCol (QPointF)
+10~>0~>5| AEdge1Col (QPointF)
+10~>0~>6| AEdge2Col (QPointF)
+10~>1| AngleColorCol (QColor): Color of the angle

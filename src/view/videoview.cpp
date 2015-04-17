@@ -38,6 +38,8 @@
 #include "ui_recordingframeratedialog.h"
 #include "ui_scalecalibrationdialog.h"
 
+long mId;
+
 VideoView::VideoView(QWidget *parent) :
     QAbstractItemView(parent),
     _noVideoVideo(Video(new QGraphicsScene(&_view), 0))
@@ -83,6 +85,13 @@ VideoView::VideoView(QWidget *parent) :
 
             model()->setData(frameDurationIndex, frameDuration);
         }
+    });
+
+    connect(&_controlBar, &ControlBar::originPointSettingRequested, [this]()
+    {
+        mId = _controlBar.pushPersistentMessage(tr("Click at the orgin point"));
+
+        connect(&_view, SIGNAL(mousePressed(QPointF)), SLOT(setOriginPoint(QPointF)));
     });
 
     connect(&_controlBar, SIGNAL(settingsRequested()), SIGNAL(settingsRequested()));
@@ -568,4 +577,15 @@ void VideoView::endScaleCalibration()
     }
 
     calibration = false;
+}
+
+void VideoView::setOriginPoint(const QPointF &p)
+{
+    connect(&_view, SIGNAL(mousePressed(QPointF)), SLOT(setOriginPoint(QPointF)));
+    _controlBar.dequeueMessageWithId(mId);
+
+    auto originPointIndex = model()->index(_currentVideoRow, VideoModel::OriginPointCol);
+    model()->setData(originPointIndex, p);
+
+    _controlBar.enqueueMessage(tr("Done"));
 }

@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ ControlBar::ControlBar(QWidget *parent) :
     QMenu *calibrateMenu = new QMenu { _ui.calibrateButton };
     calibrateMenu->addAction(_ui.actionCalibrate_scale);
     calibrateMenu->addAction(_ui.actionCalibrate_framerate);
+    calibrateMenu->addAction(_ui.actionSet_origin_point);
     _ui.calibrateButton->setMenu(calibrateMenu);
     _ui.calibrateButton->setDefaultAction(_ui.actionCalibrate_scale);
 
@@ -85,6 +86,10 @@ ControlBar::ControlBar(QWidget *parent) :
     connect(_ui.actionCalibrate_scale, SIGNAL(triggered(bool)), SIGNAL(scaleCalibrationRequested()));
     connect(_ui.actionCalibrate_framerate, SIGNAL(triggered(bool)),
             SIGNAL(framerateCalibrationRequested()));
+    connect(
+        _ui.actionSet_origin_point,
+        SIGNAL(triggered(bool)),
+        SIGNAL(originPointSettingRequested()));
     connect(_ui.actionSettings, SIGNAL(triggered(bool)), SIGNAL(settingsRequested()));
 
     connect(_ui.progressSlide, &QSlider::valueChanged, [&](int frame)

@@ -108,6 +108,8 @@ private slots:
 
     void beginScaleCalibration();
     void endScaleCalibration();
+
+    void setOriginPoint(const QPointF &p);
 };
 
 #endif // VIDEOVIEW_H

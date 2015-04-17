@@ -55,6 +55,7 @@ public:
         AllFramesCol,
         PlayStatusCol,
         CalibrationRatioCol,
+        OriginPointCol,
         AllDistancesCol,
         AllTrajectoriesCol,
         AllAnglesCol,
@@ -218,9 +219,15 @@ private:
             return calibration? *calibration : 1;
         }
 
+        inline QPointF calibratedPoint(const QPointF &p) const
+        {
+            return (p - originPoint) * calibrationRatio();
+        }
+
         QString fileName;
         int currentFrame, frameDuration, frameCount, streamFrame;
         double *calibration = nullptr;
+        QPointF originPoint = {0, 0};
         bool playStatus;
         QImage frameImage;
         QSizeF frameSize;

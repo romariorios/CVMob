@@ -331,6 +331,21 @@
     <string>Ctrl+Left</string>
    </property>
   </action>
+  <action name="actionSet_origin_point">
+   <property name="icon">
+    <iconset resource="../cvmob_resource.qrc">
+     <normaloff>:/images/icons/set-origin-point.png</normaloff>:/images/icons/set-origin-point.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set origin point</string>
+   </property>
+   <property name="toolTip">
+    <string>Set the origin of the coordinate system</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
