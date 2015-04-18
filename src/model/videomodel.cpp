@@ -182,6 +182,7 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
             }
 
             cvtColor(rawImg, rawImg, CV_BGR2RGB);
+            flip(rawImg, rawImg, 0);
             currentVideo.frameImage = QImage(rawImg.data, rawImg.cols, rawImg.rows, QImage::Format_RGB888).copy();
 
             currentVideo.streamFrame = newFrame;

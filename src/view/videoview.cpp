@@ -268,6 +268,7 @@ void VideoView::selectionChanged(const QItemSelection &selected, const QItemSele
 
     _view.setScene(_videos.at(_currentVideoRow).scene);
     _view.fitInView(_view.sceneRect(), Qt::KeepAspectRatio);
+    _view.scale(1, -1);
 
     _controlBar.setPlayData(model()->rowCount(
                               model()->index(

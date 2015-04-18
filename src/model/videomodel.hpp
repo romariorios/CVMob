@@ -221,10 +221,7 @@ private:
 
         inline QPointF calibratedPoint(const QPointF &p) const
         {
-            auto calibratedPoint = (p - originPoint) * calibrationRatio();
-            calibratedPoint.setY(frameSize.height() - calibratedPoint.y());
-
-            return calibratedPoint;
+            return (p - originPoint) * calibrationRatio();
         }
 
         QString fileName;
