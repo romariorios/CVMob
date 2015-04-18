@@ -264,6 +264,13 @@ private:
 
     double calculateDistance(long row) const;
 
+    inline void notifyCoordinatesChange(int row)
+    {
+        auto leftIndex = index(row, AllDistancesCol);
+        auto rightIndex = index(row, VideoColCount - 1);
+        emit dataChanged(leftIndex, rightIndex);
+    }
+
     template <class T>
     bool checkAndInsertRowsIn(
         std::vector<T> &l,

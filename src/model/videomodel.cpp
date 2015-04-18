@@ -423,9 +423,11 @@ bool VideoModel::setData(const QModelIndex &index, const QVariant &value, int ro
             } else {
                 currentVideo.unsetCalibration();
             }
+            notifyCoordinatesChange(index.row());
             break;
         case OriginPointCol:
             currentVideo.originPoint = value.toPointF();
+            notifyCoordinatesChange(index.row());
             break;
         default:
             return false;

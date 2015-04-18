@@ -1,6 +1,6 @@
 /*
     CVMob - Motion capture program
-    Copyright (C) 2013, 2014  The CVMob contributors
+    Copyright (C) 2013--2015  The CVMob contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,10 +46,24 @@ void BaseProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
     connect(sourceModel, &QAbstractItemModel::dataChanged,
             [=](const QModelIndex &topLeft, const QModelIndex &bottomRight)
     {
+        if (
+            _parentIndex.parent() == topLeft.parent() &&
+            _parentIndex.row() >= topLeft.row() &&
+            _parentIndex.row() <= bottomRight.row() &&
+            _parentIndex.column() >= topLeft.column() &&
+            _parentIndex.column() <= bottomRight.column()) {
+            beginResetModel();
+            endResetModel();
+
+            return;
+        }
+
         QModelIndex proxyTopLeft = mapFromSource(topLeft);
         QModelIndex proxyBottomRight = topLeft == bottomRight? proxyTopLeft :
                                                                mapFromSource(bottomRight);
-        emit dataChanged(proxyTopLeft, proxyBottomRight);
+
+        if (proxyTopLeft.isValid() && proxyBottomRight.isValid())
+            emit dataChanged(proxyTopLeft, proxyBottomRight);
     });
 
     connect(sourceModel, &QAbstractItemModel::rowsInserted, [=](const QModelIndex &parent,
