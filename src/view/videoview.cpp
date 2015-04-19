@@ -582,7 +582,7 @@ void VideoView::endScaleCalibration()
 
 void VideoView::setOriginPoint(const QPointF &p)
 {
-    connect(&_view, SIGNAL(mousePressed(QPointF)), SLOT(setOriginPoint(QPointF)));
+    disconnect(&_view, SIGNAL(mousePressed(QPointF)), this, SLOT(setOriginPoint(QPointF)));
     _controlBar.dequeueMessageWithId(mId);
 
     auto originPointIndex = model()->index(_currentVideoRow, VideoModel::OriginPointCol);
