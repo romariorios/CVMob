@@ -271,7 +271,7 @@
     <string>Calibrate scale</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>Ctrl+Alt+S</string>
    </property>
   </action>
   <action name="actionCalibrate_framerate">
@@ -283,7 +283,7 @@
     <string>Calibrate framerate</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+F</string>
+    <string>Ctrl+Alt+F</string>
    </property>
   </action>
   <action name="actionStop_background_activity">
@@ -298,7 +298,7 @@
     <string>Stop background activity</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Alt+S</string>
    </property>
   </action>
   <action name="actionClose_status">
@@ -343,7 +343,7 @@
     <string>Set the origin of the coordinate system</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+O</string>
+    <string>Ctrl+Alt+O</string>
    </property>
   </action>
  </widget>

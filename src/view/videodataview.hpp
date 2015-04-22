@@ -38,6 +38,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent *e);
 
 private:
+    QString trajectoryDataString(const QModelIndex &index);
     void copySelectionToClipboard();
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     QAbstractProxyModel *proxyModel();
@@ -50,6 +51,10 @@ private:
     QAction _copyAction{
         style()->standardIcon(QStyle::SP_FileIcon),
         tr("Copy data to clipboard"),
+        this};
+    QAction _saveAction{
+        style()->standardIcon(QStyle::SP_DialogSaveButton),
+        tr("Save data to file"),
         this};
 };
 

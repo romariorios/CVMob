@@ -1,6 +1,5 @@
 === Missing features from 3.x ===
 Reports
-Export trajectory
 
 === Refactoring ===
 Make context menu data come from the model

@@ -23,6 +23,10 @@
 #include <QApplication>
 #include <QtGui/QClipboard>
 #include <QtGui/QContextMenuEvent>
+#include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QTextStream>
 #include <QMenu>
 #include <model/videomodel.hpp>
 
@@ -49,6 +53,29 @@ VideoDataView::VideoDataView(QWidget* parent) :
 
     addAction(&_copyAction);
     _contextMenu.addAction(&_copyAction);
+
+    // Save
+    _saveAction.setShortcut(tr("Ctrl+S"));
+
+    connect(&_saveAction, &QAction::triggered, [this]()
+    {
+        auto fileName = QFileDialog::getSaveFileName(
+            this,
+            tr("Save trajectory data"),
+            QDir::homePath());
+
+        if (fileName.isEmpty())
+            return;
+
+        QFile file{fileName};
+        file.open(QIODevice::WriteOnly);
+        QTextStream stream{&file};
+        for (auto index : selectionModel()->selectedRows())
+            stream << trajectoryDataString(index) << "\n";
+    });
+
+    addAction(&_saveAction);
+    _contextMenu.addAction(&_saveAction);
 }
 
 void VideoDataView::contextMenuEvent(QContextMenuEvent* e)
@@ -85,39 +112,43 @@ void VideoDataView::contextMenuEvent(QContextMenuEvent* e)
     _contextMenu.popup(e->globalPos());
 }
 
-void VideoDataView::copySelectionToClipboard()
+QString VideoDataView::trajectoryDataString(const QModelIndex &index)
 {
-    for (auto index : selectionModel()->selectedRows()) {
-        auto path = VideoModel::indexPath(proxyModel()->mapToSource(index));
-        QString clipboardText;
+    auto path = VideoModel::indexPath(proxyModel()->mapToSource(index));
+    QString clipboardText;
 
-        if (path.size() == 2 && path.at(0).column == VideoModel::AllTrajectoriesCol) {
-            clipboardText += index.data().toString() + "\n";
-            int section = 0;
+    if (path.size() == 2 && path.at(0).column == VideoModel::AllTrajectoriesCol) {
+        clipboardText += index.data().toString() + "\n";
+        int section = 0;
+        for (
+            auto header = model()->headerData(section, Qt::Horizontal);
+            header.isValid();
+            ++section, header = model()->headerData(section, Qt::Horizontal)
+        ) {
+            clipboardText += header.toString() + "\t";
+        }
+        clipboardText += "\n";
+
+        for (int i = 0; i < model()->rowCount(index); ++i) {
+            int col = 0;
             for (
-                auto header = model()->headerData(section, Qt::Horizontal);
-                header.isValid();
-                ++section, header = model()->headerData(section, Qt::Horizontal)
+                auto clipData = model()->index(i, col, index).data();
+                clipData.isValid();
+                ++col, clipData = model()->index(i, col, index).data()
             ) {
-                clipboardText += header.toString() + "\t";
+                clipboardText += clipData.toString() + "\t";
             }
             clipboardText += "\n";
-
-            for (int i = 0; i < model()->rowCount(index); ++i) {
-                int col = 0;
-                for (
-                    auto clipData = model()->index(i, col, index).data();
-                    clipData.isValid();
-                    ++col, clipData = model()->index(i, col, index).data()
-                ) {
-                    clipboardText += clipData.toString() + "\t";
-                }
-                clipboardText += "\n";
-            }
         }
-
-        QApplication::clipboard()->setText(clipboardText);
     }
+
+    return clipboardText;
+}
+
+void VideoDataView::copySelectionToClipboard()
+{
+    for (auto index : selectionModel()->selectedRows())
+        QApplication::clipboard()->setText(trajectoryDataString(index));
 }
 
 void VideoDataView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
